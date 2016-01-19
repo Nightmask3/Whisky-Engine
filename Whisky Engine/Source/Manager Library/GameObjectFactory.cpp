@@ -14,8 +14,12 @@
 
 #include "..\..\Engine.h"
 
+#include <string>
+#include <functional>
+#include <cctype>
 #include <sstream>
 #include <iostream>
+#include <typeinfo>
 #include <algorithm>
 
 
@@ -43,8 +47,11 @@ using std::string;
 
 
 	GameObjectFactory::GameObjectFactory()
-		: gameObjList_(GAME_OBJ_INST_COUNT, GameObject())
-	{}
+	{
+		// Creates a handle manager and gives it the reference to this game object factory for future use
+		_pHandleMan = new HandleManager(*_pInstance);
+
+	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// system functions
@@ -77,60 +84,60 @@ using std::string;
 			}
 
 		// update UI
-		std::pair<bool, GameObject*> result = Find("Player");
-		if (result.first)
-		{
-			GameObject* player = result.second;
-			if ((result = Find("HealthBar")).first)
-			{
-				GameObject* hpBar = result.second;
-				if ((result = Find("WeaponBar")).first)
-				{
-					GameObject* weaponBar = result.second;
+		//std::pair<bool, GameObject*> result = Find("Player");
+		//if (result.first)
+		//{
+		//	GameObject* player = result.second;
+		//	if ((result = Find("HealthBar")).first)
+		//	{
+		//		GameObject* hpBar = result.second;
+		//		if ((result = Find("WeaponBar")).first)
+		//		{
+		//			GameObject* weaponBar = result.second;
 
-					// all ui elements are found.
-					//if (!player->GetComponent<PlayerController>) cout << "NULL PLAYER!" << endl;
-					float hp = static_cast<float>(player->GetComponent<PlayerController>()->Hp());
-					float wp = static_cast<float>(player->GetComponent<PlayerController>()->WeaponCharge());
-					int lvl = 1 + player->GetComponent<PlayerController>()->WeaponLevel();
+		//			// all ui elements are found.
+		//			//if (!player->GetComponent<PlayerController>) cout << "NULL PLAYER!" << endl;
+		//			float hp = static_cast<float>(player->GetComponent<PlayerController>()->Hp());
+		//			float wp = static_cast<float>(player->GetComponent<PlayerController>()->WeaponCharge());
+		//			int lvl = 1 + player->GetComponent<PlayerController>()->WeaponLevel();
 
-					// health bar original scales: (7.5, 0.8)
-					hpBar->GetComponent<TransformComponent>()->Scale((hp / 10)*7.5f, 0.8f);
+		//			// health bar original scales: (7.5, 0.8)
+		//			hpBar->GetComponent<TransformComponent>()->Scale((hp / 10)*7.5f, 0.8f);
 
-					// health bar original scales: (7.5, 0.8)
-					weaponBar->GetComponent<TransformComponent>()->Scale((wp / lvl)*8.0f, 0.8f);
+		//			// health bar original scales: (7.5, 0.8)
+		//			weaponBar->GetComponent<TransformComponent>()->Scale((wp / lvl)*8.0f, 0.8f);
 
 
-				}
+		//		}
 
-			}
-		}
+		//	}
+		//}
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// Member functions
 	///////////////////////////////////////////////////////////////////////////////////////////////
-	bool GameObjectFactory::InitializeArchetypes()
+	bool GameObjectFactory::InitializeArchetypes(const std::string & name, const glm::vec3 & pos)
 	{
 		for (const auto archetype_s : RSC->GetArchetypeList())
 		{
-			_archetypeList[archetype_s.name].Name(archetype_s.name);
-			_archetypeList[archetype_s.name].IsArchetype(true);
+			archetypeList_[archetype_s.name].Name(archetype_s.name);
+			archetypeList_[archetype_s.name].IsArchetype(true);
 			for (auto& component_s : archetype_s.componentList)
 			{
 				// grab the component name and parameters
-				string		componentName = component_s.first;
+				string	componentName = component_s.first;
 				const char* params = component_s.second.c_str();
 
 				// lowercase the component name
-				std::transform(componentName.begin(), componentName.end(), componentName.begin(), ::tolower);
+				//std::TransformComponent(componentName.begin(), componentName.end(), componentName.begin(), ::tolower);
 
 				// create the component and add it to the gameobject instance
 				Component* component = Component::CreateComponent(componentName, params);
-				if (component)	_archetypeList[archetype_s.name].AddComponent(component);
+				if (component)	archetypeList_[archetype_s.name].AddComponent(component);
 				else
 				{
-					cout << "Error creating component for archetype " << _archetypeList[archetype_s.name].Name() << ": " << componentName << endl;
+					cout << "Error creating component for archetype " << archetypeList_[archetype_s.name].Name() << ": " << componentName << endl;
 					return false;
 				}
 			}
@@ -147,7 +154,7 @@ using std::string;
 		for (auto& obj_s : objList)
 		{
 			// instantiate every object in the scene
-			GameObject& obj = Instantiate();
+			//GameObject& obj = Instantiate();
 			obj.Name(obj_s.name);
 			auto components_s = obj_s.componentList;
 
@@ -158,8 +165,7 @@ using std::string;
 					 string componentName	= component_s.first;
 				const char* params			= component_s.second.c_str();
 
-				// lowercase the component name
-				std::transform(componentName.begin(), componentName.end(), componentName.begin(), ::tolower);
+
 
 				// create the component and add it to the gameobject instance
 				Component* component = Component::CreateComponent(componentName, params);
@@ -167,10 +173,6 @@ using std::string;
 				{
 					obj.AddComponent(component);
 
-					///////////////////////////////////////////////////////////////////////////////////
-					///								SPECIAL CASES									///
-					///////////////////////////////////////////////////////////////////////////////////
-					if (component->GetType() == BOX_COLLIDER)	PHY->AddGameObj(component->GetOwner());
 				}
 				else
 				{
@@ -181,20 +183,26 @@ using std::string;
 
 			if (obj.Name() == "PauseMenu")
 			{
-				_pauseMenu = obj.Pntr();
+				pauseMenu_ = obj.Pntr();
 			}
 		}
-		
+		std::vector<HandleEntry_> vec;
+
+		InitializeList(vec, typeid(GameObjectFactory));
 		
 		return true;
 	}
-
+	// Initializes a list using a reference to the container of the system that called this function
+	bool GameObjectFactory::InitializeList(std::vector<HandleEntry_> & mEntries, type_info const & CallerType)
+	{
+		_pHandleMan->InitializeList(mEntries, CallerType);
+	}
 	std::vector<GameObject>& GameObjectFactory::GameObjList()
 	{
 		return gameObjList_;
 	}
 
-	GameObject& GameObjectFactory::Instantiate(const glm::vec3 & position = glm::vec3(0), const glm::vec3 & rotation = glm::vec3(0), const glm::vec3 & scale)
+	GameObject& GameObjectFactory::Instantiate(const glm::vec3 position = glm::vec3(0), const glm::vec3 rotation = glm::vec3(0), const glm::vec3 scale)
 	{
 		// TODO: Fix warning: not all paths return a value
 		for (auto& obj : gameObjList_)
@@ -202,7 +210,7 @@ using std::string;
 			if (!obj.IsActive())
 			{
 				obj.Activate();
-				obj.AddComponent(new TransformComponent(pos, rot, scale));
+				obj.AddComponent(new TransformComponent(position, rotation, scale));
 				return obj;
 			}
 		}
@@ -230,13 +238,13 @@ using std::string;
 		return gameObjList_.back();
 	}
 
-	GameObject& GameObjectFactory::InstantiateArchetype(const std::string& name)
+	GameObject& GameObjectFactory::InstantiateArchetype(const std::string & name)
 	{
 		for (auto& obj : gameObjList_)
 		{
 			if (!obj.IsActive())
 			{
-				_archetypeList[name].Clone(obj);
+				archetypeList_[name].Clone(obj);
 				return obj;
 			}
 		}
@@ -245,13 +253,13 @@ using std::string;
 		return gameObjList_.back();
 	}
 
-	GameObject& GameObjectFactory::InstantiateArchetype(const std::string& name, const vec3& pos)
+	GameObject& GameObjectFactory::InstantiateArchetype(const std::string & name, const glm::vec3 & pos)
 	{
 		for (auto& obj : gameObjList_)
 		{
 			if (!obj.IsActive())
 			{
-				_archetypeList[name].Clone(obj);
+				archetypeList_[name].Clone(obj);
 				obj.GetComponent<TransformComponent>()->Position(pos);
 				return obj;
 			}
@@ -301,4 +309,3 @@ using std::string;
 		cout << "WARNING: GameObjectManager::GetInactiveObject(): GameObjectList is full!" << endl;
 		return defaultObj;
 	}
-}

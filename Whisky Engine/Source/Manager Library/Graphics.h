@@ -60,7 +60,7 @@ private:
 
 	bool LoadTextures();
 
-	void DrawObject(const GameObject& obj, const Matrix3D & view, Matrix3D & proj);
+	void DrawObject(const GameObject& obj, const glm::mat4 & view, glm::mat4 & proj);
 	void DrawDebugMode(const GameObject&);
 	void DrawCollider(const GameObject&);
 
@@ -78,7 +78,7 @@ private:
 
 	StringMap	_textures;
 	MeshTypeMap _meshData;
-	Matrix3D _viewMatrix;
+	glm::mat4 _viewMatrix;
 };
 
 #endif

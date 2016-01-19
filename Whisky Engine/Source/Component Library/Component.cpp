@@ -13,35 +13,25 @@
 // ---------------------------------------------------------------------------
 
 #include "Component.h"
-#include "Components.h"
 
-#include "utils.h"
+#include "..\Manager Library\utils.h"
 
 #include <algorithm>
-
-using std::string;
-using std::cout;
-using std::endl;
-using std::vector;
+#include <iostream>
 
 #define DEBUG1
 
-	Component::Component()
-		:
-		_gameObject(NULL)
-	{}
+Component* Component::CreateComponent(std::string name, const char* params)
+{
+	Component * comp = NULL;
 
-	Component* Component::CreateComponent(std::string name, const char* params)
-	{
-		Component* comp = NULL;
+	if (name == "transform")				comp = Transform::Deserialize(params);
+	else if (name == "sprite")				comp = Sprite::Deserialize(params);
+	else if (name == "mesh")				comp = Mesh::Deserialize(params);
+	else if (name == "selfdestruct")		comp = SelfDestruct::Deserialize(params);
 
-		if (name == "transform")				comp = Transform::Deserialize(params);
-		else if (name == "sprite")				comp = Sprite::Deserialize(params);	
-		else if (name == "mesh")				comp = Mesh::Deserialize(params); 
-		else if (name == "selfdestruct")		comp = SelfDestruct::Deserialize(params);
+	else std::cout << "WARNING: unknown component name when creating: " << name << std::endl;
 
-		else cout << "WARNING: unknown component name when creating: " << name << endl;
-		
 
-		return comp;
-	}
+	return comp;
+}

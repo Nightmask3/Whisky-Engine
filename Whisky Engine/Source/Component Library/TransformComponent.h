@@ -15,24 +15,21 @@
 // Component header files
 #include "Component.h"
 #include "..\..\Dependencies\GLEW\glew.h"
-class TransformComponent : public Component
+class TransformComponent : public Component(Component::TRANSFORM)
 {
-	public:
+	private:
 		glm::vec3 mPosition;			// Stores the translation matrix of the component
 		glm::vec3 mRotation;			// Stores the rotation matrix of the component
 		glm::vec3 mScale;				// Stores the scaling matrix of the component
 	public:
-		TransformComponent() : Component(ComponentType::TRANSFORM){ 
-			mPosition = mRotation = glm::vec3(0, 0, 0);  
-			mScale = glm::vec3(1); 
-		}
+		// Inititalizes rotation and position to (0, 0 ,0) and Scale to (1, 1, 1)
+		TransformComponent();
+		TransformComponent(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
 		~TransformComponent();
-		void Translate(float X, float Y, float Z);
-		void Rotate(float AngleX, float AngleY, float AngleZ);
-		void Scale(float X, float Y, float Z);
+		
 		// Scales the sprite along with its collider
 		void ScaleWithCollider(float X, float Y, float Z);
 		void Update();
-		void Serialize(std::string &, unsigned int &);
+		static TransformComponent * Deserialize(const char*);
 };
 

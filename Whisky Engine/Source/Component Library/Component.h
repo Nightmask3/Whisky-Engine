@@ -18,41 +18,39 @@
 #include <string>
 #include "..\Manager Library\utils.h"
 
-
-enum ComponentType{			// update: Components.h | GameObject::Clone() | Component::CreateComponent()
-	TRANSFORM,
-	MESH,
-	SPRITE,
-
-	PLAYER_CONTROLLER,
-	SELF_DESTRUCT,
-
-	COMPONENT_COUNT
-};
-
 class GameObject;
 class Message;
 class Component
 {
 public:
-	Component();
-	virtual ~Component(){ /*std::cout << "component dtor" << std::endl;*/ }
+	enum ComponentType
+	{			
+		TRANSFORM,
+		MESH,
+		SPRITE,
+		PLAYER_CONTROLLER,
+		SELF_DESTRUCT,
 
-	virtual void		SetOwner(GameObject* obj)	{ _gameObject = obj; }
-	virtual GameObject* GetOwner() const			{ return _gameObject; }
+		COMPONENT_COUNT
+	};
+	
+	virtual ~Component(){ /*std::cout << "component dtor" << std::endl;*/ }
+	virtual void		SetOwner(GameObject* obj)	{ mOwner_ = obj; }
+	virtual GameObject* GetOwner() const			{ return  mOwner_; }
 	virtual void		Update(){};
 	virtual void		HandleMessage(Message*){}
-
-	virtual ComponentType GetType() const = 0;
-	//virtual const std::type_info GetTypeInfo() const = 0;
-
+	ComponentType GetType() { return mType; }
+	
+	ComponentType mType;
 	static Component* CreateComponent(std::string name, const char* params);
 
 	template <typename ComponentName>
 	static ComponentName* CopyComponent(ComponentName*);
 
 protected:
-	GameObject* _gameObject;
+	GameObject * mOwner_;
+	// Made protected because we don't want objects of this class to be instantiated directly, but derived classes can access it
+	Component(ComponentType type) : mType(type), mOwner_(nullptr) {}
 
 };
 

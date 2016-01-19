@@ -78,12 +78,17 @@
   <ItemGroup>
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Source\Component Library\Component.cpp" />
+    <ClCompile Include="Source\Component Library\Mesh.cpp" />
+    <ClCompile Include="Source\Component Library\PlayerController.cpp" />
+    <ClCompile Include="Source\Component Library\Sprite.cpp" />
     <ClCompile Include="Source\Component Library\TransformComponent.cpp" />
     <ClCompile Include="Source\Entity Library\Camera.cpp" />
     <ClCompile Include="Source\Entity Library\GameObject.cpp" />
     <ClCompile Include="Source\Manager Library\FrameRateController.cpp" />
-    <ClCompile Include="Source\Manager Library\GameObjectManager.cpp" />
+    <ClCompile Include="Source\Manager Library\GameObjectFactory.cpp" />
     <ClCompile Include="Source\Manager Library\Graphics.cpp" />
+    <ClCompile Include="Source\Manager Library\HandleManager.cpp" />
     <ClCompile Include="Source\Manager Library\Input.cpp" />
     <ClCompile Include="Source\Manager Library\ResourceManager.cpp" />
     <ClCompile Include="Source\Manager Library\utils.cpp" />
@@ -91,12 +96,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="Source\Component Library\Component.h" />
+    <ClInclude Include="Source\Component Library\Components.h" />
+    <ClInclude Include="Source\Component Library\Mesh.h" />
+    <ClInclude Include="Source\Component Library\PlayerController.h" />
+    <ClInclude Include="Source\Component Library\Sprite.h" />
     <ClInclude Include="Source\Component Library\TransformComponent.h" />
     <ClInclude Include="Source\Entity Library\Camera.h" />
+    <ClInclude Include="Source\Entity Library\Entity.h" />
     <ClInclude Include="Source\Entity Library\GameObject.h" />
+    <ClInclude Include="Source\Manager Library\Handle.h" />
     <ClInclude Include="Source\Manager Library\FrameRateController.h" />
-    <ClInclude Include="Source\Manager Library\GameObjectManager.h" />
+    <ClInclude Include="Source\Manager Library\GameObjectFactory.h" />
     <ClInclude Include="Source\Manager Library\Graphics.h" />
+    <ClInclude Include="Source\Manager Library\HandleManager.h" />
     <ClInclude Include="Source\Manager Library\Input.h" />
     <ClInclude Include="Source\Manager Library\ResourceManager.h" />
     <ClInclude Include="Source\Manager Library\utils.h" />

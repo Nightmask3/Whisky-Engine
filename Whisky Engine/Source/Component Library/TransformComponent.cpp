@@ -6,22 +6,17 @@
 
 TransformComponent::TransformComponent() : Component(ComponentType::TRANSFORM)
 {
-	Matrix3DIdentity(&mTranslation); 
-	Matrix3DIdentity(&mRotation); 
-	Matrix3DIdentity(&mScale); 
-
-	/*-------------------------------- MODEL MATRIX -------------------------------*/
-	// Creates the translation matrix
-	Matrix3DTranslate(&mTranslation, 0, 0, 0);
-	// Creates the rotation matrix
-	Matrix3DRotRadZ(&mRotation, 0);
-	// Creates the scaling matrix
-	Matrix3DScale(&mScale, 1, 1, 1);
-	mOriginalScale.x = 1.05;
-	mOriginalScale.y = 1.05;
-	mOriginalScale.z = 1.05;
-
+	mPosition = mRotation = glm::vec3(0, 0, 0);
+	mScale = glm::vec3(1);
 }
+
+TransformComponent::TransformComponent(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale) : 
+	mPosition(position), // Used in GameObjectFactory::Instantiate
+	mRotation(rotation), 
+	mScale(scale) , 
+	Component(ComponentType::TRANSFORM) {}
+
+
 TransformComponent::~TransformComponent() {}
 
 void TransformComponent::Serialize(std::string & Contents, unsigned int & Count)
