@@ -16,6 +16,7 @@
 #include <sstream>
 #include "..\Manager Library\GameObjectFactory.h"
 #include <cassert>
+#include "..\Component Library\Sprite.h"
 
 using std::cout; 
 using std::endl;
@@ -188,7 +189,7 @@ GameObject::GameObject()
 					case Component::ComponentType::PLAYER_CONTROLLER:
 						component = new PlayerController(*static_cast<PlayerController*>(componentList_[i]));
 						break;
-					case Component::ComponentType::SPRITE:
+					case Component::ComponentType::SPRITE:	// we might wwanna remove this: sprite = 2D
 						component = new Sprite(*static_cast<Sprite*>(componentList_[i]));
 						break;
 					case Component::ComponentType::MESH:

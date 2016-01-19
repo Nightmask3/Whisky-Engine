@@ -12,7 +12,7 @@
 // consent of DigiPen Institute of Technology is prohibited.
 // ---------------------------------------------------------------------------
 
-#include "Component.h"
+#include "Components.h"
 
 #include "..\Manager Library\utils.h"
 

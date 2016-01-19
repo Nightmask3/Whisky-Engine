@@ -30,24 +30,10 @@ public:
 
 	int Hp() const { return _hp; }
 	void Hp(int val) { _hp = val; }
-	//unsigned WeaponCharge() const { return _weaponCharge; }
-	//void WeaponCharge(unsigned val) { _weaponCharge = val; }
-	//unsigned WeaponLevel() const { return _weaponLevel; }
-	//void WeaponLevel(unsigned val) { _weaponLevel = val; }
 private:
 	void Move();
-	//void CreateBullet(const glm::vec3& pos);
-	//void Shoot();
-	//void CollectPowerUp(GameObject& pUp);
-	//void AccumulateWeaponCharge(int amount);
-	//void Hit(GameObject& eBullet, int amount);
 private:
 	float _moveSpeed;
-	//bool _fire;
-	//float _fireWhen, _firePeriod;
-	//unsigned _activeWeapon;	// 0 - 3
-	//unsigned _weaponLevel;	// 1 - 4
-	//unsigned _weaponCharge;	// get 10 charges to unlock new weapon lvl
 	int _hp;
 };
 

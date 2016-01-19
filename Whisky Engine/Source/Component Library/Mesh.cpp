@@ -20,8 +20,6 @@ using std::cout;
 using std::endl;
 using std::string;
 
-const ComponentType Mesh::Type = MESH;
-
 Mesh* Mesh::Deserialize(const char* params)
 {
 	Mesh* comp = NULL;
@@ -45,5 +43,6 @@ Mesh* Mesh::Deserialize(const char* params)
 Mesh::Mesh(MeshType t) 
 	: 
 	mMeshHandle_(t),
-	bIsActive_(true)
+	bIsActive_(true),
+	Component(ComponentType::MESH)
 {}

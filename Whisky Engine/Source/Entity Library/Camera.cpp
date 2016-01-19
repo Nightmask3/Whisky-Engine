@@ -12,7 +12,8 @@ void Camera::Update()
 	if (InMan.isKeyPressed(sf::Keyboard::A))
 	{
 		// Left Movement
-		Vector3D RightVec;
+		glm::vec3 RightVec;
+	
 		RightVec = Vector3DCrossProduct(&CameraDir, &UpVec);
 		// Normalize target vector before scaling and subtracting from camera position
 		Vector3DNormalize(RightVec, RightVec);
@@ -57,7 +58,7 @@ void Camera::Update()
 			CameraYaw = MAX_PITCH;
 		if (CameraYaw < -MAX_PITCH)
 			CameraYaw = -MAX_PITCH;
-		Vector3D temp;
+		glm::vec3 temp;
 		temp.x = cosf(CameraPitch) * cosf(CameraYaw);
 		temp.y = sinf(CameraPitch);
 		temp.z = cosf(CameraPitch) * sinf(CameraYaw);

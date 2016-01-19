@@ -21,7 +21,7 @@
 #include <iostream>
 #include <typeinfo>
 #include <algorithm>
-#include <..\Component Library\Components.h>
+#include "..\Component Library\Components.h"
 
 
 using std::cout;

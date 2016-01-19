@@ -78,9 +78,9 @@ void HandleManager::Remove(const Handle handle, std::vector<HandleEntry_> & m_en
 
 	m_entries[index].m_nextFreeIndex = MetaDataList_[CallerType].m_firstFreeEntry;
 	m_entries[index].m_active = 0;
-	MetaDataList_[CallerType].m_firstFreeEntry = index;
+	MetaDataList_[CallerType].m_firstFreeEntry = index;	// ERROR: left of '.m_activeEntryCount' must have class/struct/union
 
-	--MetaDataList_[CallerType].m_activeEntryCount;
+	--MetaDataList_[CallerType].m_activeEntryCount;		// ERROR: left of '.m_activeEntryCount' must have class/struct/union
 }
 
 

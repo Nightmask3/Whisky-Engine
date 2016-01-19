@@ -1,16 +1,18 @@
 // Component header files
-#include "PhysicsComponent.h"
+//#include "PhysicsComponent.h"
 #include "Transform.h"
 #include <string>
 // Matrix Transformation header files
 #include "..\..\Dependencies\glm\glm\gtc\matrix_transform.hpp"
 
 
-Transform::Transform(const glm::vec3 position, const glm::vec3 rotation, const glm::vec3 scale) : 
+Transform::Transform(const glm::vec3 position, const glm::vec3 rotation, const glm::vec3 scale) 
+	: 
 	mPosition_(position), // Used in GameObjectFactory::Instantiate
 	mRotation_(rotation), 
 	mScale_(scale) , 
-	Component(ComponentType::TRANSFORM) {}
+	Component(ComponentType::TRANSFORM) 
+{}
 
 
 Transform::~Transform() {}

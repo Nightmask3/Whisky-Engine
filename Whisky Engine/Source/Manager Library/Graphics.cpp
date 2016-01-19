@@ -377,10 +377,9 @@ void Graphics::DrawDebugMode(const GameObject& obj)
 	//	// set vao					// can also be acquired from obj if tied during construction
 	//	glBindVertexArray(_meshData[MeshType::BOX_COLLIDER_MESH]);
 
-
-	//	Vector3D pos	= obj.GetComponent<BoxCollider2D>()->Center();
-	//	float rot	= obj.GetComponent<BoxCollider2D>()->Orientation();
-	//	Vector3D scale	= obj.GetComponent<BoxCollider2D>()->Scale();
+	//	glm::vec3 pos	= obj.GetComponent<BoxCollider2D>()->Center();
+	//	glm::vec3 rot	= obj.GetComponent<BoxCollider2D>()->Orientation();
+	//	glm::vec3 scale = obj.GetComponent<BoxCollider2D>()->Scale();
 
 	//	Matrix3D vModel = mat4::Translate(pos) *
 	//		mat4::Rotate(2, rot*DEG2RAD) *
@@ -418,13 +417,14 @@ void Graphics::DrawObject(const GameObject& obj, const glm::mat4 & vView, const 
 	GLint uniProj = glGetUniformLocation(_shaderProgram.program, "proj");
 	glUniformMatrix4fv(uniProj, 1, GL_TRUE, glm::value_ptr(vProj));
 
-	Sprite* sprite = obj.GetComponent<Sprite>();
-	if (sprite != NULL){
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, *sprite->Texture());
-		GLint tex = glGetUniformLocation(_shaderProgram.program, "tex");
-		glUniform1i(tex, 0);
-	}
+	/// LETS SKIP SPRITES FOR NOW
+	//Sprite* sprite = obj.GetComponent<Sprite>();
+	//if (sprite != NULL){
+	//	glActiveTexture(GL_TEXTURE0);
+	//	glBindTexture(GL_TEXTURE_2D, *sprite->Texture());
+	//	GLint tex = glGetUniformLocation(_shaderProgram.program, "tex");
+	//	glUniform1i(tex, 0);
+	//}
 
 	// Draw call
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

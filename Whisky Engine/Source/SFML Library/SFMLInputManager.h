@@ -7,7 +7,7 @@
 // SFML HEADERFILES
 #include <SFML\Window\Keyboard.hpp>
 // MATH LIBRARY HEADER FILE
-#include "..\Math Library\Vector3D.h"
+//#include "..\Math Library\Vector3D.h"
 // MANAGER HEADER FILES
 #include "SFMLEventManager.h"
 #include "SFMLWindowManager.h"

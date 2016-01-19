@@ -18,9 +18,10 @@
 #include <string>
 #include "..\Manager Library\utils.h"
 // List of involved components
-#include "..\Component Library\Components.h"
+//#include "..\Component Library\Components.h"
 class GameObject;
 class Message;
+
 class Component
 {
 public:

@@ -37,6 +37,13 @@ class Transform : public Component
 		{ 
 			mScale_ = glm::vec3(x, y, z);
 		}
+
+		// Translates the position by the provided vector
+		void Translate(glm::vec3 v)
+		{
+			mPosition_ += v;
+		}
+
 		// Creates a transform component according to a given set of vectors
 		// Initializes rotation and position to (0, 0 ,0) and Scale to (1, 1, 1) as default parameters
 		Transform(const glm::vec3 position = glm::vec3(0), const glm::vec3 rotation = glm::vec3(0), const glm::vec3 scale = glm::vec3(1));
