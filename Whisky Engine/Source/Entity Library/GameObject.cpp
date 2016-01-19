@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------
-// Project Name		:	VolkEngine Game Engine
+// Project Name		:	Whisky Engine
 // File Name		:	GameObject.cpp
-// Author			:	Volkan Ilbeyli
+// Author			:	Team Stake
 // Creation Date	:	2015/10/25
 // Purpose			:	Class for encapsulating game object related data
 // History			:
@@ -30,8 +30,8 @@ unsigned long GameObject::_last_id = id_offset;
 // ctor/dtor/operator
 ///////////////////////////////////////////////////////////////////////////////
 
-	GameObject::GameObject()
-		: isActive_(false), isArchetype_(false), id_(_last_id++), Entity(EntityType::GameObject)
+GameObject::GameObject()
+	: isActive_(false), isArchetype_(false), id_(_last_id++), Entity(EntityType::GameObject)
 	{
 		name_ = string("GameObject") + std::to_string(id_ - id_offset);
 		tag_ = string("None");
@@ -41,7 +41,7 @@ unsigned long GameObject::_last_id = id_offset;
 		// ComponentType enum as the indices to the component
 		// when getting a component of a Gameobject in the
 		// GetComponent<>() template function
-		componentList_.resize(ComponentType::COMPONENT_COUNT, NULL);
+		componentList_.resize(Component::ComponentType::COMPONENT_COUNT, NULL);
 
 
 #ifdef DEBUG
@@ -58,7 +58,7 @@ unsigned long GameObject::_last_id = id_offset;
 		isArchetype_(false), 
 		Entity(EntityType::GameObject)
 	{
-		componentList_.resize(ComponentType::COMPONENT_COUNT, NULL);
+		componentList_.resize(Component::ComponentType::COMPONENT_COUNT, NULL);
 
 #ifdef DEBUG
 		cout << "gameobj ctor(str): " << id_ << "\t: " << name_ << "(" << tag_ << ")" << endl;
@@ -172,31 +172,31 @@ unsigned long GameObject::_last_id = id_offset;
 			obj.tag_ = tag_;
 			//obj._componentList = _componentList;
 
-			for (int i = 0; i < COMPONENT_COUNT; ++i)
+			for (int i = 0; i < Component::ComponentType::COMPONENT_COUNT; ++i)
 			{
 				if (componentList_[i])
 				{
 					//typedef CompName _componentList[i]->GetType();
 					//Component* component = Component::CopyComponent(static_cast<>(_componentList[i]));
 
-					Component* component = NULL;	// don't forget NULL pls
+					Component* component = nullptr;	// don't forget NULL please
 					switch (componentList_[i]->GetType())
 					{
-					case TRANSFORM:
+					case Component::ComponentType::TRANSFORM:
 						component = new Transform(*static_cast<Transform*>(componentList_[i]));
 						break;
-					case PLAYER_CONTROLLER:
+					case Component::ComponentType::PLAYER_CONTROLLER:
 						component = new PlayerController(*static_cast<PlayerController*>(componentList_[i]));
 						break;
-					case SPRITE:
+					case Component::ComponentType::SPRITE:
 						component = new Sprite(*static_cast<Sprite*>(componentList_[i]));
 						break;
-					case MESH:
+					case Component::ComponentType::MESH:
 						component = new Mesh(*static_cast<Mesh*>(componentList_[i]));
 						break;
-					case SELF_DESTRUCT:
+					/*case SELF_DESTRUCT:
 						component = new SelfDestruct(*static_cast<SelfDestruct*>(componentList_[i]));
-						break;
+						break;*/
 					default:
 						cout << "WARNING: " << __FUNCTION__ << " Component not in switch statement" << endl;
 						break;

@@ -82,6 +82,7 @@
     <ClCompile Include="Source\Component Library\Mesh.cpp" />
     <ClCompile Include="Source\Component Library\PlayerController.cpp" />
     <ClCompile Include="Source\Component Library\Sprite.cpp" />
+    <ClCompile Include="Source\Component Library\Transform.cpp" />
     <ClCompile Include="Source\Component Library\TransformComponent.cpp" />
     <ClCompile Include="Source\Entity Library\Camera.cpp" />
     <ClCompile Include="Source\Entity Library\GameObject.cpp" />
@@ -101,7 +102,7 @@
     <ClInclude Include="Source\Component Library\Mesh.h" />
     <ClInclude Include="Source\Component Library\PlayerController.h" />
     <ClInclude Include="Source\Component Library\Sprite.h" />
-    <ClInclude Include="Source\Component Library\TransformComponent.h" />
+    <ClInclude Include="Source\Component Library\Transform.h" />
     <ClInclude Include="Source\Entity Library\Camera.h" />
     <ClInclude Include="Source\Entity Library\Entity.h" />
     <ClInclude Include="Source\Entity Library\GameObject.h" />

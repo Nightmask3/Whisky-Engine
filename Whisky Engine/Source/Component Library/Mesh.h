@@ -38,16 +38,13 @@ class Mesh : public Component
 	public:
 		Mesh(MeshType);
 
-		ComponentType GetType() const { return Type; }
-		MeshType MeshHandle() const { return _meshHandle; }
-		bool IsActive() const		{ return _isActive; }
-		void SetActive(bool val)	{ _isActive = val; }
-	public:
-		static const ComponentType Type;
+		MeshType MeshHandle() const { return mMeshHandle_; }
+		bool IsActive() const		{ return bIsActive_; }
+		void SetActive(bool val)	{ bIsActive_ = val; }
 
 	private:
-		MeshType _meshHandle;
-		bool _isActive; 
+		MeshType mMeshHandle_;
+		bool bIsActive_; 
 };
 
 #endif

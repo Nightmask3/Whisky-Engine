@@ -1,4 +1,4 @@
--------------------------------------------------------------------------- -
+
 // Project Name		:	Whisky Engine
 // File Name		:	Engine.h
 // Author			:	Team Stake

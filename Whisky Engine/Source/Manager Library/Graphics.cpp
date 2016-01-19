@@ -17,9 +17,8 @@
 // Whisky Engine headerfiles
 #include "Graphics.h"
 #include "..\..\Engine.h"
-#include "..\Math Library\Matrix3D.h"
-#include "..\Math Library\Vector3D.h"
-
+#include "..\..\Dependencies\glm\glm\gtc\matrix_transform.hpp"
+#include "..\..\Dependencies\glm\glm\gtc\type_ptr.hpp"
 using std::cout;
 using std::endl;
 using std::string;
@@ -68,12 +67,12 @@ bool Graphics::Init()
 	_far = 100.0f;
 	_viewAngle = 45.0f;
 	// View matrix settings
-	Vector3D eye(0.0f, 10.0f, -10.0f, 0.0f);
-	Vector3D target(0.0f, 0.0f, 1.0f, 0.0f);
-	Vector3D up(0.0f, 1.0f, 0.0f, 0.0f);
+	glm::vec3 eye(0.0f, 10.0f, -10.0f);
+	glm::vec3 target(0.0f, 0.0f, 1.0f);
+	glm::vec3 up(0.0f, 1.0f, 0.0f);
 
 	// Creation of view matrix (default view, can be overriden)
-	_viewMatrix = CreateViewMatrix(eye, target, up);
+	_viewMatrix = glm::lookAt(eye, target, up);
 
 	// Initialize GLEW
 	glewExperimental = GL_TRUE;
@@ -88,45 +87,47 @@ bool Graphics::Init()
 	cout << "\tversion:\t\t" << settings.majorVersion << "." << settings.minorVersion << endl << endl;
 	return true;
 }
+
+
 // load functions
-bool Graphics::LoadTextures()
-{
-	auto textureFiles = RSC::Inst()->GetTextureFiles();
-	//glGenTextures(texCount, _textures);
-	int i = 0;
-	for (auto path : textureFiles)
-	{
-		GLuint* p = new GLuint;
-		glGenTextures(1, p);
-		_textures[path] = p;
-		glBindTexture(GL_TEXTURE_2D, *p);
-
-		sf::Image img;
-		if (!img.loadFromFile(path))
-		{
-			cout << "Error loading texture from file: " << path << endl;
-			return false;
-		}
-
-		// enable alpha blending
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glTexImage2D(
-			GL_TEXTURE_2D, 0, GL_RGBA,
-			img.getSize().x, img.getSize().y,
-			0,
-			GL_RGBA, GL_UNSIGNED_BYTE, img.getPixelsPtr()
-			);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-
-	return true;
-}
+//bool Graphics::LoadTextures()
+//{
+//	//auto textureFiles = RSC::Inst()->GetTextureFiles();
+//	//glGenTextures(texCount, _textures);
+//	int i = 0;
+//	for (auto path : textureFiles)
+//	{
+//		GLuint* p = new GLuint;
+//		glGenTextures(1, p);
+//		_textures[path] = p;
+//		glBindTexture(GL_TEXTURE_2D, *p);
+//
+//		sf::Image img;
+//		if (!img.loadFromFile(path))
+//		{
+//			cout << "Error loading texture from file: " << path << endl;
+//			return false;
+//		}
+//
+//		// enable alpha blending
+//		glEnable(GL_BLEND);
+//		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//		glTexImage2D(
+//			GL_TEXTURE_2D, 0, GL_RGBA,
+//			img.getSize().x, img.getSize().y,
+//			0,
+//			GL_RGBA, GL_UNSIGNED_BYTE, img.getPixelsPtr()
+//			);
+//
+//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//		glBindTexture(GL_TEXTURE_2D, 0);
+//	}
+//
+//	return true;
+//}
 
 bool Graphics::CreateQuad()
 {
@@ -400,22 +401,22 @@ void Graphics::DrawDebugMode(const GameObject& obj)
 	//	glBindVertexArray(0);
 	//}
 
-void Graphics::DrawObject(const GameObject& obj, const Matrix3D & vView, const Matrix3D & vProj)
+void Graphics::DrawObject(const GameObject& obj, const glm::mat4 & vView, const glm::mat4 & vProj)
 {
 	glBindVertexArray(_meshData[obj.GetComponent<Mesh>()->MeshHandle()]);
 	// assert dereference stuff maybe?
 
-	Matrix3D vModel = obj.GetComponent<Transform>()->ModelTransformationMatrix();
+	glm::mat4 vModel = obj.GetComponent<Transform>()->ModelTransformationMatrix();
 
 	// send shader parameters
 	GLint uniTrans = glGetUniformLocation(_shaderProgram.program, "model");
-	glUniformMatrix4fv(uniTrans, 1, GL_TRUE, vModel.Pntr());
+	glUniformMatrix4fv(uniTrans, 1, GL_TRUE, glm::value_ptr(vModel));
 
 	GLint uniView = glGetUniformLocation(_shaderProgram.program, "view");
-	glUniformMatrix4fv(uniView, 1, GL_TRUE, vView.Pntr());
+	glUniformMatrix4fv(uniView, 1, GL_TRUE, glm::value_ptr(vView));
 
 	GLint uniProj = glGetUniformLocation(_shaderProgram.program, "proj");
-	glUniformMatrix4fv(uniProj, 1, GL_TRUE, vProj.Pntr());
+	glUniformMatrix4fv(uniProj, 1, GL_TRUE, glm::value_ptr(vProj));
 
 	Sprite* sprite = obj.GetComponent<Sprite>();
 	if (sprite != NULL){
@@ -444,10 +445,10 @@ void Graphics::Render()
 	// Clear the screen to black
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	
-	Matrix3D vProj = CreateProjectionMatrix(_viewAngle, (float)_width / _heigth, _near, _far);
-	
-	//Matrix3D vView = mat4:(vec3(0.0f, 0.0f, 20.0f));
+	// Creates the perspective matrix
+	glm::mat4 vProj = glm::perspective(_viewAngle, (float)_width / _heigth, _near, _far);
+	// Replace with the Camera view matrix values
+	glm::mat4 vView =  _viewMatrix;
 
 	// for every game object
 	for (auto& obj : GOM->GameObjList())
@@ -482,7 +483,7 @@ void Graphics::UpdateWindowSize(unsigned int w, unsigned int h)
 
 void Graphics::RenderPauseMenu()
 {
-	Matrix3D proj, view;
+	glm::mat4 proj, view;
 	GameObject* obj = GOM->GetMenu();
 
 	if (!obj) return;

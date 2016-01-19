@@ -18,44 +18,41 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
-namespace VEngine
-{
 	typedef sf::Keyboard::Key KeyCode;
 
-	class Graphics;
+class Graphics;
 
-	class Input
-	{
-	public:
-		static Input* Inst();
+class Input
+{
+public:
+	static Input* Inst();
 
-		bool Init();
-		void Update();
-		void Cleanup();
+	bool Init();
+	void Update();
+	void Cleanup();
 
-		// keyboard input
-		static sf::Keyboard::Key Key(int);
-		bool IsKeyPressed(const KeyCode);	// 
-		bool IsKeyTriggered(const KeyCode);	//	no const, see implementation comments
-		bool IsKeyReleased(const KeyCode);	//
+	// keyboard input
+	static sf::Keyboard::Key Key(int);
+	bool IsKeyPressed(const KeyCode);	// 
+	bool IsKeyTriggered(const KeyCode);	//	no const, see implementation comments
+	bool IsKeyReleased(const KeyCode);	//
 
-		// mouse input
+	// mouse input
 
-	private:
-		// singleton
-		Input(){}	// empty ctor/dtor
+private:
+	// singleton
+	Input(){}	// empty ctor/dtor
 
-		static Input* _pInstance;
+	static Input* _pInstance;
 
-		// context 
-		sf::RenderWindow* _pWindow;
+	// context 
+	sf::RenderWindow* _pWindow;
 
-		// keyboard states
-		std::unordered_map<KeyCode, bool> _prevState;
-		std::unordered_map<KeyCode, bool> _currState;
+	// keyboard states
+	std::unordered_map<KeyCode, bool> _prevState;
+	std::unordered_map<KeyCode, bool> _currState;
 
-		// mouse states
+	// mouse states
 
-	};
-}
+};
 #endif

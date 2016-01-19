@@ -30,8 +30,8 @@
 #define GOM	   GameObjectFactory::Inst()
 #define FRC  FrameRateController::Inst()
 #define RSC		 ResourceManager::Inst()
-#define MSG			   Messaging::Inst()		
-#define PHY				 Physics::Inst()
+//#define MSG			   Messaging::Inst()		
+//#define PHY				 Physics::Inst()
 
 class Engine
 {
@@ -74,6 +74,5 @@ private:
 	sf::Clock clock_;
 
 	static const float version_;
-
 };
 #endif

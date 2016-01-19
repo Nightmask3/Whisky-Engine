@@ -27,16 +27,11 @@ public:
 
 	Sprite(const std::vector<std::string>&);
 
-	ComponentType GetType() const { return Type; }
-
-	GLuint* const Texture() const { return _sprites[_activeSprite].second; }
+	GLuint* const Texture() const { return sprites_[activeSprite_].second; }
 	void ActivateSprite(unsigned);
 
-public:
-	static const ComponentType Type;	// formerly used in gameobject template functions
-
 private:
-	int _activeSprite;
-	std::vector<std::pair<std::string, GLuint*>> _sprites;
+	int activeSprite_;
+	std::vector<std::pair<std::string, GLuint*>> sprites_;
 };
 #endif

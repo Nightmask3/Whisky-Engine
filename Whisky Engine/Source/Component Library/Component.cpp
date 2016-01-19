@@ -28,7 +28,7 @@ Component* Component::CreateComponent(std::string name, const char* params)
 	if (name == "transform")				comp = Transform::Deserialize(params);
 	else if (name == "sprite")				comp = Sprite::Deserialize(params);
 	else if (name == "mesh")				comp = Mesh::Deserialize(params);
-	else if (name == "selfdestruct")		comp = SelfDestruct::Deserialize(params);
+	//else if (name == "selfdestruct")		comp = SelfDestruct::Deserialize(params);
 
 	else std::cout << "WARNING: unknown component name when creating: " << name << std::endl;
 

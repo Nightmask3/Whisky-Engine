@@ -44,6 +44,6 @@ Mesh* Mesh::Deserialize(const char* params)
 
 Mesh::Mesh(MeshType t) 
 	: 
-	_meshHandle(t),
-	_isActive(true)
+	mMeshHandle_(t),
+	bIsActive_(true)
 {}

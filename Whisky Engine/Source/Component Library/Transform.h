@@ -18,18 +18,33 @@
 class Transform : public Component
 {
 	private:
-		glm::vec3 mPosition;			// Stores the translation matrix of the component
-		glm::vec3 mRotation;			// Stores the rotation matrix of the component
-		glm::vec3 mScale;				// Stores the scaling matrix of the component
+		glm::vec3 mPosition_;			// Stores the translation matrix of the component
+		glm::vec3 mRotation_;			// Stores the rotation matrix of the component
+		glm::vec3 mScale_;				// Stores the scaling matrix of the component
 	public:
-		// Inititalizes rotation and position to (0, 0 ,0) and Scale to (1, 1, 1)
-		Transform();
-		Transform(const glm::vec3 position, const glm::vec3 rotation, const glm::vec3 scale);
-		~Transform();
+		//Transform(); NOTE: Disabled as no need when there is an overriden version with default parameters, causes ambiguity
+		void Position(glm::vec3 val)		
+		{
+			mPosition_ = val; 
+		}
+		// Adds the vector formed by x, y, z to the position
+		void Position(float x, float y, float z)		
+		{ 
+			mPosition_ += glm::vec3(x, y, z);
+		}
+		// Sets the scale to the vector formed by x, y, z
+		void Scale(float x, float y, float z) 
+		{ 
+			mScale_ = glm::vec3(x, y, z);
+		}
+		// Creates a transform component according to a given set of vectors
+		// Initializes rotation and position to (0, 0 ,0) and Scale to (1, 1, 1) as default parameters
+		Transform(const glm::vec3 position = glm::vec3(0), const glm::vec3 rotation = glm::vec3(0), const glm::vec3 scale = glm::vec3(1));
+		 ~Transform();
+		// Returns the Model Transformation Matrix
+		glm::mat4 ModelTransformationMatrix() const;
 		
-		// Scales the sprite along with its collider
-		void ScaleWithCollider(float X, float Y, float Z);
 		void Update();
-		//static Transform * Deserialize(const char*);
+		static Transform * Deserialize(const char*);
 };
 

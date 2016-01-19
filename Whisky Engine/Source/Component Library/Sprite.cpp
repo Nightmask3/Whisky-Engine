@@ -15,44 +15,38 @@
 
 
 #include "Sprite.h"
-#include "Graphics.h"
+#include "..\Manager Library\Graphics.h"
+
 #include <cassert>
 #include <algorithm>
 
 using std::vector;
 using std::string;
 
-namespace VEngine
+
+void lower(string& s){ std::transform(s.begin(), s.end(), s.begin(), ::tolower); }
+
+Sprite* Sprite::Deserialize(const char* params)
 {
+	vector<string> fileNames = split(params, ' ');
+	std::for_each(fileNames.begin(), fileNames.end(), lower);
+	return new Sprite(fileNames);
+}
 
-	
-	const ComponentType Sprite::Type = SPRITE;
-
-	void lower(string& s){ std::transform(s.begin(), s.end(), s.begin(), ::tolower); }
-
-	Sprite* Sprite::Deserialize(const char* params)
+Sprite::Sprite(const vector<string>& names) : Component(Component::SPRITE)
+{
+	assert(names.size() > 0);
+	for (auto& name : names)
 	{
-		vector<string> fileNames = split(params, ' ');
-		std::for_each(fileNames.begin(), fileNames.end(), lower);
-		return new Sprite(fileNames);
+		GLuint* p = Graphics::Inst()->Textures().at(name);
+		sprites_.push_back(make_pair(name, p));
 	}
 
-	Sprite::Sprite(const vector<string>& names)
-	{
-		assert(names.size() > 0);
-		for (auto& name : names)
-		{
-			GLuint* p = Graphics::Inst()->Textures().at(name);
-			_sprites.push_back(make_pair(name, p));
-		}
+	activeSprite_ = 0;
+}
 
-		_activeSprite = 0;
-	}
-
-	void Sprite::ActivateSprite(unsigned i)
-	{
-		assert(i < _sprites.size());
-		_activeSprite = i;
-	}
-
+void Sprite::ActivateSprite(unsigned i)
+{
+	assert(i < sprites_.size());
+	activeSprite_ = i;
 }

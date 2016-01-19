@@ -21,8 +21,6 @@
 #define DEBUG1
 
 
-namespace VEngine
-{
 	Input* Input::_pInstance = NULL;
 
 	Input* Input::Inst()
@@ -155,4 +153,3 @@ namespace VEngine
 	{
 		return _prevState[key] && !_currState[key];
 	}
-}

@@ -30,10 +30,14 @@ bool HandleManager::InitializeList(std::vector<HandleEntry_> & m_entries, type_i
 	ListEntry_ listValue;
 	listValue.m_activeEntryCount = 0;
 	listValue.m_firstFreeEntry = 0;
-	// Creates a meta data list entry and inserts with Caller Type as index in a map
-	MetaDataList_.insert(std::make_pair(CallerType, listValue));
+	std::string ID = CallerType.raw_name();
+	// Creates a meta data list entry and inserts with Caller Type name as tag in a map
+	MetaDataList_.insert(std::make_pair(ID, listValue));
 	for (int i = 0; i < MaxGameObjects - 1; ++i)
+	{
 		m_entries[i] = HandleEntry_(i + 1);
+		m_entries[i].m_ComponentType = ID;
+	}
 	m_entries[MaxGameObjects - 1] = HandleEntry_();
 	m_entries[MaxGameObjects - 1].m_endOfList = true;
 
@@ -43,7 +47,9 @@ bool HandleManager::InitializeList(std::vector<HandleEntry_> & m_entries, type_i
 
 Handle HandleManager::Add(void* p, uint32 type, std::vector<HandleEntry_> & m_entries, type_info const & CallerType)
 {
-	const int newIndex = MetaDataList_[CallerType].m_firstFreeEntry;
+	// Converts the Caller Type into a string to be used to index the Components in the MetaDataList
+	std::string ID = CallerType.raw_name();
+	const int newIndex = MetaDataList_[ID].m_firstFreeEntry;
 
 	MetaDataList_[CallerType].m_firstFreeEntry = m_entries[newIndex].m_nextFreeIndex;
 	m_entries[newIndex].m_nextFreeIndex = 0;
@@ -77,15 +83,6 @@ void HandleManager::Remove(const Handle handle, std::vector<HandleEntry_> & m_en
 	--MetaDataList_[CallerType].m_activeEntryCount;
 }
 
-std::vector<HandleEntry_> HandleManager::CreateComponentList(Component::ComponentType type)
-{
-
-}
-
-std::vector<HandleEntry_> HandleManager::CreateEntityList(Entity::EntityType type)
-{
-
-}
 
 void* HandleManager::Get(Handle handle, std::vector<HandleEntry_> const & m_entries) const
 {

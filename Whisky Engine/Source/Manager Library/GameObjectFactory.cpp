@@ -31,9 +31,6 @@ using std::string;
 
 #define NO_DEBUG
 
-
-	const unsigned GAME_OBJ_INST_COUNT = 1024;
-
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// static functions
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,7 +115,7 @@ using std::string;
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// Member functions
 	///////////////////////////////////////////////////////////////////////////////////////////////
-	bool GameObjectFactory::InitializeArchetypes(const std::string & name, const glm::vec3 & pos)
+	bool GameObjectFactory::InitializeArchetypes()
 	{
 		for (const auto archetype_s : RSC->GetArchetypeList())
 		{
@@ -133,7 +130,7 @@ using std::string;
 				// lowercase the component name
 				//std::Transform(componentName.begin(), componentName.end(), componentName.begin(), ::tolower);
 
-				// create the component and add it to the gameobject instance
+				// create the component and add it to the Gameobject instance
 				Component* component = Component::CreateComponent(componentName, params);
 				if (component)	archetypeList_[archetype_s.name].AddComponent(component);
 				else
@@ -151,11 +148,11 @@ using std::string;
 		// get the level data from the resource manager
 		auto objList = RSC->GetLevelData();
 
-		// deserialize the objects in the level data
+		// Deserialize the objects in the level data
 		for (auto& obj_s : objList)
 		{
 			// instantiate every object in the scene
-			//GameObject& obj = Instantiate();
+			GameObject& obj = Instantiate();
 			obj.Name(obj_s.name);
 			auto components_s = obj_s.componentList;
 
@@ -204,7 +201,7 @@ using std::string;
 		return gameObjList_;
 	}
 
-	GameObject& GameObjectFactory::Instantiate(const glm::vec3 position, const glm::vec3 rotation, const glm::vec3 scale)
+	GameObject& GameObjectFactory::InstantiateExplicit(const glm::vec3 position, const glm::vec3 rotation, const glm::vec3 scale)
 	{
 		// TODO: Fix warning: not all paths return a value
 		for (auto& obj : gameObjList_)
@@ -229,9 +226,8 @@ using std::string;
 			if (!obj.IsActive())
 			{
 				obj.Activate();
+
 				obj.AddComponent(new Transform());
-
-
 				return obj;
 			}
 		}
@@ -270,13 +266,16 @@ using std::string;
 		cout << "WARNING: " << __FUNCTION__ << " MAX GAME OBJECTS REACHED" << endl;
 		return gameObjList_.back();
 	}
+	bool AddComponent(std::vector<HandleEntry_> & m_entries, type_info const & CallerType)
+	{
 
+	}
 	void GameObjectFactory::Destroy(GameObject& obj)
 	{
 		if (!obj.IsActive()) return;
 
 		// remove all components
-		for (size_t i = 1; i < COMPONENT_COUNT; i++)
+		for (size_t i = 1; i < Component::ComponentType::COMPONENT_COUNT; i++)
 			obj.RemoveComponent(i);
 		obj.Deactivate();
 	}

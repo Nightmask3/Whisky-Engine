@@ -17,7 +17,8 @@
 
 #include <string>
 #include "..\Manager Library\utils.h"
-
+// List of involved components
+#include "..\Component Library\Components.h"
 class GameObject;
 class Message;
 class Component
@@ -29,7 +30,6 @@ public:
 		MESH,
 		SPRITE,
 		PLAYER_CONTROLLER,
-		SELF_DESTRUCT,
 
 		COMPONENT_COUNT
 	};

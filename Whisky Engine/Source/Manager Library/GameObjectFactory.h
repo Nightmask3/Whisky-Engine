@@ -39,9 +39,9 @@ public:
 	// member functions
 	GameObject& Instantiate();		// Consider removal? Don't want Game Objects that can exist without a transform/root component
 	GameObject& InstantiateArchetype(const std::string&);
-	GameObject& InstantiateArchetype(const std::string& name, glm::vec3 & pos);
+	GameObject& InstantiateArchetype(const std::string& name, const glm::vec3 & pos);
 	// Initialize the position to (0,0,0), rotation to (0,0,0) and scale to (1,1,)
-	GameObject& Instantiate(const glm::vec3 position = glm::vec3(0), const glm::vec3 rotation = glm::vec3(0), const glm::vec3 scale = glm::vec3(1));
+	GameObject& InstantiateExplicit(const glm::vec3 position, const glm::vec3 rotation, const glm::vec3 scale);
 	void Destroy(GameObject&);
 
 	std::pair<bool, GameObject*> Find(const std::string& name);
@@ -58,15 +58,15 @@ private:
 	GameObjectFactory(const GameObjectFactory&){}
 	GameObjectFactory& operator=(const GameObjectFactory&){}
 
-	bool InitializeArchetypes(const std::string & name, const glm::vec3 & pos);
+	bool InitializeArchetypes();
 	bool InitializeLevel();
 	// Makes a call to handle manager to initialize list
 	bool InitializeList(std::vector<HandleEntry_> & mEntries, type_info const & CallerType);
-	// Adds an Object
-	bool AddObject(void* p, uint32 type, std::vector<HandleEntry_> & m_entries, type_info const & CallerType);
-	// Updates an Object
+	// Adds a Component to a Game Object component list
+	bool AddComponent(std::vector<HandleEntry_> & m_entries, type_info const & CallerType);
+	// Updates a Component
 	bool UpdateObject(Handle handle, void* p, std::vector<HandleEntry_> & m_entries);
-	// Removes an Object
+	// Removes a Component
 	bool Remove(Handle handle, std::vector<HandleEntry_> & m_entries, type_info const & CallerType);
 	template <typename T> 
 	bool CreateComponent()	// Member Template function used to create component of any type

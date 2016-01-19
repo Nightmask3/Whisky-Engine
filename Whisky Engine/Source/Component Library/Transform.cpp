@@ -1,19 +1,15 @@
 // Component header files
 #include "PhysicsComponent.h"
 #include "Transform.h"
+#include <string>
 // Matrix Transformation header files
 #include "..\..\Dependencies\glm\glm\gtc\matrix_transform.hpp"
 
-Transform::Transform() : Component(ComponentType::TRANSFORM)
-{
-	mPosition = mRotation = glm::vec3(0, 0, 0);
-	mScale = glm::vec3(1);
-}
 
-Transform::Transform(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale) : 
-	mPosition(position), // Used in GameObjectFactory::Instantiate
-	mRotation(rotation), 
-	mScale(scale) , 
+Transform::Transform(const glm::vec3 position, const glm::vec3 rotation, const glm::vec3 scale) : 
+	mPosition_(position), // Used in GameObjectFactory::Instantiate
+	mRotation_(rotation), 
+	mScale_(scale) , 
 	Component(ComponentType::TRANSFORM) {}
 
 
@@ -127,4 +123,28 @@ void Transform::Update()
 //	return glm::Translate(position) *
 //		glm::mat4::Rotate(2, rotation* glm::DEG2RAD) *
 //		glm::mat4::Scale(scale);
+//}
+//
+//Transform* Transform::Deserialize(const char* params)
+//{
+//	Transform* t = NULL;
+//	std::vector<std::string> parameters = split(params);
+//	try
+//	{
+//		if (parameters[0].size() == 1 && parameters[0][0] == '-') t = new Transform();
+//		else
+//		{
+//			float x = std::stof(parameters[0]);
+//			float y = std::stof(parameters[1]);
+//			float r = std::stof(parameters[2]);
+//			float s_x = std::stof(parameters[3]);
+//			float s_y = std::stof(parameters[4]);
+//			t = new Transform(x, y, r, s_x, s_y);
+//		}
+//	}
+//	catch (const std::invalid_argument& ia)
+//	{
+//		std::cout << "Invalid argument creating transform: " << ia.what() << endl;
+//	}
+//	return t;
 //}

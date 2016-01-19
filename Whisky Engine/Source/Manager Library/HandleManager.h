@@ -24,12 +24,12 @@ struct HandleEntry_
 	uint32 m_active : 1;
 	uint32 m_endOfList : 1;
 	void* m_entry;
+	std::string m_ComponentType;
 };
 struct ListEntry_
 {
 	int m_activeEntryCount;
 	uint32 m_firstFreeEntry;
-
 };
 
 // Forward Declaration
@@ -41,7 +41,7 @@ private:
 	HandleManager& operator=(const HandleManager&);
 
 	// A List that holds information about all the other handle lists in the game
-	std::map<type_info, ListEntry_> MetaDataList_;
+	std::map<std::string, ListEntry_> MetaDataList_;
 	static GameObjectFactory* _pObjectFactory;
 
 public:
@@ -60,10 +60,6 @@ public:
 	void Update(Handle handle, void* p, std::vector<HandleEntry_> & m_entries);
 	// Removes a list element
 	void Remove(Handle handle, std::vector<HandleEntry_> & m_entries, type_info const & CallerType);
-	// Creates Component lists
-	std::vector<HandleEntry_> CreateComponentList(Component::ComponentType type);
-	// Creates Entity lists
-	std::vector<HandleEntry_> CreateEntityList(Entity::EntityType type);
 	// Get number of elements
 	int GetCount(std::vector<HandleEntry_> const & m_entries) const;
 

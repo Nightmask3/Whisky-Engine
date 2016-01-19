@@ -60,7 +60,7 @@ private:
 
 	bool LoadTextures();
 
-	void DrawObject(const GameObject& obj, const glm::mat4 & view, glm::mat4 & proj);
+	void DrawObject(const GameObject& obj, const glm::mat4 & view, const glm::mat4 & proj);
 	void DrawDebugMode(const GameObject&);
 	void DrawCollider(const GameObject&);
 
