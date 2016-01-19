@@ -41,7 +41,7 @@ public:
 	GameObject& InstantiateArchetype(const std::string&);
 	GameObject& InstantiateArchetype(const std::string& name, glm::vec3 & pos);
 	// Initialize the position to (0,0,0), rotation to (0,0,0) and scale to (1,1,)
-	GameObject& Instantiate(const glm::vec3 position, const glm::vec3 rotation, const glm::vec3 scale = glm::vec3(1));
+	GameObject& Instantiate(const glm::vec3 position = glm::vec3(0), const glm::vec3 rotation = glm::vec3(0), const glm::vec3 scale = glm::vec3(1));
 	void Destroy(GameObject&);
 
 	std::pair<bool, GameObject*> Find(const std::string& name);
@@ -73,7 +73,7 @@ private:
 	{
 		Component * mComponent = nullptr;
 		// Create component type as requested
-		if (typeid(T) == typeid(TransformComponent))
+		if (typeid(T) == typeid(Transform))
 		{
 			
 			return true;
@@ -94,8 +94,8 @@ private:
 			mComponent->mOwner->ComponentListSize++;
 			mComponent->mOwner->ComponentList.push_back(mComponent);
 			// Sets current position to use in physics simulation
-			TransformComponent * t = nullptr;
-			t = static_cast<TransformComponent *>(mComponent->mOwner->GetComponent(Component::TRANSFORM));
+			Transform * t = nullptr;
+			t = static_cast<Transform *>(mComponent->mOwner->GetComponent(Component::TRANSFORM));
 
 			PhysicsComponent * p = nullptr;
 			p = static_cast<PhysicsComponent *>(mComponent->mOwner->GetComponent(Component::PHYSICS));

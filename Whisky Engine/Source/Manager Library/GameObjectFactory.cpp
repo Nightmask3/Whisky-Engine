@@ -21,6 +21,7 @@
 #include <iostream>
 #include <typeinfo>
 #include <algorithm>
+#include <..\Component Library\Components.h>
 
 
 using std::cout;
@@ -102,10 +103,10 @@ using std::string;
 		//			int lvl = 1 + player->GetComponent<PlayerController>()->WeaponLevel();
 
 		//			// health bar original scales: (7.5, 0.8)
-		//			hpBar->GetComponent<TransformComponent>()->Scale((hp / 10)*7.5f, 0.8f);
+		//			hpBar->GetComponent<Transform>()->Scale((hp / 10)*7.5f, 0.8f);
 
 		//			// health bar original scales: (7.5, 0.8)
-		//			weaponBar->GetComponent<TransformComponent>()->Scale((wp / lvl)*8.0f, 0.8f);
+		//			weaponBar->GetComponent<Transform>()->Scale((wp / lvl)*8.0f, 0.8f);
 
 
 		//		}
@@ -130,7 +131,7 @@ using std::string;
 				const char* params = component_s.second.c_str();
 
 				// lowercase the component name
-				//std::TransformComponent(componentName.begin(), componentName.end(), componentName.begin(), ::tolower);
+				//std::Transform(componentName.begin(), componentName.end(), componentName.begin(), ::tolower);
 
 				// create the component and add it to the gameobject instance
 				Component* component = Component::CreateComponent(componentName, params);
@@ -171,6 +172,7 @@ using std::string;
 				Component* component = Component::CreateComponent(componentName, params);
 				if (component)
 				{
+					// TODO: overhaul here, replace with handle manager.
 					obj.AddComponent(component);
 
 				}
@@ -202,7 +204,7 @@ using std::string;
 		return gameObjList_;
 	}
 
-	GameObject& GameObjectFactory::Instantiate(const glm::vec3 position = glm::vec3(0), const glm::vec3 rotation = glm::vec3(0), const glm::vec3 scale)
+	GameObject& GameObjectFactory::Instantiate(const glm::vec3 position, const glm::vec3 rotation, const glm::vec3 scale)
 	{
 		// TODO: Fix warning: not all paths return a value
 		for (auto& obj : gameObjList_)
@@ -210,7 +212,7 @@ using std::string;
 			if (!obj.IsActive())
 			{
 				obj.Activate();
-				obj.AddComponent(new TransformComponent(position, rotation, scale));
+				obj.AddComponent(new Transform(position, rotation, scale));
 				return obj;
 			}
 		}
@@ -227,7 +229,7 @@ using std::string;
 			if (!obj.IsActive())
 			{
 				obj.Activate();
-				obj.AddComponent(new TransformComponent());
+				obj.AddComponent(new Transform());
 
 
 				return obj;
@@ -260,7 +262,7 @@ using std::string;
 			if (!obj.IsActive())
 			{
 				archetypeList_[name].Clone(obj);
-				obj.GetComponent<TransformComponent>()->Position(pos);
+				obj.GetComponent<Transform>()->Position(pos);
 				return obj;
 			}
 		}

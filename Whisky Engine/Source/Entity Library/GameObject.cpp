@@ -74,7 +74,7 @@ unsigned long GameObject::_last_id = id_offset;
 		isArchetype_(false),
 		Entity(EntityType::GameObject)
 	{
-		componentList_.resize(ComponentType::COMPONENT_COUNT, NULL);
+		componentList_.resize(Component::ComponentType::COMPONENT_COUNT, NULL);
 
 #ifdef DEBUG
 		cout << "gameobj ctor(str, str): " << id_  << "\t: " << name_ << "(" << tag_ << ")" << endl;
@@ -103,7 +103,7 @@ unsigned long GameObject::_last_id = id_offset;
 		//return _id == obj._id;
 
 		// OBSOLETE
-		for (size_t i = 0; i < COMPONENT_COUNT; i++)
+		for (size_t i = 0; i < Component::ComponentType::COMPONENT_COUNT; i++)
 		{
 			if (componentList_[i])
 			{
@@ -141,7 +141,7 @@ unsigned long GameObject::_last_id = id_offset;
 
 	void GameObject::Relay(Message* m)
 	{
-		for (size_t i = 0; i < COMPONENT_COUNT; i++)
+		for (size_t i = 0; i < Component::ComponentType::COMPONENT_COUNT; i++)
 		{
 			if (componentList_[i]) componentList_[i]->HandleMessage(m);
 		}
@@ -183,7 +183,7 @@ unsigned long GameObject::_last_id = id_offset;
 					switch (componentList_[i]->GetType())
 					{
 					case TRANSFORM:
-						component = new TransformComponent(*static_cast<TransformComponent*>(componentList_[i]));
+						component = new Transform(*static_cast<Transform*>(componentList_[i]));
 						break;
 					case PLAYER_CONTROLLER:
 						component = new PlayerController(*static_cast<PlayerController*>(componentList_[i]));
@@ -211,7 +211,7 @@ unsigned long GameObject::_last_id = id_offset;
 
 	/*std::ostream& operator<<(std::ostream& o, const GameObject& obj)
 	{
-		o << obj.name_ << "(" << obj.id_ << "): pos: " << obj.GetComponent<TransformComponent>()->mTranslation;
+		o << obj.name_ << "(" << obj.id_ << "): pos: " << obj.GetComponent<Transform>()->mTranslation;
 
 		return o;
 	}*/

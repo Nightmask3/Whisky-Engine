@@ -19,7 +19,7 @@
 
 #include "Entity.h"
 #include "..\Component Library\Component.h"
-#include "..\Component Library\TransformComponent.h"
+#include "..\Component Library\Transform.h"
 #include "..\Component Library\PlayerController.h"
 class Message;
 class GameObject : public Entity

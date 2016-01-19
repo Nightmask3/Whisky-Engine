@@ -1,7 +1,7 @@
 #ifndef COMPONENTS_H
 #define COMPONENTS_H
 
-#include "TransformComponent.h"
+#include "Transform.h"
 #include "Mesh.h"
 #include "PlayerController.h"
 

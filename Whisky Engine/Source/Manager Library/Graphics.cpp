@@ -405,7 +405,7 @@ void Graphics::DrawObject(const GameObject& obj, const Matrix3D & vView, const M
 	glBindVertexArray(_meshData[obj.GetComponent<Mesh>()->MeshHandle()]);
 	// assert dereference stuff maybe?
 
-	Matrix3D vModel = obj.GetComponent<TransformComponent>()->ModelTransformationMatrix();
+	Matrix3D vModel = obj.GetComponent<Transform>()->ModelTransformationMatrix();
 
 	// send shader parameters
 	GLint uniTrans = glGetUniformLocation(_shaderProgram.program, "model");

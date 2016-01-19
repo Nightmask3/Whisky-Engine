@@ -1,7 +1,7 @@
 #pragma once
 #include "..\Entity Library\GameObject.h"
-#include "TransformComponent.h"
-#include "..\Math Library\Vector3D.h"
+#include "Transform.h"
+//#include "..\Math Library\Vector3D.h"
 #include "..\Physics Library\Bounding.h"
 
 struct VertexCollider
