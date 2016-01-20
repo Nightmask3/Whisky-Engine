@@ -9,8 +9,7 @@
 #ifndef HANDLEMANAGER_H
 #define HANDLEMANAGER_H
 
-#define MaxGameObjects 4096 // 2 ^ 12 entries, max number of gameobjects in the world, and belonging to any system
-#define MaxComponents 10	// Max number of components allowed to belong to any gameobject
+#define MaxComponents Component::COMPONENT_COUNT	// Max number of components allowed to belong to any gameobject
 
 // Made global as other classes need access to these types
 struct HandleEntry_
@@ -42,7 +41,7 @@ private:
 
 	// A List that holds information about all the other handle lists in the game
 	std::map<std::string, ListEntry_> MetaDataList_;
-	static GameObjectFactory* _pObjectFactory;
+	static GameObjectFactory* HandleManager::_pObjectFactory;
 
 public:
 	// Gets a reference to game object factory in use by engine
@@ -51,18 +50,22 @@ public:
 	void * Get(Handle handle, std::vector<HandleEntry_> const & m_entries) const;
 	bool Get(Handle handle, void*& out, std::vector<HandleEntry_> const & m_entries) const;
 	// Get as specific type
-	template< typename T > bool GetAs(Handle handle, std::vector<HandleEntry_> const & m_entries, T& out) const;
-	// Creates a list
-	bool InitializeList(std::vector<HandleEntry_> & m_entries, type_info const & CallerType);
+	template< typename T > bool GetAs(Handle handle, T& out) const;
+	// Get number of elements
+	int GetCount(std::vector<HandleEntry_> const & m_entries) const;
+
+	// Creates a list of components for System callers
+	bool InitializeListForSystem(std::vector<HandleEntry_> & m_entries, int);
+	// Creates a list of components for Game object callers
+	bool InitializeListForGameObject(std::vector<HandleEntry_> & m_entries, int);
+
 	// Adds an element to a list
-	Handle Add(void* p, uint32 type, std::vector<HandleEntry_> & m_entries, type_info const & CallerType);
+	Handle & Add(void* p, uint32 type, std::vector<HandleEntry_> & m_entries, std::string componentType);
 	// Updates a list element
 	void Update(Handle handle, void* p, std::vector<HandleEntry_> & m_entries);
 	// Removes a list element
 	void Remove(Handle handle, std::vector<HandleEntry_> & m_entries, type_info const & CallerType);
-	// Get number of elements
-	int GetCount(std::vector<HandleEntry_> const & m_entries) const;
-
+	
 };
 
 

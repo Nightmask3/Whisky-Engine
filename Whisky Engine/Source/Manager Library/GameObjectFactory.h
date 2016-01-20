@@ -21,7 +21,7 @@
 #include <vector>
 #include <map>
 
-
+#define MaxGameObjects 4096
 class GameObjectFactory
 {
 	typedef std::vector<GameObject>				ObjVector;
@@ -53,6 +53,19 @@ public:
 	int GetActiveObjCount() const { return activeObjCount_; }
 	GameObject*   GetMenu()	const { return pauseMenu_; }
 
+	// Makes a call to handle manager to initialize component list for a game object
+	bool InitializeListForGameObject(std::vector<HandleEntry_> & mEntries, int) const;
+	// Makes a call to handle manager to initialize component list for a system
+	bool InitializeListForSystem(std::vector<HandleEntry_> & mEntries, int) const;
+	// Makes a call to handle manager to convert the handle to a pointer
+	Component * ConvertHandletoPointer(Handle handle, std::vector<HandleEntry_> mEntries);
+	// Adds a Component to a Game Object component list and returns the handle to it
+	Handle & AddComponent(void* p, unsigned int ,std::vector<HandleEntry_> & m_entries, std::string ComponentType) const;
+	// Updates a Component
+	bool UpdateComponent(Handle handle, void* p, std::vector<HandleEntry_> & m_entries);
+	// Removes a Component
+	bool Remove(Handle handle, std::vector<HandleEntry_> & m_entries, std::type_info const & CallerType);
+
 private:
 	GameObjectFactory();
 	GameObjectFactory(const GameObjectFactory&){}
@@ -60,14 +73,7 @@ private:
 
 	bool InitializeArchetypes();
 	bool InitializeLevel();
-	// Makes a call to handle manager to initialize list
-	bool InitializeList(std::vector<HandleEntry_> & mEntries, type_info const & CallerType);
-	// Adds a Component to a Game Object component list
-	bool AddComponent(std::vector<HandleEntry_> & m_entries, type_info const & CallerType);
-	// Updates a Component
-	bool UpdateObject(Handle handle, void* p, std::vector<HandleEntry_> & m_entries);
-	// Removes a Component
-	bool Remove(Handle handle, std::vector<HandleEntry_> & m_entries, type_info const & CallerType);
+	
 	template <typename T> 
 	bool CreateComponent()	// Member Template function used to create component of any type
 	{
@@ -75,7 +81,6 @@ private:
 		// Create component type as requested
 		if (typeid(T) == typeid(Transform))
 		{
-			
 			return true;
 		}
 		else if (typeid(T) == typeid(Mesh))
@@ -115,16 +120,18 @@ private:
 		}
 		return false;
 	}
+	
 private:
 	static GameObjectFactory* _pInstance;
 	static HandleManager* _pHandleMan;
-
+	static int  _mGameObjectCounter;
 	ObjVector	gameObjList_;
 	NameObjMap	archetypeList_;
 
 	int activeObjCount_;
-
+	
 	GameObject* pauseMenu_;
 };
+
 
 #endif

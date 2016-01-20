@@ -1,4 +1,3 @@
-#include "TransformComponent.h"
 #include "PhysicsComponent.h"
 #include "..\Entity Library\GameObject.h"
 #include "..\Physics Library\BoundingSphere.h"

@@ -349,7 +349,7 @@ bool Graphics::Load()
 	// --------------------------------------------------------
 	//	Textures
 	// --------------------------------------------------------
-	if (!LoadTextures()) return false;
+	//if (!LoadTextures()) return false;
 
 	// print system info
 	cout << "Graphics System Loaded." << endl;
@@ -405,7 +405,7 @@ void Graphics::DrawObject(const GameObject& obj, const glm::mat4 & vView, const 
 	glBindVertexArray(_meshData[obj.GetComponent<Mesh>()->MeshHandle()]);
 	// assert dereference stuff maybe?
 
-	glm::mat4 vModel = obj.GetComponent<Transform>()->ModelTransformationMatrix();
+	glm::mat4 vModel = (obj.GetComponent<Transform>())->ModelTransformationMatrix();
 
 	// send shader parameters
 	GLint uniTrans = glGetUniformLocation(_shaderProgram.program, "model");

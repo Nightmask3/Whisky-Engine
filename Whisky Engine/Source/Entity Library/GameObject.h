@@ -21,14 +21,17 @@
 #include "..\Component Library\Component.h"
 #include "..\Component Library\Transform.h"
 #include "..\Component Library\PlayerController.h"
+#include "..\Manager Library\GameObjectFactory.h"
 class Message;
+
+#define DEBUG
 class GameObject : public Entity
 {
 public:
 	// ctor/dtor/operators
-	GameObject();
-	GameObject(const std::string& name);
-	GameObject(const std::string& name, const std::string& tag);
+	GameObject(GameObjectFactory &);
+	GameObject(GameObjectFactory & mFactory, const std::string& name);
+	GameObject(GameObjectFactory & mFactory,const std::string& name, const std::string& tag);
 	GameObject(const GameObject&);
 	~GameObject();
 
@@ -39,13 +42,17 @@ public:
 	void Relay(Message* m);
 
 	template<typename ComponentName>	ComponentName* GetComponent() const;
-	template<typename ComponentName>	void AddComponent(ComponentName*);
+	//template<typename ComponentName>	void AddComponent(ComponentName*);
 	template<typename ComponentName>	void RemoveComponent();
 	void RemoveComponent(unsigned);
 
-	void Clone(GameObject&) const;
+	//void Clone(GameObject&) const;
 
 	// getters & setters
+	inline unsigned int GetHandleID()		{ return handle_id_; }
+	inline void SetHandleID(unsigned int ID) { handle_id_ = ID; }
+	// Reference of handle is used to add to handle list of game object
+	inline void AddHandle(Handle & handle)  { Handles_.push_back(handle); }
 	inline bool IsActive() const			{ return isActive_; }
 	inline void Activate()					{ isActive_ = true; }
 	inline void Deactivate()				{ isActive_ = false; }
@@ -53,26 +60,26 @@ public:
 	inline std::string Name() const			{ return name_; }
 	inline void Name(std::string n)			{ name_ = n; }
 	inline GameObject* Pntr()				{ return this; }
-
 	friend std::ostream& operator<<(std::ostream&, const GameObject&);
-
+	std::vector<HandleEntry_> & GetComponentList() { return HandleEntries_; }
 	bool IsArchetype() const { return isArchetype_; }
 	void IsArchetype(bool val) { isArchetype_ = val; }
-
+	GameObjectFactory & mFactoryRef_;
+	
+private:
 	// static members
-private:
 	static unsigned long _last_id;
-
-	// members
+	
 private:
-
+	// members
+	unsigned int handle_id_;
 	std::string name_, tag_;
 	const unsigned long id_;
 	bool isActive_;
 	bool isArchetype_;
 
-	std::vector<unsigned int> componentHandles;
-
+	std::vector<HandleEntry_> HandleEntries_;
+	std::vector<Handle> Handles_;
 	std::vector<Component *> componentList_;
 
 };
@@ -84,35 +91,42 @@ private:
 template<typename ComponentName>
 ComponentName* GameObject::GetComponent() const
 {
-	return static_cast<ComponentName*>(componentList_[ComponentName::Type]);
-}
-
-template<typename ComponentName>
-void GameObject::AddComponent(ComponentName* c)
-{
-	//if (_componentList[T::Type])
-	if (componentList_[c->GetType()])
+	// TODO : Request to Handle Manager for conversion of handle to pointer
+	for(int i = 0; i < Handles_.size(); ++i)
 	{
-
-#ifdef WARNINGS
-		std::cout << "====== WARNING: Trying to add second component of the same type to the Game Object!" << std::endl;
-#endif
-
-		//delete _componentList[T::Type];
-		delete componentList_[c->GetType()];
-
+		if (Handles_[i].m_type == ComponentName::_mType)
+			return static_cast<ComponentName *>(mFactoryRef_.ConvertHandletoPointer(Handles_[i], HandleEntries_));
 	}
-
-		componentList_[c->GetType()] = static_cast<ComponentName*>(c);
-		c->SetOwner(this);
+	std::cout << "Component not found!\n";
+	return nullptr;
 }
+
+//template<typename ComponentName>
+//void GameObject::AddComponent(ComponentName* c)
+//{
+//	//if (_componentList[T::Type])
+//	// TODO : Replace with the call to Get function from Handle Manager 
+//	if (
+//	{
+//
+//#ifdef WARNINGS
+//		std::cout << "====== WARNING: Trying to add second component of the same type to the Game Object!" << std::endl;
+//#endif
+//		//delete _componentList[T::Type];
+//		delete componentList_[c->GetType()];
+//
+//	}
+//
+//		componentList_[c->GetType()] = static_cast<ComponentName*>(c);
+//		c->SetOwner(this);
+//}
 
 template<typename ComponentName>
 void GameObject::RemoveComponent()
 {
-	if (componentList_[ComponentName::Type])
+	/*if (componentList_[ComponentName::Type])
 	{
 		delete componentList_[ComponentName::Type];
-	}
+	}*/
 }
 #endif

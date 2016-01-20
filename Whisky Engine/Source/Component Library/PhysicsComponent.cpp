@@ -1,4 +1,4 @@
-#include "SpriteComponent.h"
+
 #include "..\Physics Library\BoundingSphere.h"
 #include "..\Physics Library\BoundingBox.h"
 

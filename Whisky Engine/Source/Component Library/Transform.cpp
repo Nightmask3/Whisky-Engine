@@ -119,14 +119,11 @@ void Transform::Update()
 //	mScale.m[1][1] = Y;
 //	mScale.m[2][2] = Z;
 //}
-//glm::mat4 Transform::ModelTransformationMatrix() const
-//{
-//	glm::t
-//	return glm::Translate(position) *
-//		glm::mat4::Rotate(2, rotation* glm::DEG2RAD) *
-//		glm::mat4::Scale(scale);
-//}
-//
+glm::mat4 Transform::ModelTransformationMatrix() const
+{
+	return glm::mat4(1);
+}
+
 //Transform* Transform::Deserialize(const char* params)
 //{
 //	Transform* t = NULL;

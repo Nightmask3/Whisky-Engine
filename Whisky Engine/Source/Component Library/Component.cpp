@@ -13,25 +13,51 @@
 // ---------------------------------------------------------------------------
 
 #include "Components.h"
-
-#include "..\Manager Library\utils.h"
-
 #include <algorithm>
 #include <iostream>
 
 #define DEBUG1
 
-Component* Component::CreateComponent(std::string name, const char* params)
+Component* Component::CreateComponent(std::string name)
 {
 	Component * comp = NULL;
 
-	if (name == "transform")				comp = Transform::Deserialize(params);
-	else if (name == "sprite")				comp = Sprite::Deserialize(params);
-	else if (name == "mesh")				comp = Mesh::Deserialize(params);
+	if (name == "transform")				//comp = Transform::Deserialize(params);
+	{
+		comp = new Transform();
+	}
+	//else if (name == "sprite")				//comp = Sprite::Deserialize(params);
+	//{
+	//	comp = new Sprite();
+	//}
+	else if (name == "mesh")				//comp = Mesh::Deserialize(params);
+	{
+		comp = new Mesh(MeshType::QUAD);
+	}
 	//else if (name == "selfdestruct")		comp = SelfDestruct::Deserialize(params);
 
-	else std::cout << "WARNING: unknown component name when creating: " << name << std::endl;
+	else std::cout << "WARNING: Trying to create an unknown type of component: " << name << std::endl;
 
 
 	return comp;
 }
+//Component* Component::DeSerializeComponent(std::string name, const char* params)
+//{
+//	Component * comp = NULL;
+//
+//	if (name == "transform")				
+//	{
+//		comp = Transform::Deserialize(params);
+//	}
+//	else if (name == "sprite")				
+//	{
+//		comp = Sprite::Deserialize(params);
+//	}
+//	else if (name == "mesh")			
+//	{
+//		comp = Mesh::Deserialize(params);
+//	}
+//	else std::cout << "WARNING: Trying to create an unknown type of component: " << name << std::endl;
+//
+//	return comp;
+//}

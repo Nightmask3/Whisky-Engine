@@ -31,11 +31,18 @@ using std::string;
 
 #define NO_DEBUG
 
+///////////////////////////////////////////////////////////////////////////////////////////////
+// static member initialization
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+GameObjectFactory* GameObjectFactory::_pInstance = NULL;
+HandleManager* GameObjectFactory::_pHandleMan = NULL;
+int  GameObjectFactory::_mGameObjectCounter = 0;
+
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// static functions
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
-	GameObjectFactory* GameObjectFactory::_pInstance = NULL;
 	GameObjectFactory* GameObjectFactory::Inst()
 	{
 		if (_pInstance == NULL) _pInstance = new GameObjectFactory();
@@ -43,8 +50,8 @@ using std::string;
 		return _pInstance;
 	}
 
-
-	GameObjectFactory::GameObjectFactory()
+	// Populates the game object list with empty Game Objects, each having a reference to the factory that created them
+	GameObjectFactory::GameObjectFactory() : gameObjList_(MaxGameObjects, GameObject(*this))
 	{
 		// Creates a handle manager and gives it the reference to this game object factory for future use
 		_pHandleMan = new HandleManager(*_pInstance);
@@ -63,10 +70,10 @@ using std::string;
 
 	bool GameObjectFactory::Load()
 	{
-		if (!InitializeArchetypes() ||
+		/*if (!InitializeArchetypes() ||
 			!InitializeLevel()
 			)
-			return false;
+			return false;*/
 		return true;
 	}
 
@@ -115,86 +122,113 @@ using std::string;
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// Member functions
 	///////////////////////////////////////////////////////////////////////////////////////////////
-	bool GameObjectFactory::InitializeArchetypes()
+	//bool GameObjectFactory::InitializeArchetypes()
+	//{
+	//	for (const auto archetype_s : RSC->GetArchetypeList())
+	//	{
+	//		archetypeList_[archetype_s.name].Name(archetype_s.name);
+	//		archetypeList_[archetype_s.name].IsArchetype(true);
+	//		for (auto& component_s : archetype_s.componentList)
+	//		{
+	//			// grab the component name and parameters
+	//			string	componentName = component_s.first;
+	//			const char* params = component_s.second.c_str();
+
+	//			// lowercase the component name
+	//			//std::Transform(componentName.begin(), componentName.end(), componentName.begin(), ::tolower);
+
+	//			// create the component and add it to the Gameobject instance
+	//			Component* component = Component::CreateComponent(componentName, params);
+	//			if (component)	archetypeList_[archetype_s.name].AddComponent(componentName);
+	//			else
+	//			{
+	//				cout << "Error creating component for archetype " << archetypeList_[archetype_s.name].Name() << ": " << componentName << endl;
+	//				return false;
+	//			}
+	//		}
+	//	}
+	//	return true;
+	//}
+
+	//bool GameObjectFactory::InitializeLevel()
+	//{
+	//	// get the level data from the resource manager
+	//	auto objList = RSC->GetLevelData();
+
+	//	// Deserialize the objects in the level data
+	//	for (auto& obj_s : objList)
+	//	{
+	//		// instantiate every object in the scene
+
+	//		GameObject& obj = Instantiate();
+	//		obj.Name(obj_s.name);
+	//		auto components_s = obj_s.componentList;
+
+	//		// for every component in the gameobject's component list
+	//		for (auto& component_s : components_s)
+	//		{
+	//			// grab the component name and parameters
+	//				 string componentName	= component_s.first;
+	//			const char* params			= component_s.second.c_str();
+
+	//			// create the component and add it to the gameobject instance
+	//			Component* component = Component::DeSerializeComponent(componentName, params); // DESERIALIZATION METHOD
+	//			if (component)
+	//			{
+	//				// TODO: overhaul here, replace with handle manager.
+	//				if (AddComponent(component, component->GetType(), obj.GetComponentList(), componentName))
+	//				{
+	//					std::cout << "Component added!\n";
+	//				}
+	//				else
+	//				{
+	//					int x;
+	//					std::cout << "Error!";
+	//					std::cin >> x;
+	//				}
+	//			}
+	//			/*	else
+	//				{
+	//				cout << "Error creating component: " << componentName << endl;
+	//				return false;
+	//				}*/
+	//		}
+
+	//		if (obj.Name() == "PauseMenu")
+	//		{
+	//			pauseMenu_ = obj.Pntr();
+	//		}
+	//	}
+	//	
+	//	return true;
+	//}
+	// Initializes a list for the game object that performed that calling
+	bool GameObjectFactory::InitializeListForGameObject(std::vector<HandleEntry_> & mEntries, int counter) const
 	{
-		for (const auto archetype_s : RSC->GetArchetypeList())
-		{
-			archetypeList_[archetype_s.name].Name(archetype_s.name);
-			archetypeList_[archetype_s.name].IsArchetype(true);
-			for (auto& component_s : archetype_s.componentList)
-			{
-				// grab the component name and parameters
-				string	componentName = component_s.first;
-				const char* params = component_s.second.c_str();
-
-				// lowercase the component name
-				//std::Transform(componentName.begin(), componentName.end(), componentName.begin(), ::tolower);
-
-				// create the component and add it to the Gameobject instance
-				Component* component = Component::CreateComponent(componentName, params);
-				if (component)	archetypeList_[archetype_s.name].AddComponent(component);
-				else
-				{
-					cout << "Error creating component for archetype " << archetypeList_[archetype_s.name].Name() << ": " << componentName << endl;
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-	bool GameObjectFactory::InitializeLevel()
-	{
-		// get the level data from the resource manager
-		auto objList = RSC->GetLevelData();
-
-		// Deserialize the objects in the level data
-		for (auto& obj_s : objList)
-		{
-			// instantiate every object in the scene
-			GameObject& obj = Instantiate();
-			obj.Name(obj_s.name);
-			auto components_s = obj_s.componentList;
-
-			// for every component in the gameobject's component list
-			for (auto& component_s : components_s)
-			{
-				// grab the component name and parameters
-					 string componentName	= component_s.first;
-				const char* params			= component_s.second.c_str();
-
-
-
-				// create the component and add it to the gameobject instance
-				Component* component = Component::CreateComponent(componentName, params);
-				if (component)
-				{
-					// TODO: overhaul here, replace with handle manager.
-					obj.AddComponent(component);
-
-				}
-				else
-				{
-					cout << "Error creating component: " << componentName << endl;
-					return false;
-				}
-			}
-
-			if (obj.Name() == "PauseMenu")
-			{
-				pauseMenu_ = obj.Pntr();
-			}
-		}
-		std::vector<HandleEntry_> vec;
-
-		InitializeList(vec, typeid(GameObjectFactory));
+		if (_pHandleMan->InitializeListForGameObject(mEntries, counter))
+			return true;
+		else
+			return false;
 		
-		return true;
 	}
-	// Initializes a list using a reference to the container of the system that called this function
-	bool GameObjectFactory::InitializeList(std::vector<HandleEntry_> & mEntries, type_info const & CallerType)
+	// Initializes a list for the system that performed that calling
+	bool GameObjectFactory::InitializeListForSystem(std::vector<HandleEntry_> & mEntries, int counter) const
 	{
-		_pHandleMan->InitializeList(mEntries, CallerType);
+		if (_pHandleMan->InitializeListForSystem(mEntries, counter))
+			return true;
+		else
+			return false;
+	}
+
+	Handle & GameObjectFactory::AddComponent(void* p, unsigned int type, std::vector<HandleEntry_> & m_entries, std::string componentType) const
+	{
+		return _pHandleMan->Add(p, type, m_entries, componentType);
+	}
+	// Makes a call to handle manager to convert the handle to a pointer
+	Component * GameObjectFactory::ConvertHandletoPointer(Handle handle, std::vector<HandleEntry_> mEntries)
+	{
+		// Casts the void * returned from Handle Manager to a Component pointer
+		return static_cast<Component *>(_pHandleMan->Get(handle, mEntries));
 	}
 	std::vector<GameObject>& GameObjectFactory::GameObjList()
 	{
@@ -209,7 +243,14 @@ using std::string;
 			if (!obj.IsActive())
 			{
 				obj.Activate();
-				obj.AddComponent(new Transform(position, rotation, scale));
+				obj.SetHandleID(_mGameObjectCounter);
+				InitializeListForGameObject(obj.GetComponentList(), _mGameObjectCounter++);
+				Transform * tempTransform = new Transform(position, rotation, scale);
+				// Creates a transform component with the given values, registers it on the gameobject component list and returns the handle to it
+				Handle newComponentHandle = AddComponent(new Transform(position, rotation, scale), Component::ComponentType::TRANSFORM, obj.GetComponentList(), "transform");
+				// Handle is added to game object handle list
+				obj.AddHandle(newComponentHandle);
+				//obj.AddComponent(new Transform());
 				return obj;
 			}
 		}
@@ -226,8 +267,13 @@ using std::string;
 			if (!obj.IsActive())
 			{
 				obj.Activate();
-
-				obj.AddComponent(new Transform());
+				obj.SetHandleID(_mGameObjectCounter);
+				InitializeListForGameObject(obj.GetComponentList(), _mGameObjectCounter++);
+				// Creates a transform component with the default values, registers it on the gameobject component list and returns the handle to it
+				Handle newComponentHandle = AddComponent(new Transform(), Component::ComponentType::TRANSFORM, obj.GetComponentList(), "transform");
+				// Handle is added to game object handle list
+				obj.AddHandle(newComponentHandle);
+				//obj.AddComponent(new Transform());
 				return obj;
 			}
 		}
@@ -236,7 +282,7 @@ using std::string;
 		return gameObjList_.back();
 	}
 
-	GameObject& GameObjectFactory::InstantiateArchetype(const std::string & name)
+	/*GameObject& GameObjectFactory::InstantiateArchetype(const std::string & name)
 	{
 		for (auto& obj : gameObjList_)
 		{
@@ -258,18 +304,14 @@ using std::string;
 			if (!obj.IsActive())
 			{
 				archetypeList_[name].Clone(obj);
-				obj.GetComponent<Transform>()->Position(pos);
+				(obj.GetComponent<Transform>())->Position(pos);
 				return obj;
 			}
 		}
 
 		cout << "WARNING: " << __FUNCTION__ << " MAX GAME OBJECTS REACHED" << endl;
 		return gameObjList_.back();
-	}
-	bool AddComponent(std::vector<HandleEntry_> & m_entries, type_info const & CallerType)
-	{
-
-	}
+	}*/
 	void GameObjectFactory::Destroy(GameObject& obj)
 	{
 		if (!obj.IsActive()) return;

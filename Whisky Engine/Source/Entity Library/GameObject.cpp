@@ -31,17 +31,15 @@ unsigned long GameObject::_last_id = id_offset;
 // ctor/dtor/operator
 ///////////////////////////////////////////////////////////////////////////////
 
-GameObject::GameObject()
-	: isActive_(false), isArchetype_(false), id_(_last_id++), Entity(EntityType::GameObject)
+GameObject::GameObject(GameObjectFactory & mFactory)
+	: isActive_(false), 
+	  isArchetype_(false), 
+	  id_(_last_id++), 
+	  mFactoryRef_(mFactory), 
+	  Entity(EntityType::GameObject)
 	{
 		name_ = string("GameObject") + std::to_string(id_ - id_offset);
 		tag_ = string("None");
-
-		// Component* vector is resized to the number of components 
-		// and pointers are set to NULL because I want to use 
-		// ComponentType enum as the indices to the component
-		// when getting a component of a Gameobject in the
-		// GetComponent<>() template function
 		componentList_.resize(Component::ComponentType::COMPONENT_COUNT, NULL);
 
 
@@ -50,13 +48,14 @@ GameObject::GameObject()
 #endif
 	}
 
-	GameObject::GameObject(const string& name)
+GameObject::GameObject(GameObjectFactory & mFactory, const string& name)
 		:
 		name_(name),
 		tag_("None"),
 		id_(_last_id++),
 		isActive_(false),
-		isArchetype_(false), 
+		isArchetype_(false),
+		mFactoryRef_(mFactory),
 		Entity(EntityType::GameObject)
 	{
 		componentList_.resize(Component::ComponentType::COMPONENT_COUNT, NULL);
@@ -66,13 +65,14 @@ GameObject::GameObject()
 #endif
 	}
 
-	GameObject::GameObject(const string& name, const string& tag)
+GameObject::GameObject(GameObjectFactory & mFactory, const string& name, const string& tag)
 		:
 		name_(name),
 		tag_(tag),
 		id_(_last_id++),
 		isActive_(false),
 		isArchetype_(false),
+		mFactoryRef_(mFactory),
 		Entity(EntityType::GameObject)
 	{
 		componentList_.resize(Component::ComponentType::COMPONENT_COUNT, NULL);
@@ -90,6 +90,7 @@ GameObject::GameObject()
 		isActive_(ref.isActive_),
 		isArchetype_(ref.isArchetype_),
 		componentList_(ref.componentList_),
+		mFactoryRef_(ref.mFactoryRef_),
 		Entity(EntityType::GameObject)
 	{
 
@@ -154,61 +155,61 @@ GameObject::GameObject()
 		componentList_[i] = NULL;
 	}
 
-	void GameObject::Clone(GameObject& obj) const
-	{
-		assert(isArchetype_);
-		// check for caller (must be archetype)
-		if (!isArchetype_)
-		{
-			cout << "WARNING: GameObject::Clone() is called by a non-archetype object - caller id: " << id_ << endl;
-			return;
-			
-		}
+	//void GameObject::Clone(GameObject& obj) const
+	//{
+	//	assert(isArchetype_);
+	//	// check for caller (must be archetype)
+	//	if (!isArchetype_)
+	//	{
+	//		cout << "WARNING: GameObject::Clone() is called by a non-archetype object - caller id: " << id_ << endl;
+	//		return;
+	//		
+	//	}
 
-		// if all good, construct the object
-		else
-		{
-			obj.isActive_ = true;
-			obj.name_ = name_;
-			obj.tag_ = tag_;
-			//obj._componentList = _componentList;
+	//	// if all good, construct the object
+	//	else
+	//	{
+	//		obj.isActive_ = true;
+	//		obj.name_ = name_;
+	//		obj.tag_ = tag_;
+	//		//obj._componentList = _componentList;
 
-			for (int i = 0; i < Component::ComponentType::COMPONENT_COUNT; ++i)
-			{
-				if (componentList_[i])
-				{
-					//typedef CompName _componentList[i]->GetType();
-					//Component* component = Component::CopyComponent(static_cast<>(_componentList[i]));
+	//		for (int i = 0; i < Component::ComponentType::COMPONENT_COUNT; ++i)
+	//		{
+	//			if (componentList_[i])
+	//			{
+	//				//typedef CompName _componentList[i]->GetType();
+	//				//Component* component = Component::CopyComponent(static_cast<>(_componentList[i]));
 
-					Component* component = nullptr;	// don't forget NULL please
-					switch (componentList_[i]->GetType())
-					{
-					case Component::ComponentType::TRANSFORM:
-						component = new Transform(*static_cast<Transform*>(componentList_[i]));
-						break;
-					case Component::ComponentType::PLAYER_CONTROLLER:
-						component = new PlayerController(*static_cast<PlayerController*>(componentList_[i]));
-						break;
-					case Component::ComponentType::SPRITE:	// we might wwanna remove this: sprite = 2D
-						component = new Sprite(*static_cast<Sprite*>(componentList_[i]));
-						break;
-					case Component::ComponentType::MESH:
-						component = new Mesh(*static_cast<Mesh*>(componentList_[i]));
-						break;
-					/*case SELF_DESTRUCT:
-						component = new SelfDestruct(*static_cast<SelfDestruct*>(componentList_[i]));
-						break;*/
-					default:
-						cout << "WARNING: " << __FUNCTION__ << " Component not in switch statement" << endl;
-						break;
-					}	// TODO: THIS NEEDS TO CHANGE. --> implement copy ctors for components...
-					obj.AddComponent(component);
-					component->SetOwner(obj.Pntr());
-				}
-			}
+	//				Component* component = nullptr;	// don't forget NULL please
+	//				switch (componentList_[i]->GetType())
+	//				{
+	//				case Component::ComponentType::TRANSFORM:
+	//					component = new Transform(*static_cast<Transform*>(componentList_[i]));
+	//					break;
+	//				case Component::ComponentType::PLAYER_CONTROLLER:
+	//					component = new PlayerController(*static_cast<PlayerController*>(componentList_[i]));
+	//					break;
+	//				case Component::ComponentType::SPRITE:	// we might wwanna remove this: sprite = 2D
+	//					component = new Sprite(*static_cast<Sprite*>(componentList_[i]));
+	//					break;
+	//				case Component::ComponentType::MESH:
+	//					component = new Mesh(*static_cast<Mesh*>(componentList_[i]));
+	//					break;
+	//				/*case SELF_DESTRUCT:
+	//					component = new SelfDestruct(*static_cast<SelfDestruct*>(componentList_[i]));
+	//					break;*/
+	//				default:
+	//					cout << "WARNING: " << __FUNCTION__ << " Component not in switch statement" << endl;
+	//					break;
+	//				}	// TODO: THIS NEEDS TO CHANGE. --> implement copy ctors for components...
+	//				obj.AddComponent(component);
+	//				component->SetOwner(obj.Pntr());
+	//			}
+	//		}
 
-		}
-	}
+	//	}
+	//}
 
 	/*std::ostream& operator<<(std::ostream& o, const GameObject& obj)
 	{

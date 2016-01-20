@@ -52,6 +52,7 @@ class Transform : public Component
 		glm::mat4 ModelTransformationMatrix() const;
 		
 		void Update();
+		static const ComponentType _mType = Component::TRANSFORM;
 		static Transform * Deserialize(const char*);
 };
 
