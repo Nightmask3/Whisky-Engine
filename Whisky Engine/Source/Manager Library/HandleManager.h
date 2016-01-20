@@ -60,7 +60,7 @@ public:
 	bool InitializeListForGameObject(std::vector<HandleEntry_> & m_entries, int);
 
 	// Adds an element to a list
-	Handle & Add(void* p, uint32 type, std::vector<HandleEntry_> & m_entries, std::string componentType);
+	Handle Add(void* p, uint32 type, std::vector<HandleEntry_> & m_entries, std::string componentType, int index);
 	// Updates a list element
 	void Update(Handle handle, void* p, std::vector<HandleEntry_> & m_entries);
 	// Removes a list element

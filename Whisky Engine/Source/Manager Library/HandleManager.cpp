@@ -5,7 +5,7 @@
 
 HandleEntry_::HandleEntry_()
 : m_nextFreeIndex(0)
-, m_counter(1)
+, m_counter(0)
 , m_active(0)
 , m_endOfList(0)
 , m_entry(NULL)
@@ -13,7 +13,7 @@ HandleEntry_::HandleEntry_()
 
 HandleEntry_::HandleEntry_(uint32 nextFreeIndex)
 : m_nextFreeIndex(nextFreeIndex)
-, m_counter(1)
+, m_counter(0)
 , m_active(0)
 , m_endOfList(0)
 , m_entry(NULL)
@@ -36,10 +36,10 @@ bool HandleManager::InitializeListForSystem(std::vector<HandleEntry_> & m_entrie
 
 	for (int i = 0; i < MaxGameObjects - 1; ++i)
 	{
-		m_entries[i] = HandleEntry_(i + 1);
+		m_entries.push_back(HandleEntry_(i + 1));
 	}
 	// Creates the last element and sets its status to end of List as true
-	m_entries[MaxGameObjects - 1] = HandleEntry_();
+	m_entries.push_back(HandleEntry_());
 	m_entries[MaxGameObjects - 1].m_endOfList = true;
 
 	return true;
@@ -48,31 +48,36 @@ bool HandleManager::InitializeListForSystem(std::vector<HandleEntry_> & m_entrie
 bool HandleManager::InitializeListForGameObject(std::vector<HandleEntry_> & m_entries, int index)
 {
 	ListEntry_ listValue;
+
 	listValue.m_activeEntryCount = 0;
 	listValue.m_firstFreeEntry = 0;
 	// ID is generated
 	std::string ID = "GameObject" + std::to_string(index);
+	m_entries.reserve(MaxComponents);
 	// Creates a meta data list entry and inserts with "Caller Type name + GameObject Index" as tag in a map
+
 	MetaDataList_.insert(std::make_pair(ID, listValue));
 	
 	for (int i = 0; i < MaxComponents - 1; ++i)
 	{
-		m_entries[i] = HandleEntry_(i + 1);		// BUG: Vector Subscript out of range
+		
+		m_entries.push_back(HandleEntry_(i + 1));		// BUG: Vector Subscript out of range
 	}
 	// Creates the last element and sets its status to end of List as true
-	m_entries[MaxComponents - 1] = HandleEntry_();
+	m_entries.push_back(HandleEntry_());
 	m_entries[MaxComponents - 1].m_endOfList = true;
 
 	return true;
 }
 
 
-Handle & HandleManager::Add(void* p, uint32 type, std::vector<HandleEntry_> & m_entries, std::string componentType)
+Handle HandleManager::Add(void* p, uint32 type, std::vector<HandleEntry_> & m_entries, std::string componentType, int index)
 {
+	std::string ID = "GameObject" + std::to_string(index);
 	// Finds first free entry in list
-	const int newIndex = MetaDataList_[componentType].m_firstFreeEntry;
+	const int newIndex = MetaDataList_[ID].m_firstFreeEntry;
 	// Shifts the firstFreeEntry to the nextFreeIndex
-	MetaDataList_[componentType].m_firstFreeEntry = m_entries[newIndex].m_nextFreeIndex;
+	MetaDataList_[ID].m_firstFreeEntry = m_entries[newIndex].m_nextFreeIndex;
 	// Sets this entries nextFreeIndex to be 0
 	m_entries[newIndex].m_nextFreeIndex = 0;
 	// Increment the counter of the number of references to this component
@@ -82,8 +87,9 @@ Handle & HandleManager::Add(void* p, uint32 type, std::vector<HandleEntry_> & m_
 		m_entries[newIndex].m_counter = 1;
 	m_entries[newIndex].m_active = true;
 	m_entries[newIndex].m_entry = p;
-
-	++MetaDataList_[componentType].m_activeEntryCount;
+	// Sets the tag of the type of component
+	m_entries[newIndex].m_ComponentType = componentType;
+	++MetaDataList_[ID].m_activeEntryCount;
 
 	return Handle(newIndex, m_entries[newIndex].m_counter, type);
 }

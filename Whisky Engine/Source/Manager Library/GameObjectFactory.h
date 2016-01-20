@@ -60,7 +60,7 @@ public:
 	// Makes a call to handle manager to convert the handle to a pointer
 	Component * ConvertHandletoPointer(Handle handle, std::vector<HandleEntry_> mEntries);
 	// Adds a Component to a Game Object component list and returns the handle to it
-	Handle & AddComponent(void* p, unsigned int ,std::vector<HandleEntry_> & m_entries, std::string ComponentType) const;
+	Handle AddComponent(void* p, unsigned int ,std::vector<HandleEntry_> & m_entries, std::string ComponentType, int index) const;
 	// Updates a Component
 	bool UpdateComponent(Handle handle, void* p, std::vector<HandleEntry_> & m_entries);
 	// Removes a Component

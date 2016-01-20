@@ -226,9 +226,9 @@ int  GameObjectFactory::_mGameObjectCounter = 0;
 			return false;
 	}
 
-	Handle & GameObjectFactory::AddComponent(void* p, unsigned int type, std::vector<HandleEntry_> & m_entries, std::string componentType) const
+	Handle GameObjectFactory::AddComponent(void* p, unsigned int type, std::vector<HandleEntry_> & m_entries, std::string componentType, int index) const
 	{
-		return _pHandleMan->Add(p, type, m_entries, componentType);
+		return _pHandleMan->Add(p, type, m_entries, componentType, index);
 	}
 	// Makes a call to handle manager to convert the handle to a pointer
 	Component * GameObjectFactory::ConvertHandletoPointer(Handle handle, std::vector<HandleEntry_> mEntries)
@@ -253,7 +253,7 @@ int  GameObjectFactory::_mGameObjectCounter = 0;
 				InitializeListForGameObject(obj.GetComponentList(), _mGameObjectCounter++);
 				Transform * tempTransform = new Transform(position, rotation, scale);
 				// Creates a transform component with the given values, registers it on the gameobject component list and returns the handle to it
-				Handle newComponentHandle = AddComponent(new Transform(position, rotation, scale), Component::ComponentType::TRANSFORM, obj.GetComponentList(), "transform");
+				Handle newComponentHandle = AddComponent(new Transform(position, rotation, scale), Component::ComponentType::TRANSFORM, obj.GetComponentList(), "Transform", obj.GetHandleID());
 				// Handle is added to game object handle list
 				obj.AddHandle(newComponentHandle);
 				//obj.AddComponent(new Transform());
@@ -275,7 +275,7 @@ int  GameObjectFactory::_mGameObjectCounter = 0;
 				obj.SetHandleID(_mGameObjectCounter);
 				InitializeListForGameObject(obj.GetComponentList(), _mGameObjectCounter++);	// BUG: ASSERTION FAIL
 				// Creates a transform component with the default values, registers it on the gameobject component list and returns the handle to it
-				Handle newComponentHandle = AddComponent(new Transform(), Component::ComponentType::TRANSFORM, obj.GetComponentList(), "transform");
+				Handle newComponentHandle = AddComponent(new Transform(), Component::ComponentType::TRANSFORM, obj.GetComponentList(), "Transform", obj.GetHandleID());
 				// Handle is added to game object handle list
 				obj.AddHandle(newComponentHandle);
 				//obj.AddComponent(new Transform());
