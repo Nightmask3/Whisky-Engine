@@ -34,7 +34,7 @@ class Mesh : public Component
 {
 	public:
 		static Mesh* Deserialize(const char*);
-
+		static const ComponentType _mType = Component::MESH;
 	public:
 		Mesh(MeshType);
 

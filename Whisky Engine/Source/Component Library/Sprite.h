@@ -29,7 +29,7 @@ public:
 
 	GLuint* const Texture() const { return sprites_[activeSprite_].second; }
 	void ActivateSprite(unsigned);
-
+	static const ComponentType _mType = Component::SPRITE;
 private:
 	int activeSprite_;
 	std::vector<std::pair<std::string, GLuint*>> sprites_;

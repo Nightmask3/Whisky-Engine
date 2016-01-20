@@ -17,8 +17,7 @@
 
 #include <string>
 #include "..\Manager Library\utils.h"
-// List of involved components
-//#include "..\Component Library\Components.h"
+
 class GameObject;
 class Message;
 
@@ -43,11 +42,10 @@ public:
 	ComponentType GetType() { return mType; }
 	
 	ComponentType mType;
-	static Component* CreateComponent(std::string name, const char* params);
-
 	template <typename ComponentName>
 	static ComponentName* CopyComponent(ComponentName*);
-
+	static Component* CreateComponent(std::string name);
+	static Component* Component::DeSerializeComponent(std::string name, const char* params);
 protected:
 	GameObject * mOwner_;
 	// Made protected because we don't want objects of this class to be instantiated directly, but derived classes can access it

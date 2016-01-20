@@ -40,16 +40,16 @@ void PlayerController::Move()
 	float frameTime = FRC->FrameDelta();
 
 	if (INP->IsKeyPressed(KeyCode::Up))
-		mOwner_->GetComponent<Transform>()->Translate(glm::vec3(0, 1, 0) * _moveSpeed*frameTime);
+		(mOwner_->GetComponent<Transform>())->Translate(glm::vec3(0, 1, 0) * _moveSpeed*frameTime);
 		
 	if (INP->IsKeyPressed(KeyCode::Down))
-		mOwner_->GetComponent<Transform>()->Translate(glm::vec3(0, -1, 0)* _moveSpeed*frameTime);
+		(mOwner_->GetComponent<Transform>())->Translate(glm::vec3(0, -1, 0)* _moveSpeed*frameTime);
 		
 	if (INP->IsKeyPressed(KeyCode::Left))
-		mOwner_->GetComponent<Transform>()->Translate(glm::vec3(-1, 0, 0)* _moveSpeed*frameTime);
+		(mOwner_->GetComponent<Transform>())->Translate(glm::vec3(-1, 0, 0)* _moveSpeed*frameTime);
 											
 	if (INP->IsKeyPressed(KeyCode::Right))
-		mOwner_->GetComponent<Transform>()->Translate(glm::vec3(1, 0, 0)* _moveSpeed*frameTime);	
+		(mOwner_->GetComponent<Transform>())->Translate(glm::vec3(1, 0, 0)* _moveSpeed*frameTime);	
 }
 
 // player collision behavior (physics system will send the collision message)
