@@ -70,10 +70,16 @@ int  GameObjectFactory::_mGameObjectCounter = 0;
 
 	bool GameObjectFactory::Load()
 	{
-		/*if (!InitializeArchetypes() ||
-			!InitializeLevel()
-			)
-			return false;*/
+		////////////////////////////////////
+		// Temporary scene initialization
+		// create a cube gameobj
+		// GameObject& cube = Instantiate(); // uncomment after fixing assertion fail
+		
+		//if (!InitializeArchetypes() ||
+		//	!InitializeLevel()
+		//	)
+		//	return false;
+
 		return true;
 	}
 
@@ -205,7 +211,7 @@ int  GameObjectFactory::_mGameObjectCounter = 0;
 	// Initializes a list for the game object that performed that calling
 	bool GameObjectFactory::InitializeListForGameObject(std::vector<HandleEntry_> & mEntries, int counter) const
 	{
-		if (_pHandleMan->InitializeListForGameObject(mEntries, counter))
+		if (_pHandleMan->InitializeListForGameObject(mEntries, counter))	
 			return true;
 		else
 			return false;
@@ -261,14 +267,13 @@ int  GameObjectFactory::_mGameObjectCounter = 0;
 
 	GameObject& GameObjectFactory::Instantiate()
 	{
-		// TODO: Fix warning: not all paths return a value
 		for (auto& obj : gameObjList_)
 		{
 			if (!obj.IsActive())
 			{
 				obj.Activate();
 				obj.SetHandleID(_mGameObjectCounter);
-				InitializeListForGameObject(obj.GetComponentList(), _mGameObjectCounter++);
+				InitializeListForGameObject(obj.GetComponentList(), _mGameObjectCounter++);	// BUG: ASSERTION FAIL
 				// Creates a transform component with the default values, registers it on the gameobject component list and returns the handle to it
 				Handle newComponentHandle = AddComponent(new Transform(), Component::ComponentType::TRANSFORM, obj.GetComponentList(), "transform");
 				// Handle is added to game object handle list

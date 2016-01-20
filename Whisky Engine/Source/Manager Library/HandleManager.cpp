@@ -57,7 +57,7 @@ bool HandleManager::InitializeListForGameObject(std::vector<HandleEntry_> & m_en
 	
 	for (int i = 0; i < MaxComponents - 1; ++i)
 	{
-		m_entries[i] = HandleEntry_(i + 1);
+		m_entries[i] = HandleEntry_(i + 1);		// BUG: Vector Subscript out of range
 	}
 	// Creates the last element and sets its status to end of List as true
 	m_entries[MaxComponents - 1] = HandleEntry_();

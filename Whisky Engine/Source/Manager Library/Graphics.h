@@ -54,9 +54,11 @@ public:
 	void RenderPauseMenu();
 
 private:
+	// built in geometry
 	bool CreateQuad();
 	bool CreateQuadWireframe();
 	bool CreateBoxColliderMesh();
+	bool CreateCubeMesh();
 
 	bool LoadTextures();
 

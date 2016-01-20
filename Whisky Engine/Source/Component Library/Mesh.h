@@ -22,6 +22,7 @@
 enum MeshType
 {
 	QUAD = 0,
+	CUBE,
 
 	QUAD_WIREFRAME,
 	BOX_COLLIDER_MESH,
