@@ -19,6 +19,7 @@
 #include "..\..\Engine.h"
 #include "..\..\Dependencies\glm\glm\gtc\matrix_transform.hpp"
 #include "..\..\Dependencies\glm\glm\gtc\type_ptr.hpp"
+
 using std::cout;
 using std::endl;
 using std::string;
@@ -42,7 +43,7 @@ bool Graphics::Init()
 	// Amazing OpenGL tutorial: https://open.gl/context
 
 	std::ostringstream os;
-	os << "Engine v" << Engine::Version() << " | To The Light v0.1";
+	os << "WhiskyEngine v" << Engine::Version() << " | To The Light v0.1";
 	string label = os.str();
 
 	// create the window
@@ -314,15 +315,119 @@ bool Graphics::CreateBoxColliderMesh()
 	return true;
 }
 
+bool Graphics::CreateCubeMesh()
+{
+	//	Vertex Array Object
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	_meshData[MeshType::CUBE] = vao;
+	glBindVertexArray(vao);
+
+	// Define a 3D cube (6 faces made of 2 triangles composed by 3 vertices)
+	GLfloat cube_vertices[] = {
+		// front
+		-1.0f, -1.0f, 1.0f,
+		 1.0f, -1.0f, 1.0f,
+		 1.0f,  1.0f, 1.0f,
+		-1.0f,  1.0f, 1.0f,
+		// back
+		-1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+	};
+
+	// maybe all white and make color vector uniform?
+	GLfloat cube_colors[] = {
+		// front colors
+		1.0, 0.0, 0.0,
+		0.0, 1.0, 0.0,
+		0.0, 0.0, 1.0,
+		1.0, 1.0, 1.0,
+		// back colors
+		1.0, 0.0, 0.0,
+		0.0, 1.0, 0.0,
+		0.0, 0.0, 1.0,
+		1.0, 1.0, 1.0,
+	};
+
+	GLushort cube_elements[] = {
+		// front
+		0, 1, 2,
+		2, 3, 0,
+		// top
+		1, 5, 6,
+		6, 2, 1,
+		// back
+		7, 6, 5,
+		5, 4, 7,
+		// bottom
+		4, 0, 3,
+		3, 7, 4,
+		// left
+		4, 5, 1,
+		1, 0, 4,
+		// right
+		3, 2, 6,
+		6, 7, 3,
+	};
+
+
+	//	Vertex Buffer Object
+	GLuint vbo;
+	glGenBuffers(1, &vbo); // Generate 1 buffer
+
+	// activate & send data to the buffer
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);						// static: upload once draw many times
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_colors), cube_colors, GL_STATIC_DRAW);
+
+	//	Element Buffer Object
+	GLuint ebo;
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_elements), cube_elements, GL_STATIC_DRAW);
+
+	//	Shader Parameters
+	// attributes
+	GLint posAttrib = glGetAttribLocation(_shaderProgram.program, "position");	// handle to vert shader argument
+	glEnableVertexAttribArray(posAttrib);
+	glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE,
+		3 * sizeof(float), 0); // how to interpret input array
+	// position, vec3, type, normalize mode, stride, offset
+
+	//GLint colAttrib = glGetAttribLocation(_shaderProgram.program, "color");
+	//glEnableVertexAttribArray(colAttrib);
+	//glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE,
+	//	7 * sizeof(float), (void*)(2 * sizeof(float)));
+
+	//GLint texAttrib = glGetAttribLocation(_shaderProgram.program, "texcoords");
+	//glEnableVertexAttribArray(texAttrib);
+	//glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE,
+	//	7 * sizeof(float), (void*)(5 * sizeof(float)));
+
+	// check for errors
+	int err;
+	if ((err = glGetError()) != 0)
+	{
+		cout << "Error(" << err << ") | Graphics : CreateQuad" << endl;
+		return false;
+	}
+
+	return true;
+}
+
 bool Graphics::Load()
 {
+	auto vert = "vert.glsl";
+	auto frag = "frag.glsl";
+
 	cout << "Graphics System Loading..." << endl;
 	// --------------------------------------------------------
 	//	Vertex & Fragment Shaders
 	// --------------------------------------------------------
 	_shaderProgram.CreateShaderProgram();
-	_shaderProgram.CreateShader("vert.glsl", GL_VERTEX_SHADER);
-	_shaderProgram.CreateShader("frag.glsl", GL_FRAGMENT_SHADER);
+	_shaderProgram.CreateShader(vert, GL_VERTEX_SHADER);
+	_shaderProgram.CreateShader(frag, GL_FRAGMENT_SHADER);
 
 	glBindFragDataLocation(_shaderProgram.program, 0, "outColor");	// not necessary for only 1 output
 
