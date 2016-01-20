@@ -32,6 +32,12 @@ class Graphics
 	typedef std::unordered_map<std::string, GLuint*>	StringMap;
 	typedef std::unordered_map<MeshType, GLuint >		MeshTypeMap;
 
+	struct Vertex 
+	{
+		glm::vec3 position;
+		glm::vec3 color;
+	};
+
 public:
 	static Graphics* Inst();
 

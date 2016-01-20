@@ -69,7 +69,7 @@ bool Graphics::Init()
 	_viewAngle = 45.0f;
 	// View matrix settings
 	glm::vec3 eye(0.0f, 10.0f, -10.0f);
-	glm::vec3 target(0.0f, 0.0f, 1.0f);
+	glm::vec3 target(0.0f, 0.0f, 0.0f);
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
 
 	// Creation of view matrix (default view, can be overriden)
@@ -510,17 +510,17 @@ void Graphics::DrawObject(const GameObject& obj, const glm::mat4 & vView, const 
 	glBindVertexArray(_meshData[obj.GetComponent<Mesh>()->MeshHandle()]);
 	// assert dereference stuff maybe?
 
-	glm::mat4 vModel = (obj.GetComponent<Transform>())->ModelTransformationMatrix();
+	glm::mat4 vModel = obj.GetComponent<Transform>()->ModelTransformationMatrix();
 
 	// send shader parameters
 	GLint uniTrans = glGetUniformLocation(_shaderProgram.program, "model");
-	glUniformMatrix4fv(uniTrans, 1, GL_TRUE, glm::value_ptr(vModel));
+	glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(vModel));
 
 	GLint uniView = glGetUniformLocation(_shaderProgram.program, "view");
-	glUniformMatrix4fv(uniView, 1, GL_TRUE, glm::value_ptr(vView));
+	glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(vView));
 
 	GLint uniProj = glGetUniformLocation(_shaderProgram.program, "proj");
-	glUniformMatrix4fv(uniProj, 1, GL_TRUE, glm::value_ptr(vProj));
+	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(vProj));
 
 	/// LETS SKIP SPRITES FOR NOW
 	//Sprite* sprite = obj.GetComponent<Sprite>();
@@ -547,8 +547,8 @@ void Graphics::DrawObject(const GameObject& obj, const glm::mat4 & vView, const 
 
 void Graphics::Render()
 {
-	// Clear the screen to black
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	// Clear the screen to gray
+	glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	// Creates the perspective matrix
 	glm::mat4 vProj = glm::perspective(_viewAngle, (float)_width / _heigth, _near, _far);

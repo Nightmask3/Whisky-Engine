@@ -121,7 +121,8 @@ void Transform::Update()
 //}
 glm::mat4 Transform::ModelTransformationMatrix() const
 {
-	return glm::mat4(1);
+	glm::mat4 m = glm::mat4(1);
+	return m;
 }
 
 //Transform* Transform::Deserialize(const char* params)

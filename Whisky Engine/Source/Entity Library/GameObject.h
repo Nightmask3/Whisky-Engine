@@ -79,8 +79,6 @@ private:
 
 	std::vector<HandleEntry_> HandleEntries_;
 	std::vector<Handle> Handles_;
-	std::vector<Component *> componentList_;
-
 };
 
 ////////////////////////////////////////////////////////////////

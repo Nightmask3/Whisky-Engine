@@ -69,12 +69,7 @@ int  GameObjectFactory::_mGameObjectCounter = 0;
 	}
 
 	bool GameObjectFactory::Load()
-	{
-		////////////////////////////////////
-		// Temporary scene initialization
-		// create a cube gameobj
-		// GameObject& cube = Instantiate(); // uncomment after fixing assertion fail
-		
+	{		
 		//if (!InitializeArchetypes() ||
 		//	!InitializeLevel()
 		//	)
@@ -208,6 +203,7 @@ int  GameObjectFactory::_mGameObjectCounter = 0;
 	//	
 	//	return true;
 	//}
+
 	// Initializes a list for the game object that performed that calling
 	bool GameObjectFactory::InitializeListForGameObject(std::vector<HandleEntry_> & mEntries, int counter) const
 	{
@@ -217,6 +213,7 @@ int  GameObjectFactory::_mGameObjectCounter = 0;
 			return false;
 		
 	}
+
 	// Initializes a list for the system that performed that calling
 	bool GameObjectFactory::InitializeListForSystem(std::vector<HandleEntry_> & mEntries, int counter) const
 	{
@@ -230,12 +227,22 @@ int  GameObjectFactory::_mGameObjectCounter = 0;
 	{
 		return _pHandleMan->Add(p, type, m_entries, componentType, index);
 	}
+
+	Handle GameObjectFactory::AddComponent(void* p, std::string componentType, GameObject& obj) const
+	{
+		unsigned type = static_cast<Component*>(p)->GetType();
+		auto m_entries = obj.GetComponentList();
+		int index = obj.GetHandleID();
+		return _pHandleMan->Add(p, type, m_entries, componentType, index);
+	}
+
 	// Makes a call to handle manager to convert the handle to a pointer
 	Component * GameObjectFactory::ConvertHandletoPointer(Handle handle, std::vector<HandleEntry_> mEntries)
 	{
 		// Casts the void * returned from Handle Manager to a Component pointer
 		return static_cast<Component *>(_pHandleMan->Get(handle, mEntries));
 	}
+
 	std::vector<GameObject>& GameObjectFactory::GameObjList()
 	{
 		return gameObjList_;
@@ -321,9 +328,11 @@ int  GameObjectFactory::_mGameObjectCounter = 0;
 	{
 		if (!obj.IsActive()) return;
 
-		// remove all components
-		for (size_t i = 1; i < Component::ComponentType::COMPONENT_COUNT; i++)
-			obj.RemoveComponent(i);
+		/// DEPRECATED
+		//// remove all components
+		//for (size_t i = 1; i < Component::ComponentType::COMPONENT_COUNT; i++)
+		//	obj.RemoveComponent(i);
+		
 		obj.Deactivate();
 	}
 
