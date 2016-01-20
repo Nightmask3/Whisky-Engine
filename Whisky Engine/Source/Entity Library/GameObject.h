@@ -24,7 +24,6 @@
 #include "..\Manager Library\GameObjectFactory.h"
 class Message;
 
-#define DEBUG
 class GameObject : public Entity
 {
 public:
@@ -92,7 +91,7 @@ template<typename ComponentName>
 ComponentName* GameObject::GetComponent() const
 {
 	// TODO : Request to Handle Manager for conversion of handle to pointer
-	for(int i = 0; i < Handles_.size(); ++i)
+	for(unsigned i = 0; i < Handles_.size(); ++i)
 	{
 		if (Handles_[i].m_type == ComponentName::_mType)
 			return static_cast<ComponentName *>(mFactoryRef_.ConvertHandletoPointer(Handles_[i], HandleEntries_));

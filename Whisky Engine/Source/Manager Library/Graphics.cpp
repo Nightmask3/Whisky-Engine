@@ -19,6 +19,7 @@
 #include "..\..\Engine.h"
 #include "..\..\Dependencies\glm\glm\gtc\matrix_transform.hpp"
 #include "..\..\Dependencies\glm\glm\gtc\type_ptr.hpp"
+
 using std::cout;
 using std::endl;
 using std::string;
@@ -42,7 +43,7 @@ bool Graphics::Init()
 	// Amazing OpenGL tutorial: https://open.gl/context
 
 	std::ostringstream os;
-	os << "Engine v" << Engine::Version() << " | To The Light v0.1";
+	os << "WhiskyEngine v" << Engine::Version() << " | To The Light v0.1";
 	string label = os.str();
 
 	// create the window
@@ -316,13 +317,16 @@ bool Graphics::CreateBoxColliderMesh()
 
 bool Graphics::Load()
 {
+	auto vert = "vert.glsl";
+	auto frag = "frag.glsl";
+
 	cout << "Graphics System Loading..." << endl;
 	// --------------------------------------------------------
 	//	Vertex & Fragment Shaders
 	// --------------------------------------------------------
 	_shaderProgram.CreateShaderProgram();
-	_shaderProgram.CreateShader("vert.glsl", GL_VERTEX_SHADER);
-	_shaderProgram.CreateShader("frag.glsl", GL_FRAGMENT_SHADER);
+	_shaderProgram.CreateShader(vert, GL_VERTEX_SHADER);
+	_shaderProgram.CreateShader(frag, GL_FRAGMENT_SHADER);
 
 	glBindFragDataLocation(_shaderProgram.program, 0, "outColor");	// not necessary for only 1 output
 

@@ -100,7 +100,7 @@ using std::endl;
 			FRC->Begin();		// start frame
 
 			// read user input
-			//INP->Update();		// input manager
+			INP->Update();		// input manager
 
 			if (!_pause)
 			{
