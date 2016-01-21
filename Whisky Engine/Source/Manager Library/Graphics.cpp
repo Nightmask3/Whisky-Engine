@@ -539,8 +539,8 @@ void Graphics::DrawObject(const GameObject& obj, const glm::mat4 & vView, const 
 	glBindVertexArray(0);
 
 	//// debug draws // EDIT : DEACTIVATED FOR NOW WHILE REFACTORING, REIMPLEMENT 
-	//if (Engine::_debug)	DrawDebugMode(obj);
-	//if (Engine::_debug && obj.GetComponent<BoxCollider2D>() != NULL)
+	//if (Engine::_debugDraw)	DrawDebugMode(obj);
+	//if (Engine::_debugDraw && obj.GetComponent<BoxCollider2D>() != NULL)
 	//	DrawCollider(obj);
 
 }

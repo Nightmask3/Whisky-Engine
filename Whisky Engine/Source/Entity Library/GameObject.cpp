@@ -100,10 +100,7 @@ GameObject::GameObject(GameObjectFactory & mFactory, const string& name, const s
 
 	bool GameObject::operator==(const GameObject& obj)
 	{
-		// TODO: Implement==
-
-		return false;
-		//return _id == obj._id;
+		return id_ == obj.id_;
 	}
 
 	GameObject::~GameObject()

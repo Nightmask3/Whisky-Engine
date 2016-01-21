@@ -22,7 +22,7 @@ using std::endl;
 
 
 	bool Engine::_quit = false;
-	bool Engine::_debug = false;
+	bool Engine::_debugDraw = false;
 	bool Engine::_collisionInfo = false;
 	bool Engine::_info = false;
 	bool Engine::_pause = false;
@@ -161,7 +161,7 @@ using std::endl;
 			<< "FrameDelta: " << FRC->FrameDelta() * 1000 << "ms | " << FRC->FrameTimeLimit() * 1000 << "ms"
 			<< "  FPS: " << (int)(1.0f / FRC->FrameDelta()) + 1
 			<< "  Frame: #" << FRC->FrameCount()
-			<< "  DebugDraw: " << _debug
+			<< "  DebugDraw: " << _debugDraw
 			<< "  CollisionLog: " << _collisionInfo
 			<< "  GameObjects: " << GOM->GetActiveObjCount() << "/" << GOM->GameObjList().size()
 			<< " \r";
