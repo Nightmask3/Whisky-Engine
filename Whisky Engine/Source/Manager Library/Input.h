@@ -17,6 +17,7 @@
 #include <unordered_map>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <glm\vec2.hpp>
 
 	typedef sf::Keyboard::Key KeyCode;
 
@@ -38,6 +39,12 @@ public:
 	bool IsKeyReleased(const KeyCode);	//
 
 	// mouse input
+	bool IsMouseButtonPressed(sf::Mouse::Button);
+	bool IsMouseButtonReleased(sf::Mouse::Button);
+	bool IsMouseButtonTriggered(sf::Mouse::Button);
+	glm::vec2 GetMousePosition();
+	glm::vec2 GetMouseDelta();
+	
 
 private:
 	// singleton
@@ -53,6 +60,10 @@ private:
 	std::unordered_map<KeyCode, bool> _currState;
 
 	// mouse states
+	glm::vec2 _position;
+	glm::vec2 _deltaPosition;
+	std::unordered_map<sf::Mouse::Button, bool> _prevButtonState;
+	std::unordered_map<sf::Mouse::Button, bool> _currButtonState;
 
 };
 #endif

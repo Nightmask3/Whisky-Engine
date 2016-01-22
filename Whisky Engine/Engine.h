@@ -48,8 +48,7 @@ public:
 	void Log() const;
 
 	inline static void Quit()					{ _quit = true; }
-	inline static void ToggleDebug()			{ _debug = !_debug; }
-	inline static bool IsDebug()				{ return _debug; }
+	inline static void ToggleDebugDraw()		{ _debugDraw = !_debugDraw; }
 	inline static void ToggleCollisionInfo()	{ _collisionInfo = !_collisionInfo; }
 	static void ToggleInfo();
 
@@ -64,7 +63,7 @@ public:
 
 	// debug & info flags
 	static bool _info;
-	static bool _debug;
+	static bool _debugDraw;
 	static bool _collisionInfo;
 
 	// window info
