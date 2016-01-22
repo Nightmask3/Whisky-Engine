@@ -126,12 +126,14 @@ GameObject::GameObject(GameObjectFactory & mFactory, const string& name, const s
 
 	void GameObject::Update()
 	{
-		// TODO: Use new handle system to use components
-
-		/// DEPRECATED
-		//for (auto& component : componentList_){
-		//	if (component) component->Update();
-		//}
+		// For every handle in the list of handles, get the corresponding component pointer and call its update function
+		for (auto handle : Handles_)
+		{
+			Component * pComponent;
+			pComponent = mFactoryRef_.ConvertHandletoPointer(handle, HandleEntries_);
+			pComponent->Update();
+		}
+		
 	}
 
 	//void GameObject::Relay(Message* m)

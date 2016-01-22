@@ -41,7 +41,7 @@ void PlayerController::Move()
 
 	std::cout << "MOVE" << std::endl;
 	if (INP->IsKeyPressed(KeyCode::Up))
-		(mOwner_->GetComponent<Transform>())->Translate(glm::vec3(0, 1, 0) * _moveSpeed*frameTime);
+		(mOwner_->GetComponent<Transform>())->Translate(glm::vec3(0, 1, 0) * 50.f);
 		
 	if (INP->IsKeyPressed(KeyCode::Down))
 		(mOwner_->GetComponent<Transform>())->Translate(glm::vec3(0, -1, 0)* _moveSpeed*frameTime);

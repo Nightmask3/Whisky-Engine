@@ -94,14 +94,12 @@ using std::endl;
 		obj.GetComponent<Transform>()->Scale(0.5f, 0.5f, 0.5f);
 
 		// Add component to component list of object, then add handle to handle list
-		Mesh * MeshComponent = new Mesh(MeshType::QUAD);	// new component to be added
-		obj.AddHandle(GOM->AddComponent(MeshComponent, MeshComponent->GetType(), obj.GetComponentList(), "Mesh", obj.GetHandleID()));
+		Mesh * mesh = new Mesh(MeshType::QUAD);	// new component to be added
+		obj.AddHandle(GOM->AddComponent(mesh, "Mesh", obj));
 		
 		// NOTICE: current issue is GameObject::Update() function is not using the new handle system to update the components.
 		PlayerController* ctrl = new PlayerController();
-		obj.AddHandle(GOM->AddComponent(ctrl, "PlayerController", obj));	//alternative
-
- 
+		obj.AddHandle(GOM->AddComponent(ctrl, "PlayerController", obj));
 
 		return true;
 	}
@@ -113,7 +111,7 @@ using std::endl;
 		{
 			FRC->Begin();		// start frame
 
-			// read user input
+			// read user inputS
 			INP->Update();		// input manager
 
 			if (!_pause)

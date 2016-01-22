@@ -231,7 +231,9 @@ int  GameObjectFactory::_mGameObjectCounter = 0;
 	Handle GameObjectFactory::AddComponent(void* p, std::string componentType, GameObject& obj) const
 	{
 		unsigned type = static_cast<Component*>(p)->GetType();
-		auto m_entries = obj.GetComponentList();
+		Component * component = static_cast<Component*>(p);
+		component->SetOwner(&obj);
+		auto & m_entries = obj.GetComponentList();
 		int index = obj.GetHandleID();
 		return _pHandleMan->Add(p, type, m_entries, componentType, index);
 	}

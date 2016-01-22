@@ -95,7 +95,6 @@ private:
 		}
 		else if (typeid(T) == typeid(PlayerController))
 		{
-			
 			return true;
 		}
 		else if (typeid(T) == typeid(PhysicsComponent))

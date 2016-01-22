@@ -88,10 +88,12 @@ private:
 template<typename ComponentName>
 ComponentName* GameObject::GetComponent() const
 {
-	// TODO : Request to Handle Manager for conversion of handle to pointer
+	// Request to Handle Manager for conversion of handle to pointer
 	for(unsigned i = 0; i < Handles_.size(); ++i)
 	{
-		if (Handles_[i].m_type == ComponentName::_mType)
+		ComponentName comp;
+
+		if (Handles_[i].m_type == comp.GetType())
 			return static_cast<ComponentName *>(mFactoryRef_.ConvertHandletoPointer(Handles_[i], HandleEntries_));
 	}
 	std::cout << "Component not found!\n";
