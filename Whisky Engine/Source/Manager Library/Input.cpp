@@ -44,6 +44,9 @@
 			_prevState.emplace(Key(i), false);
 			_currState.emplace(Key(i), false);
 		}
+		
+		_position = glm::vec2(0.0f, 0.0f);
+		_deltaPosition = glm::vec2(0.0f, 0.0f);
 
 		// assign window handle
 		_pWindow = Graphics::Inst()->_pWindow;
@@ -55,6 +58,22 @@
 
 	void Input::Update()
 	{
+		//---------------------------------------------------
+		// MOUSE STATE
+		//---------------------------------------------------
+		// Caputer the mouse position and update the mouse pressed states
+		sf::Window* win = _pWindow;
+		sf::Vector2i temp = sf::Mouse::getPosition(*win);
+		_position.x = temp.x;
+		_position.y = temp.y;
+
+		for (int i = 0; i < sf::Mouse::ButtonCount; i++)
+		{
+			_prevButtonState[static_cast<sf::Mouse::Button>(i)] = _currButtonState[static_cast<sf::Mouse::Button>(i)];
+			_currButtonState[static_cast<sf::Mouse::Button>(i)] = sf::Mouse::isButtonPressed(static_cast<sf::Mouse::Button>(i));
+		}
+		
+		
 		//------------------------------------------------
 		// EVENT HANDLING
 		//------------------------------------------------
@@ -88,6 +107,12 @@
 			case sf::Event::LostFocus:
 				//std::cout << "Lost Focus." << std::endl;
 				break;
+
+			case sf::Event::MouseMoved:
+				_deltaPosition.x = event.mouseMove.x - _position.x;
+				_deltaPosition.y = event.mouseMove.y - _position.y;
+				break;
+					
 			}
 		}
 
@@ -103,6 +128,7 @@
 			_prevState[Key(i)] = _currState[Key(i)];
 			_currState[Key(i)] = sf::Keyboard::isKeyPressed(Key(i));
 		}
+
 
 #ifdef DEBUG
 		//------------------------------------------------
@@ -152,4 +178,32 @@
 	bool Input::IsKeyReleased(const sf::Keyboard::Key key)
 	{
 		return _prevState[key] && !_currState[key];
+	}
+
+
+	//---------------------------------------------------------------
+	// Mouse Functions
+	//
+	// Access the mouse positions, delta of position movement, 
+	// and pressed, triggered, or release states.
+	//---------------------------------------------------------------
+	bool Input::IsMouseButtonPressed(sf::Mouse::Button btn)
+	{
+		return _currButtonState[btn];
+	}
+	bool Input::IsMouseButtonTriggered(sf::Mouse::Button btn)
+	{
+		return !_prevButtonState[btn] && _currButtonState[btn];
+	}
+	bool Input::IsMouseButtonReleased(sf::Mouse::Button btn)
+	{
+		return _prevButtonState[btn] && !_currButtonState[btn];
+	}
+	glm::vec2 Input::GetMousePosition()
+	{
+		return _position;
+	}
+	glm::vec2 Input::GetMouseDelta()
+	{
+		return _deltaPosition;
 	}
