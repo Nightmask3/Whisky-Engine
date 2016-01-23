@@ -44,5 +44,14 @@ Mesh::Mesh(MeshType t)
 	: 
 	mMeshHandle_(t),
 	bIsActive_(true),
-	Component(ComponentType::MESH)
+	Component(ComponentType::MESH, "Mesh")
+{}
+
+// DEFAULT CASE: definition required to instantiate 
+// a default component in GameObject::GetComponent()
+Mesh::Mesh()	
+	:
+	mMeshHandle_(MeshType::MESH_TYPE_COUNT),
+	bIsActive_(true),
+	Component(ComponentType::MESH, "Mesh")
 {}

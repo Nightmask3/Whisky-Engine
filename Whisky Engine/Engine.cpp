@@ -95,11 +95,10 @@ using std::endl;
 
 		// Add component to component list of object, then add handle to handle list
 		Mesh * mesh = new Mesh(MeshType::QUAD);	// new component to be added
-		obj.AddHandle(GOM->AddComponent(mesh, "Mesh", obj));
+		obj.AddComponent(mesh);
 		
-		// NOTICE: current issue is GameObject::Update() function is not using the new handle system to update the components.
 		PlayerController* ctrl = new PlayerController();
-		obj.AddHandle(GOM->AddComponent(ctrl, "PlayerController", obj));
+		obj.AddComponent(ctrl);
 
 		return true;
 	}

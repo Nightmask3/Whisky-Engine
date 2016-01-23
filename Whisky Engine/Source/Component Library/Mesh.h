@@ -38,12 +38,12 @@ class Mesh : public Component
 		static const ComponentType _mType = Component::MESH;
 	public:
 		Mesh(MeshType);
+		Mesh();
 
 		MeshType MeshHandle() const { return mMeshHandle_; }
 		bool IsActive() const		{ return bIsActive_; }
 		void SetActive(bool val)	{ bIsActive_ = val; }
-		// Experimental : Still trying to figure out how it affects the handles being created
-		Mesh() : Component(Component::MESH) { /*std::cout << "Calling default Mesh constructor!\n" << __FUNCTION__ << __LINE__; */ }
+
 	private:
 		MeshType mMeshHandle_;
 		bool bIsActive_; 

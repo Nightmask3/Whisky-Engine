@@ -32,7 +32,7 @@ PlayerController::PlayerController()
 	:
 	_moveSpeed(15.0f),
 	_hp(10),
-	Component(ComponentType::PLAYER_CONTROLLER)
+	Component(ComponentType::PLAYER_CONTROLLER, "PlayerController")
 {}
 
 void PlayerController::Move()

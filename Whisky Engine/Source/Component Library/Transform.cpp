@@ -11,7 +11,7 @@ Transform::Transform(const glm::vec3 position, const glm::vec3 rotation, const g
 	mPosition_(position), // Used in GameObjectFactory::Instantiate
 	mRotation_(rotation), 
 	mScale_(scale) , 
-	Component(ComponentType::TRANSFORM) 
+	Component(ComponentType::TRANSFORM, "Transform") 
 {}
 
 
