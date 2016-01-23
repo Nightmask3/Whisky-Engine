@@ -24,6 +24,13 @@ class Message;
 class Component
 {
 public:
+	/*
+		HOW TO ADD NEW COMPONENT
+		 - Update enum ComponentType (just below)
+		 - Update Components.h - #include "NewComponentName.h"
+		 - Update DeSerializeComponent() function in Component.cpp
+		 - Define a Deserialize() function in the new component (see transform for e.g.)
+	*/
 	enum ComponentType
 	{			
 		TRANSFORM,

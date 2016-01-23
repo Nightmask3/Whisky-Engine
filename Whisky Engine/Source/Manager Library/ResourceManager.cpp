@@ -354,7 +354,7 @@ using std::vector;
 			else if (line == "{")
 			{
 				//cout << "open brace {" << endl;
-				//obj.name = prev_line + "#";	// are you sure?
+				obj.name = prev_line + "#";	// are you sure?
 				isArchetype = IsArchetypeName(prev_line);
 
 			}

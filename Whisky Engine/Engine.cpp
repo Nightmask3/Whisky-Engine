@@ -87,18 +87,18 @@ using std::endl;
 
 		print("Loaded \t");
 
-		/////////////////////////////////////////////////////////////////////////////
-		// Game Object Creation Example
+		///////////////////////////////////////////////////////////////////////////////
+		//// Game Object Creation Example
 
-		GameObject & obj = GOM->Instantiate();				// instantiated with a default transform component
-		obj.GetComponent<Transform>()->Scale(0.5f, 0.5f, 0.5f);
+		//GameObject & obj = GOM->Instantiate();				// instantiated with a default transform component
+		//obj.GetComponent<Transform>()->Scale(0.5f, 0.5f, 0.5f);
 
-		// Add component to component list of object, then add handle to handle list
-		Mesh * mesh = new Mesh(MeshType::QUAD);	// new component to be added
-		obj.AddComponent(mesh);
-		
-		PlayerController* ctrl = new PlayerController();
-		obj.AddComponent(ctrl);
+		//// Add component to component list of object, then add handle to handle list
+		//Mesh * mesh = new Mesh(MeshType::QUAD);	// new component to be added
+		//obj.AddComponent(mesh);
+		//
+		//PlayerController* ctrl = new PlayerController();
+		//obj.AddComponent(ctrl);
 
 		return true;
 	}

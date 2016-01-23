@@ -75,6 +75,8 @@ bool GameObjectFactory::Load()
 	//	)
 	//	return false;
 
+	if (!InitializeLevel()) return false;
+
 	return true;
 }
 
@@ -160,45 +162,34 @@ bool GameObjectFactory::InitializeLevel()
 	for (auto& obj_s : objList)
 	{
 		// instantiate every object in the scene
+		GameObject& obj = Instantiate();
+		obj.Name(obj_s.name);
+		auto components_s = obj_s.componentList;
 
-		//GameObject& obj = Instantiate();
-		//obj.Name(obj_s.name);
-		//auto components_s = obj_s.componentList;
+		// for every (serialized) component in the gameobject's component list
+		for (auto& component_s : components_s)
+		{
+			// grab the component name and parameters
+			string componentName	= component_s.first;
+			const char* params		= component_s.second.c_str();
 
-		//// for every component in the gameobject's component list
-		//for (auto& component_s : components_s)
-		//{
-		//	// grab the component name and parameters
-		//	string componentName	= component_s.first;
-		//	const char* params		= component_s.second.c_str();
+			// lowercase the component name
+			std::transform(componentName.begin(), componentName.end(), componentName.begin(), ::tolower);
 
-		//	// create the component and add it to the gameobject instance
-		//	Component* component = Component::DeSerializeComponent(componentName, params);
-		//	if (component)
-		//	{
-		//		// TODO: overhaul here, replace with handle manager.
-		//		if (AddComponent(component, component->GetType(), obj.GetComponentList(), componentName))
-		//		{
-		//			std::cout << "Component added!\n";
-		//		}
-		//		else
-		//		{
-		//			int x;
-		//			std::cout << "Error!";
-		//			std::cin >> x;
-		//		}
-		//	}
-		//	else
-		//	{
-		//		cout << "Error creating component: " << componentName << endl;
-		//		return false;
-		//	}
-		//}
+			// create the component and add it to the gameobject instance
+			Component* component = Component::DeSerializeComponent(componentName, params);
+			if (component)
+			{
+				obj.AddComponent(component);
+			}
+			else
+			{
+				cout << "GameObjectFactory::InitializeLevel(): Error creating component: " << componentName << endl;
+				return false;
+			}
+		}
 
-		//if (obj.Name() == "PauseMenu")
-		//{
-		//	pauseMenu_ = obj.Pntr();
-		//}
+		//if (obj.Name() == "PauseMenu")	pauseMenu_ = obj.Pntr();
 	}
 		
 	return true;
@@ -253,7 +244,6 @@ std::vector<GameObject>& GameObjectFactory::GameObjList()
 
 GameObject& GameObjectFactory::InstantiateExplicit(const glm::vec3 position, const glm::vec3 rotation, const glm::vec3 scale)
 {
-	// TODO: Fix warning: not all paths return a value
 	for (auto& obj : gameObjList_)
 	{
 		if (!obj.IsActive())

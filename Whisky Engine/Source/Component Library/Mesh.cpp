@@ -27,10 +27,8 @@ Mesh* Mesh::Deserialize(const char* params)
 	string param = params;
 	std::transform(param.begin(), param.end(), param.begin(), ::tolower);
 
-	if (param == "quad")
-		comp = new Mesh(QUAD);
-	//else if (param == "")
-	//	comp = new Mesh(???);
+	if (param == "quad")		comp = new Mesh(QUAD);
+	//else if (param == "")		comp = new Mesh(???);
 
 	else
 	{

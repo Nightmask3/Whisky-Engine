@@ -56,8 +56,8 @@ public:	// functions
 	//void Clone(GameObject&) const;
 
 	// getters & setters
-	inline bool IsActive() const			{ return isActive_; }
 	inline const unsigned long ID() const	{ return id_; }
+	inline bool IsActive() const			{ return isActive_; }
 	inline std::string Name() const			{ return name_; }
 	inline void Name(std::string n)			{ name_ = n; }
 	inline GameObject* Pntr()				{ return this; }
@@ -96,7 +96,7 @@ ComponentName* GameObject::GetComponent() const
 		if (Handles_[i].m_type == comp.GetType())
 			return static_cast<ComponentName *>(mFactoryRef_.ConvertHandletoPointer(Handles_[i], HandleEntries_));
 	}
-	std::cout << "Component not found!\n";
+
 	return nullptr;
 }
 
