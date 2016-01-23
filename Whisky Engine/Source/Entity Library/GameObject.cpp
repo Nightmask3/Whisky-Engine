@@ -126,8 +126,7 @@ GameObject::GameObject(GameObjectFactory & mFactory, const string& name, const s
 		// For every handle in the list of handles, get the corresponding component pointer and call its update function
 		for (auto handle : Handles_)
 		{
-			Component * pComponent;
-			pComponent = mFactoryRef_.ConvertHandletoPointer(handle, HandleEntries_);
+			Component * pComponent = mFactoryRef_.ConvertHandletoPointer(handle, HandleEntries_);
 			pComponent->Update();
 		}
 		
