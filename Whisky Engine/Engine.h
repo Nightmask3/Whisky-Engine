@@ -46,16 +46,18 @@ public:
 	void Exit();
 
 	void Log() const;
-
+	
+	// toggles
 	inline static void Quit()					{ _quit = true; }
 	inline static void ToggleDebugDraw()		{ _debugDraw = !_debugDraw; }
 	inline static void ToggleCollisionInfo()	{ _collisionInfo = !_collisionInfo; }
 	static void ToggleInfo();
-
-	static const float Version() { return version_; }
 	static void TogglePause();
-	void RenderPauseMenu();
 
+	// getters
+	static const float Version()	{ return version_;  }
+	static const std::string Name()	{ return name_;		}	
+	
 public:
 	// loop flags
 	static bool _pause;
@@ -73,5 +75,6 @@ private:
 	sf::Clock clock_;
 
 	static const float version_;
+	static const std::string name_;
 };
 #endif
