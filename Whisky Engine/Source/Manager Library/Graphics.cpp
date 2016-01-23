@@ -14,6 +14,7 @@
 
 // C++ headerfiles
 #include <sstream>
+
 // Whisky Engine headerfiles
 #include "Graphics.h"
 #include "..\..\Engine.h"
@@ -52,6 +53,7 @@ bool Graphics::Init()
 	settings.stencilBits = 8;
 	settings.antialiasingLevel = 2;
 	settings.majorVersion = 3;
+
 	// Width and height of window
 	_width = Engine::_resolution_w;
 	_heigth = Engine::_resolution_h;
@@ -67,8 +69,9 @@ bool Graphics::Init()
 	_near = 1.0f;
 	_far = 100.0f;
 	_viewAngle = 45.0f;
+
 	// View matrix settings
-	glm::vec3 eye(0.0f, 10.0f, -10.0f);
+	glm::vec3 eye(0.0f, 0.0f, 10.0f);
 	glm::vec3 target(0.0f, 0.0f, 0.0f);
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
 
@@ -379,7 +382,7 @@ bool Graphics::CreateCubeMesh()
 
 	// activate & send data to the buffer
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);						// static: upload once draw many times
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_colors), cube_colors, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
 
 	//	Element Buffer Object
 	GLuint ebo;
@@ -433,6 +436,7 @@ bool Graphics::Load()
 
 	_shaderProgram.Link();
 	_shaderProgram.Use();
+
 	// check for errors
 	int err;
 	if ((err = glGetError()) != 0)
@@ -455,6 +459,11 @@ bool Graphics::Load()
 	//	Textures
 	// --------------------------------------------------------
 	//if (!LoadTextures()) return false;
+
+	// Enable Z-buffer read and write
+	//glEnable(GL_DEPTH_TEST);
+	//glDepthMask(GL_TRUE);
+	//glClearDepth(1.f);
 
 	// print system info
 	cout << "Graphics System Loaded." << endl;
@@ -532,7 +541,7 @@ void Graphics::DrawObject(const GameObject& obj, const glm::mat4 & vView, const 
 	//}
 
 	// Draw call
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, 6*6, GL_UNSIGNED_INT, 0);
 
 	// cleanup
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -550,15 +559,14 @@ void Graphics::Render()
 	// Clear the screen to gray
 	glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	// Creates the perspective matrix
+	
+	// Create View & Projection matrices
 	glm::mat4 vProj = glm::perspective(_viewAngle, (float)_width / _heigth, _near, _far);
-	// Replace with the Camera view matrix values
 	glm::mat4 vView =  _viewMatrix;
 
-	// for every game object
+	// draw active objects with active mesh components
 	for (auto& obj : GOM->GameObjList())
 	{
-		// draw the active game objects that has active mesh components
 		if (obj.IsActive() && obj.GetComponent<Mesh>() && obj.GetComponent<Mesh>()->IsActive())
 			DrawObject(obj, _viewMatrix, vProj);
 	}
@@ -571,6 +579,7 @@ void Graphics::Unload()
 {
 	for (auto it = _textures.begin(); it != _textures.end(); ++it)
 		delete it->second;
+
 	cout << "Graphics System unloaded." << endl;
 }
 

@@ -121,7 +121,9 @@ void Transform::Update()
 //}
 glm::mat4 Transform::ModelTransformationMatrix() const
 {
-	glm::mat4 m = glm::mat4(1);
+	glm::mat4 scale = glm::scale(glm::mat4(1.0f), mScale_);
+	//glm::mat4 rotate = glm::rotate(scale, 0.0f, );	// TODO: FIGURE ROTATIONS OUT
+	glm::mat4 m = glm::translate(scale, mPosition_);
 	return m;
 }
 

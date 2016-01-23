@@ -118,7 +118,7 @@ using std::endl;
 			{
 				// update world
 				GOM->Update();		// game object manager
-				//PHY->Update();		// physics
+				//PHY->Update();	// physics
 
 				// render
 				GFX->Render();		// graphics(mode)
