@@ -29,6 +29,8 @@
 #include "..\Entity Library\GameObject.h"
 #include "..\Component Library\Mesh.h"
 #include "..\OpenGLRenderer Library\ShaderProgram.h"
+#include "..\OpenGLRenderer Library\MeshData.h"
+#include "..\OpenGLRenderer Library\MeshGenerator.h"
 
 class Graphics
 {

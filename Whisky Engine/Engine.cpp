@@ -50,7 +50,7 @@ void Engine::TogglePause()
 void print(std::string s)
 {
 	cout << "-----------------------------------------" << endl;
-	cout << "|\t Whisky Engine " << s << " \t|" << endl;
+	cout << "|\t Whisky Engine " << s << "\t|" << endl;
 	cout << "-----------------------------------------" << endl;
 }
 
@@ -76,7 +76,7 @@ bool Engine::Init()
 
 bool Engine::Load()
 {
-	print("Loading... \t");
+	print("Loading...");
 
 
 	if (!RSC->Load("Level.txt") ||

@@ -29,6 +29,11 @@ using std::string;
 
 // Debugging tool: http://www.gremedy.com/
 
+
+//const GLuint NUM_VERT_PER_TRI = 3;
+//const GLuint NUM_FLOAT_PER_VERT = 3;
+//const GLuint TRI_SIZE = NUM_VERT_PER_TRI * NUM_FLOAT_PER_VERT * sizeof(float);
+
 struct Vertex
 {
 	glm::vec3 position;
@@ -78,14 +83,6 @@ bool Graphics::Init()
 	far_ = 100.0f;
 	viewAngle_ = 45.0f;
 
-	// View matrix settings
-	glm::vec3 eye	(0.0f, 0.0f, 10.0f);
-	glm::vec3 target(0.0f, 0.0f,  0.0f);
-	glm::vec3 up	(0.0f, 1.0f,  0.0f);
-
-	// Creation of view matrix (default view, can be overriden)
-	_viewMatrix = glm::lookAt(eye, target, up);
-
 	// Initialize GLEW
 	glewExperimental = GL_TRUE;
 	glewInit();
@@ -105,26 +102,15 @@ bool Graphics::Load()
 	cout << "Graphics System Loading..." << endl;
 
 	// --------------------------------------------------------
-	//	Vertex & Fragment Shaders
+	//	Shaders
 	// --------------------------------------------------------
 	auto vert = "vert.glsl";
 	auto frag = "frag.glsl";
 	shaderProgram_.CreateShaderProgram();
-	shaderProgram_.CreateShader(vert, GL_VERTEX_SHADER);
-	shaderProgram_.CreateShader(frag, GL_FRAGMENT_SHADER);
-
-	glBindFragDataLocation(shaderProgram_.program, 0, "outColor");	// not necessary for only 1 output
-
-	//shaderProgram_.Link();
-	//shaderProgram_.Use();
-
-	// check for errors
-	int err;
-	if ((err = glGetError()) != 0)
-	{
-		cout << "Error(" << err << ") graphics loading!" << endl;
-		return false;
-	}
+	if (!shaderProgram_.CreateShader(vert, GL_VERTEX_SHADER))	return false;
+	if (!shaderProgram_.CreateShader(frag, GL_FRAGMENT_SHADER))	return false;
+	if (!shaderProgram_.Link())									return false;
+	shaderProgram_.Use();
 
 	// --------------------------------------------------------
 	//	Geometry 
@@ -161,6 +147,15 @@ void Graphics::Render()
 	
 	// Create View & Projection matrices
 	glm::mat4 vProj = glm::perspective(viewAngle_, (float)width_ / heigth_, near_, far_);
+	// View matrix settings
+	glm::vec3 eye(0.0f, 0.0f, 10.0f);
+	glm::vec3 target(0.0f, 0.0f, 0.0f);
+	glm::vec3 up(0.0f, 1.0f, 0.0f);
+
+	// Creation of view matrix (default view, can be overridden)
+	_viewMatrix = glm::lookAt(eye, target, up);
+	//_viewMatrix = glm::mat4(1);
+
 	glm::mat4 vView =  _viewMatrix;
 
 	// draw active objects with active mesh components
@@ -254,8 +249,8 @@ void Graphics::DrawObject(const GameObject& obj, const glm::mat4 & vView, const 
 	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(vProj));
 
 	// Draw call
-	//glDrawElements(GL_TRIANGLES, 6*6, GL_UNSIGNED_INT, 0);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+	//glDrawArrays(GL_TRIANGLES, 0, 3);
 
 	// cleanup
 	//glBindTexture(GL_TEXTURE_2D, 0);
@@ -325,11 +320,16 @@ void Graphics::RenderPauseMenu()
 bool Graphics::CreateQuad()
 {
 	// create data
-	GLfloat verts[] =
+	Vertex verts[] =
 	{
-		+0.0f, +1.0f,
-		-1.0f, -1.0f,
-		+1.0f, -1.0f,
+		glm::vec3(+0.0f, +1.0f, +0.0f),
+		glm::vec3(+1.0f, +0.0f, +0.0f),
+
+		glm::vec3(-1.0f, -1.0f, +0.0f),
+		glm::vec3(+0.0f, +1.0f, +0.0f),
+
+		glm::vec3(+1.0f, -1.0f, +0.0f),
+		glm::vec3(+0.0f, +0.0f, +1.0f),
 	};
 
 	GLuint bufferID;
@@ -339,9 +339,25 @@ bool Graphics::CreateQuad()
 
 	glBindBuffer(GL_ARRAY_BUFFER, bufferID);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
+	GLint index = glGetAttribLocation(shaderProgram_.program, "position");
+	glEnableVertexAttribArray(index);
+	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
+	index = glGetAttribLocation(shaderProgram_.program, "color");
+	glEnableVertexAttribArray(index);
+	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	GLuint indices[] = 
+	{
+		0,1,2
+	};
+
+	GLuint indexBufferID;
+	glGenBuffers(1, &indexBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	
 
 	return true;
 }
