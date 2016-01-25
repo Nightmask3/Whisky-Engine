@@ -30,6 +30,7 @@ public:
 		MESH,
 		SPRITE,
 		PLAYER_CONTROLLER,
+		AUDIO,
 
 		COMPONENT_COUNT
 	};
