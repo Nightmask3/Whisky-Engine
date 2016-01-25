@@ -22,6 +22,6 @@ void main()
 	//	if(collider)	outColor = vec4(0,1,0,1);
 	//}
 	
-	//outColor = vec4(vColor, 1);
-	outColor = diffuse;
+	outColor = vec4(vColor, 1);
+	//outColor = diffuse;
 }

@@ -79,8 +79,8 @@ bool Graphics::Init()
 	}
 
 	// Perspective matrix settings
-	near_ = 1.0f;
-	far_ = 100.0f;
+	near_ = 0.1f;
+	far_ = 1000.0f;
 	viewAngle_ = 45.0f;
 
 	// Initialize GLEW
@@ -115,11 +115,9 @@ bool Graphics::Load()
 	// --------------------------------------------------------
 	//	Geometry 
 	// --------------------------------------------------------
-	//if (!CreateQuad() ||
-	//	!CreateQuadWireframe() ||
-	//	!CreateBoxColliderMesh()
-	//	)
-	if (!CreateQuad())
+	if (//!CreateTriangle() ||
+		!CreateCubeMesh()
+		)
 		return false;
 
 
@@ -129,9 +127,9 @@ bool Graphics::Load()
 	//if (!LoadTextures()) return false;
 
 	// Enable Z-buffer read and write
-	//glEnable(GL_DEPTH_TEST);
-	//glDepthMask(GL_TRUE);
-	//glClearDepth(1.f);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glClearDepth(1.f);
 
 	// print system info
 	cout << "Graphics System Loaded." << endl;
@@ -233,7 +231,7 @@ void Graphics::DrawDebugMode(const GameObject& obj)
 
 void Graphics::DrawObject(const GameObject& obj, const glm::mat4 & vView, const glm::mat4 & vProj)
 {
-	glBindVertexArray(meshData_[obj.GetComponent<Mesh>()->MeshHandle()]);
+	glBindVertexArray(meshData_[obj.GetComponent<Mesh>()->Type()]);
 	// assert dereference stuff maybe?
 
 	glm::mat4 vModel = obj.GetComponent<Transform>()->ModelTransformationMatrix();
@@ -255,7 +253,7 @@ void Graphics::DrawObject(const GameObject& obj, const glm::mat4 & vView, const 
 	glUniform4fv(loc, 1, &color[0]);	// vec4
 
 	// Draw call
-	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 
 	// cleanup
@@ -323,7 +321,7 @@ void Graphics::RenderPauseMenu()
 //		Geometry Functions
 ////////////////////////////////////////////////////////////////
 
-bool Graphics::CreateQuad()
+bool Graphics::CreateTriangle()
 {
 	MeshData tri = MeshGenerator::MakeTriangle();
 
@@ -360,121 +358,158 @@ bool Graphics::CreateQuad()
 	return true;
 }
 
-bool Graphics::CreateQuadWireframe()
+bool Graphics::CreateCubeMesh()
 {
-	//	Vertex Array Object
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
+	MeshData cube = MeshGenerator::MakeCube();
 
-	meshData_[MeshType::QUAD_WIREFRAME] = vao;
-
-	glBindVertexArray(vao);
-	float vertices[] =
-	{//   X      Y      
-		-0.5f, +0.5f,  	// Top-left
-		+0.5f, +0.5f, 	// Top-right
-		+0.5f, -0.5f, 	// Bottom-right
-		-0.5f, -0.5f, 	// Bottom-left
-	};
-
-	GLuint elements[] = {
-		0, 1,
-		1, 2,
-		2, 0,
-		2, 3,
-		3, 0
-	};
-
-	//////////////////////////////////////////////////////////
-
-	// activate & send data to the buffer
 	GLuint vbo;
 	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);						// static: upload once draw many times
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	meshData_[MeshType::CUBE] = vbo;	// register buffer ID for the mesh type
 
-	//	Element Buffer Object
+	/////////////////////////////////////////////////////////////////////////
+	/// VERTEX DATA
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, cube.vertexBufferSize(), cube.vertices, GL_STATIC_DRAW);
+
+	GLsizei stride = sizeof(float) * 6;		// (24B) 6 floats per vertex data (3pos, 3color)
+	const void* offset = (void*)(sizeof(float) * 3);	// (12B) offset position (3 floats)
+
+	GLint index = glGetAttribLocation(shaderProgram_.program, "vertPosition");
+	glEnableVertexAttribArray(index);
+	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, stride, 0);		// 3 floats for position
+	//							 ^-----------------------------------------+
+	index = glGetAttribLocation(shaderProgram_.program, "vertColor");
+	glEnableVertexAttribArray(index);
+	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, stride, offset); // 3 floats for color
+	//							 ^------------------------------------------+
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	/////////////////////////////////////////////////////////////////////////
+	// ELEMENT DATA
 	GLuint ebo;
 	glGenBuffers(1, &ebo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, cube.indexBufferSize(), cube.indices, GL_STATIC_DRAW);
 
-	//	Shader Parameters
-	// attributes
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	GLint posAttrib = glGetAttribLocation(shaderProgram_.program, "position");	// handle to vert shader argument
-	glEnableVertexAttribArray(posAttrib);
-	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE,
-		2 * sizeof(float), 0); // how to interpret input array
-	// position, vec2, type, normalize mode, stride, offset
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	// check for errors
-	int err;
-	if ((err = glGetError()) != 0)
-	{
-		cout << "Error(" << err << ") | Graphics : CreateQuadWireframe" << endl;
-		return false;
-	}
-
+	cube.CleanUp();
 	return true;
 }
 
-bool Graphics::CreateBoxColliderMesh()
-{
-	//	Vertex Array Object
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
-
-	meshData_[MeshType::BOX_COLLIDER_MESH] = vao;
-
-	glBindVertexArray(vao);
-	float vertices[] =
-	{//   X      Y      
-		-0.5f, +0.5f,  	// Top-left
-		+0.5f, +0.5f, 	// Top-right
-		+0.5f, -0.5f, 	// Bottom-right
-		-0.5f, -0.5f, 	// Bottom-left
-	};
-
-	GLuint elements[] = {
-		0, 1,
-		1, 2,
-		2, 3,
-		3, 0
-	};
-
-	//////////////////////////////////////////////////////////
-
-	// activate & send data to the buffer
-	GLuint vbo;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);						// static: upload once draw many times
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	//	Element Buffer Object
-	GLuint ebo;
-	glGenBuffers(1, &ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
-
-	//	Shader Parameters
-	// attributes
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	GLint posAttrib = glGetAttribLocation(shaderProgram_.program, "position");	// handle to vert shader argument
-	glEnableVertexAttribArray(posAttrib);
-	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE,
-		2 * sizeof(float), 0); // how to interpret input array
-	// position, vec2, type, normalize mode, stride, offset
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	// check for errors
-	int err;
-	if ((err = glGetError()) != 0)
-	{
-		cout << "Error(" << err << ") | Graphics : CreateBoxCollider" << endl;
-		return false;
-	}
-
-	return true;
-}
+//bool Graphics::CreateQuadWireframe()
+//{
+//	//	Vertex Array Object
+//	GLuint vao;
+//	glGenVertexArrays(1, &vao);
+//
+//	meshData_[MeshType::QUAD_WIREFRAME] = vao;
+//
+//	glBindVertexArray(vao);
+//	float vertices[] =
+//	{//   X      Y      
+//		-0.5f, +0.5f,  	// Top-left
+//		+0.5f, +0.5f, 	// Top-right
+//		+0.5f, -0.5f, 	// Bottom-right
+//		-0.5f, -0.5f, 	// Bottom-left
+//	};
+//
+//	GLuint elements[] = {
+//		0, 1,
+//		1, 2,
+//		2, 0,
+//		2, 3,
+//		3, 0
+//	};
+//
+//	//////////////////////////////////////////////////////////
+//
+//	// activate & send data to the buffer
+//	GLuint vbo;
+//	glGenBuffers(1, &vbo);
+//	glBindBuffer(GL_ARRAY_BUFFER, vbo);						// static: upload once draw many times
+//	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+//
+//	//	Element Buffer Object
+//	GLuint ebo;
+//	glGenBuffers(1, &ebo);
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+//
+//	//	Shader Parameters
+//	// attributes
+//	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+//	GLint posAttrib = glGetAttribLocation(shaderProgram_.program, "position");	// handle to vert shader argument
+//	glEnableVertexAttribArray(posAttrib);
+//	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE,
+//		2 * sizeof(float), 0); // how to interpret input array
+//	// position, vec2, type, normalize mode, stride, offset
+//	glBindBuffer(GL_ARRAY_BUFFER, 0);
+//
+//	// check for errors
+//	int err;
+//	if ((err = glGetError()) != 0)
+//	{
+//		cout << "Error(" << err << ") | Graphics : CreateQuadWireframe" << endl;
+//		return false;
+//	}
+//
+//	return true;
+//}
+//
+//bool Graphics::CreateBoxColliderMesh()
+//{
+//	//	Vertex Array Object
+//	GLuint vao;
+//	glGenVertexArrays(1, &vao);
+//
+//	meshData_[MeshType::BOX_COLLIDER_MESH] = vao;
+//
+//	glBindVertexArray(vao);
+//	float vertices[] =
+//	{//   X      Y      
+//		-0.5f, +0.5f,  	// Top-left
+//		+0.5f, +0.5f, 	// Top-right
+//		+0.5f, -0.5f, 	// Bottom-right
+//		-0.5f, -0.5f, 	// Bottom-left
+//	};
+//
+//	GLuint elements[] = {
+//		0, 1,
+//		1, 2,
+//		2, 3,
+//		3, 0
+//	};
+//
+//	//////////////////////////////////////////////////////////
+//
+//	// activate & send data to the buffer
+//	GLuint vbo;
+//	glGenBuffers(1, &vbo);
+//	glBindBuffer(GL_ARRAY_BUFFER, vbo);						// static: upload once draw many times
+//	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+//
+//	//	Element Buffer Object
+//	GLuint ebo;
+//	glGenBuffers(1, &ebo);
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+//
+//	//	Shader Parameters
+//	// attributes
+//	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+//	GLint posAttrib = glGetAttribLocation(shaderProgram_.program, "position");	// handle to vert shader argument
+//	glEnableVertexAttribArray(posAttrib);
+//	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE,
+//		2 * sizeof(float), 0); // how to interpret input array
+//	// position, vec2, type, normalize mode, stride, offset
+//	glBindBuffer(GL_ARRAY_BUFFER, 0);
+//
+//	// check for errors
+//	int err;
+//	if ((err = glGetError()) != 0)
+//	{
+//		cout << "Error(" << err << ") | Graphics : CreateBoxCollider" << endl;
+//		return false;
+//	}
+//
+//	return true;
+//}

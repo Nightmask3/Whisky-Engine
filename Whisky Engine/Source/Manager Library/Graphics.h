@@ -62,9 +62,10 @@ public:
 
 private:
 	// built in geometry
-	bool CreateQuad();
-	bool CreateQuadWireframe();
-	bool CreateBoxColliderMesh();
+	//bool CreateQuad();
+	//bool CreateQuadWireframe();
+	//bool CreateBoxColliderMesh();
+	bool CreateTriangle();
 	bool CreateCubeMesh();
 
 	bool LoadTextures();

@@ -40,7 +40,7 @@ class Mesh : public Component
 		Mesh(MeshType t, Color c);
 		Mesh();
 
-		MeshType MeshHandle()		const { return mMeshHandle_; }
+		MeshType Type()				const { return mType_; }
 		bool	 IsActive()			const { return bIsActive_; }
 		void	 SetActive(bool val)	  { bIsActive_ = val; }	
 		Color	 GetColor()			const { return mColor_; }
@@ -48,7 +48,7 @@ class Mesh : public Component
 
 private:	// data
 		Color mColor_;		// might be stored in Material component/entity?
-		MeshType mMeshHandle_;
+		MeshType mType_;
 		bool bIsActive_; 
 };
 

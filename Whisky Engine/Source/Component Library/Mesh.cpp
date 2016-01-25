@@ -47,7 +47,7 @@ Mesh::Mesh()
 
 Mesh::Mesh(MeshType t) 
 	: 
-	mMeshHandle_(t),
+	mType_(t),
 	bIsActive_(true),
 	mColor_(),
 	Component(ComponentType::MESH)
@@ -55,7 +55,7 @@ Mesh::Mesh(MeshType t)
 
 Mesh::Mesh(MeshType t, Color c)
 	:
-	mMeshHandle_(t),
+	mType_(t),
 	bIsActive_(true),
 	mColor_(c),
 	Component(ComponentType::MESH)
