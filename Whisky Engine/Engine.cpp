@@ -96,7 +96,7 @@ using std::endl;
 		Component * MeshComponent = new Mesh(MeshType::QUAD);
 		// Add component to component list of object, then add handle to handle list
 		obj.AddHandle(GOM->AddComponent(MeshComponent, MeshComponent->GetType(), obj.GetComponentList(), "Mesh", obj.GetHandleID()));
-		// Retrive pointer to component like so
+		// Retrieve pointer to component like so
 		Mesh * mesh = static_cast<Mesh *>(obj.GetComponent<Mesh>());
 		return true;
 	}
