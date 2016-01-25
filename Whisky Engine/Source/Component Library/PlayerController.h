@@ -22,7 +22,7 @@ class PlayerController : public Component
 {
 public:
 	static PlayerController* Deserialize(const char*);
-
+	static const ComponentType _mType = Component::PLAYER_CONTROLLER;
 	PlayerController();
 
 	void Update();

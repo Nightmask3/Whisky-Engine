@@ -11,25 +11,32 @@
 // Reproduction or disclosure of this file or its contents without the prior written
 // consent of DigiPen Institute of Technology is prohibited.
 // ---------------------------------------------------------------------------
+
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
-// C++ headerfiles
+
+// C++ header files
 #include <unordered_map>
-// GLEW headerfiles
+
+// GLEW header files
 #include <glew.h>
-// SFML headerfiles
+
+// SFML header files
 #include <SFML/OpenGL.hpp>
 #include <SFML/Graphics.hpp>
-// Whisky Engine headerfiles
+
+// Whisky Engine header files
 #include "..\Entity Library\GameObject.h"
 #include "..\Component Library\Mesh.h"
 #include "..\OpenGLRenderer Library\ShaderProgram.h"
+#include "..\OpenGLRenderer Library\MeshData.h"
+#include "..\OpenGLRenderer Library\MeshGenerator.h"
 
 class Graphics
 {
 	friend class Input;
 
-	typedef std::unordered_map<std::string, GLuint*>	StringMap;
+	typedef std::unordered_map<std::string, GLuint*>	TextureMap;
 	typedef std::unordered_map<MeshType, GLuint >		MeshTypeMap;
 
 public:
@@ -43,44 +50,47 @@ public:
 	void Cleanup();
 
 	// window management functions
-	void UpdateWindowSize(unsigned int w, unsigned int h);
-	unsigned WindowHeight() const	{ return _heigth; }
-	unsigned WindowWidth() const	{ return _width; }
+	void UpdateWindowSize(unsigned int w, unsigned int h) { width_ = w; heigth_ = h; }
+	unsigned WindowHeight() const	{ return heigth_; }
+	unsigned WindowWidth() const	{ return width_; }
 
-	// getter & setter
-	const StringMap& Textures() const { return _textures; }	// read-only
+	// getters & setters
+	const TextureMap& Textures() const { return textures_; }	// read-only
 
-	// non-system functions
+	// pause-menu exception (its sort of a hack tho)
 	void RenderPauseMenu();
 
 private:
 	// built in geometry
-	bool CreateQuad();
-	bool CreateQuadWireframe();
-	bool CreateBoxColliderMesh();
+	//bool CreateQuad();
+	//bool CreateQuadWireframe();
+	//bool CreateBoxColliderMesh();
+	bool CreateTriangle();
 	bool CreateCubeMesh();
 
 	bool LoadTextures();
 
+	// draw functions
 	void DrawObject(const GameObject& obj, const glm::mat4 & view, const glm::mat4 & proj);
 	void DrawDebugMode(const GameObject&);
 	void DrawCollider(const GameObject&);
 
 protected:
-	sf::RenderWindow* _pWindow;	// window handle
-	unsigned _width, _heigth;	// window size
-	float _near, _far;
-	float _viewAngle;
+	sf::RenderWindow* pWindow_;	// window handle
+	unsigned width_, heigth_;	// window size
+	float near_, far_;
+	float viewAngle_;
 
 private:
-	static Graphics* _pInstance;
+	static Graphics* pInstance_;
 
 	// system variables
-	ShaderProgram _shaderProgram;
+	ShaderProgram shaderProgram_;
 
-	StringMap	_textures;
-	MeshTypeMap _meshData;
-	glm::mat4 _viewMatrix;
+	TextureMap	textures_;
+	MeshTypeMap meshData_;
+		
+	glm::mat4 _viewMatrix; // to be removed (after camera component)
 };
 
 #endif

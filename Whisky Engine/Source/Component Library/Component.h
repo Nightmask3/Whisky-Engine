@@ -24,6 +24,13 @@ class Message;
 class Component
 {
 public:
+	/*
+		HOW TO ADD NEW COMPONENT
+		 - Update enum ComponentType (just below)
+		 - Update Components.h - #include "NewComponentName.h"
+		 - Update DeSerializeComponent() function in Component.cpp
+		 - Define a Deserialize() function in the new component (see transform for e.g.)
+	*/
 	enum ComponentType
 	{			
 		TRANSFORM,
@@ -38,6 +45,7 @@ public:
 	virtual ~Component(){ /*std::cout << "component dtor" << std::endl;*/ }
 	virtual void		SetOwner(GameObject* obj)	{ mOwner_ = obj; }
 	virtual GameObject* GetOwner() const			{ return  mOwner_; }
+	virtual std::string Name() const				{ return mName_; }
 	virtual void		Update(){};
 	virtual void		HandleMessage(Message*){}
 	ComponentType GetType() { return mType; }
@@ -47,11 +55,13 @@ public:
 	static ComponentName* CopyComponent(ComponentName*);
 	static Component* CreateComponent(std::string name);
 	static Component* Component::DeSerializeComponent(std::string name, const char* params);
-protected:
-	GameObject * mOwner_;
-	// Made protected because we don't want objects of this class to be instantiated directly, but derived classes can access it
-	Component(ComponentType type) : mType(type), mOwner_(nullptr) {}
+protected:	// functions
+	// we don't want objects of this class to be instantiated directly, but derived classes can access it
+	Component(ComponentType type, std::string name) : mType(type), mOwner_(nullptr), mName_(name){}
 
+protected:	// members
+	GameObject * mOwner_;
+	std::string mName_;
 };
 
 template <typename ComponentName>
