@@ -89,6 +89,15 @@ using std::endl;
 			return false;
 
 		print("Loaded \t");
+		// Game Object Creation Example
+		// Game Object created with a transform component set to default values
+		GameObject & obj = GOM->Instantiate();
+		// Create a mesh component
+		Component * MeshComponent = new Mesh(MeshType::QUAD);
+		// Add component to component list of object, then add handle to handle list
+		obj.AddHandle(GOM->AddComponent(MeshComponent, MeshComponent->GetType(), obj.GetComponentList(), "Mesh", obj.GetHandleID()));
+		// Retrieve pointer to component like so
+		Mesh * mesh = static_cast<Mesh *>(obj.GetComponent<Mesh>());
 		return true;
 	}
 

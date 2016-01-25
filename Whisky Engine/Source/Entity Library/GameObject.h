@@ -26,7 +26,7 @@ class Message;
 
 class GameObject : public Entity
 {
-public:
+public:	// functions
 	// ctor/dtor/operators
 	GameObject(GameObjectFactory &);
 	GameObject(GameObjectFactory & mFactory, const std::string& name);
@@ -39,48 +39,46 @@ public:
 	// member functions
 	void Update();
 	void Relay(Message* m);
+	inline void Activate()					{ isActive_ = true; }
+	inline void Deactivate()				{ isActive_ = false; }
 
+	// component functions
 	template<typename ComponentName>	ComponentName* GetComponent() const;
 	//template<typename ComponentName>	void AddComponent(ComponentName*);
-	template<typename ComponentName>	void RemoveComponent();
+	//template<typename ComponentName>	void RemoveComponent();
+	void AddComponent(Component* comp);
 	void RemoveComponent(unsigned);
 
+	// Reference of handle is used to add to handle list of game object
+	inline void AddHandle(Handle & handle)		 { Handles_.push_back(handle); }
+	inline unsigned GetHandleID()				 { return handle_id_; }
+	inline void		SetHandleID(unsigned int ID) { handle_id_ = ID; }
 	//void Clone(GameObject&) const;
 
 	// getters & setters
-	inline unsigned int GetHandleID()		{ return handle_id_; }
-	inline void SetHandleID(unsigned int ID) { handle_id_ = ID; }
-	// Reference of handle is used to add to handle list of game object
-	inline void AddHandle(Handle & handle)  { Handles_.push_back(handle); }
-	inline bool IsActive() const			{ return isActive_; }
-	inline void Activate()					{ isActive_ = true; }
-	inline void Deactivate()				{ isActive_ = false; }
 	inline const unsigned long ID() const	{ return id_; }
+	inline bool IsActive() const			{ return isActive_; }
 	inline std::string Name() const			{ return name_; }
 	inline void Name(std::string n)			{ name_ = n; }
 	inline GameObject* Pntr()				{ return this; }
-	friend std::ostream& operator<<(std::ostream&, const GameObject&);
 	std::vector<HandleEntry_> & GetComponentList() { return HandleEntries_; }
-	bool IsArchetype() const { return isArchetype_; }
-	void IsArchetype(bool val) { isArchetype_ = val; }
-	GameObjectFactory & mFactoryRef_;
+
+	friend std::ostream& operator<<(std::ostream&, const GameObject&);
 	
-private:
-	// static members
+private:	// static members
 	static unsigned long _last_id;
 	
-private:
-	// members
+private:	// members
+
 	unsigned int handle_id_;
 	std::string name_, tag_;
 	const unsigned long id_;
 	bool isActive_;
 	bool isArchetype_;
 
+	GameObjectFactory& mFactoryRef_;
 	std::vector<HandleEntry_> HandleEntries_;
 	std::vector<Handle> Handles_;
-	std::vector<Component *> componentList_;
-
 };
 
 ////////////////////////////////////////////////////////////////
@@ -90,13 +88,15 @@ private:
 template<typename ComponentName>
 ComponentName* GameObject::GetComponent() const
 {
-	// TODO : Request to Handle Manager for conversion of handle to pointer
+	// Request to Handle Manager for conversion of handle to pointer
 	for(unsigned i = 0; i < Handles_.size(); ++i)
 	{
-		if (Handles_[i].m_type == ComponentName::_mType)
+		ComponentName comp;
+
+		if (Handles_[i].m_type == comp.GetType())
 			return static_cast<ComponentName *>(mFactoryRef_.ConvertHandletoPointer(Handles_[i], HandleEntries_));
 	}
-	std::cout << "Component not found!\n";
+
 	return nullptr;
 }
 
@@ -120,12 +120,12 @@ ComponentName* GameObject::GetComponent() const
 //		c->SetOwner(this);
 //}
 
-template<typename ComponentName>
-void GameObject::RemoveComponent()
-{
-	/*if (componentList_[ComponentName::Type])
-	{
-		delete componentList_[ComponentName::Type];
-	}*/
-}
+//template<typename ComponentName>
+//void GameObject::RemoveComponent()
+//{
+//	/*if (componentList_[ComponentName::Type])
+//	{
+//		delete componentList_[ComponentName::Type];
+//	}*/
+//}
 #endif

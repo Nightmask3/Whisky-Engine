@@ -33,7 +33,9 @@ Sprite* Sprite::Deserialize(const char* params)
 	return new Sprite(fileNames);
 }
 
-Sprite::Sprite(const vector<string>& names) : Component(Component::SPRITE)
+Sprite::Sprite(const vector<string>& names) 
+	: 
+	Component(Component::SPRITE, "Sprite")
 {
 	assert(names.size() > 0);
 	for (auto& name : names)

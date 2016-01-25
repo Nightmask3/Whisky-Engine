@@ -55,14 +55,20 @@ public:
 
 	// Makes a call to handle manager to initialize component list for a game object
 	bool InitializeListForGameObject(std::vector<HandleEntry_> & mEntries, int) const;
+
 	// Makes a call to handle manager to initialize component list for a system
 	bool InitializeListForSystem(std::vector<HandleEntry_> & mEntries, int) const;
+
 	// Makes a call to handle manager to convert the handle to a pointer
 	Component * ConvertHandletoPointer(Handle handle, std::vector<HandleEntry_> mEntries);
+
 	// Adds a Component to a Game Object component list and returns the handle to it
-	Handle & AddComponent(void* p, unsigned int ,std::vector<HandleEntry_> & m_entries, std::string ComponentType) const;
+	Handle AddComponent(void* p, unsigned int ,std::vector<HandleEntry_> & m_entries, std::string ComponentType, int index) const;
+	Handle AddComponent(void* p, GameObject& obj) const;
+
 	// Updates a Component
 	bool UpdateComponent(Handle handle, void* p, std::vector<HandleEntry_> & m_entries);
+	
 	// Removes a Component
 	bool Remove(Handle handle, std::vector<HandleEntry_> & m_entries, std::type_info const & CallerType);
 
@@ -89,7 +95,6 @@ private:
 		}
 		else if (typeid(T) == typeid(PlayerController))
 		{
-			
 			return true;
 		}
 		else if (typeid(T) == typeid(PhysicsComponent))

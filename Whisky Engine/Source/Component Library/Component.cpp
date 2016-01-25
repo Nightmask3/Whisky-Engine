@@ -41,23 +41,19 @@ Component* Component::CreateComponent(std::string name)
 
 	return comp;
 }
-//Component* Component::DeSerializeComponent(std::string name, const char* params)
-//{
-//	Component * comp = NULL;
-//
-//	if (name == "transform")				
-//	{
-//		comp = Transform::Deserialize(params);
-//	}
-//	else if (name == "sprite")				
-//	{
-//		comp = Sprite::Deserialize(params);
-//	}
-//	else if (name == "mesh")			
-//	{
-//		comp = Mesh::Deserialize(params);
-//	}
-//	else std::cout << "WARNING: Trying to create an unknown type of component: " << name << std::endl;
-//
-//	return comp;
-//}
+
+Component* Component::DeSerializeComponent(std::string name, const char* params)
+{
+	// relevant SO question
+	// http://stackoverflow.com/questions/582331/is-there-a-way-to-instantiate-objects-from-a-string-holding-their-class-name
+	
+	Component * comp = NULL;
+	if (name == "transform")				comp =		  Transform::Deserialize(params);
+	else if (name == "mesh")				comp =			   Mesh::Deserialize(params);
+	else if (name == "sprite")				comp =			 Sprite::Deserialize(params);
+	else if (name == "playercontroller")	comp = PlayerController::Deserialize(params);
+	
+	else std::cout << "WARNING: Trying to create an unknown type of component: " << name << std::endl;
+
+	return comp;
+}

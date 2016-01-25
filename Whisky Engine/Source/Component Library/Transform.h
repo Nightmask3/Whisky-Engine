@@ -15,6 +15,7 @@
 // Component header files
 #include "Component.h"
 #include "..\..\Dependencies\GLEW\glew.h"
+
 class Transform : public Component
 {
 	private:
