@@ -128,7 +128,7 @@ bool HandleManager::Get(const Handle handle, void*& out, std::vector<HandleEntry
 {
 	const int index = handle.m_index;
 
-	assert(m_entries[index].m_counter == handle.m_counter);
+	//assert(m_entries[index].m_counter == handle.m_counter);
 
 	if (m_entries[index].m_counter != handle.m_counter ||
 		m_entries[index].m_active == false)

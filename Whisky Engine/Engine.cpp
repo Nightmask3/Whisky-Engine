@@ -22,10 +22,10 @@ using std::endl;
 
 
 	bool Engine::_quit = false;
-	bool Engine::_debugDraw = false;
+	bool Engine::_debug = false;
 	bool Engine::_collisionInfo = false;
 	bool Engine::_info = false;
-	bool Engine::_pause = false;
+	bool Engine::_pause = true;
 
 
 	const float Engine::version_ = 0.7f;
@@ -70,6 +70,9 @@ using std::endl;
 			)
 			return false;
 
+		// set engine variables
+		_quit = false;
+
 		print("Initialized ");
 		return true;
 	}
@@ -86,23 +89,15 @@ using std::endl;
 			return false;
 
 		print("Loaded \t");
-
-		/////////////////////////////////////////////////////////////////////////////
 		// Game Object Creation Example
-
-		GameObject & obj = GOM->Instantiate();				// instantiated with a default transform component
-		obj.GetComponent<Transform>()->Scale(0.5f, 0.5f, 0.5f);
-
+		// Game Object created with a transform component set to default values
+		GameObject & obj = GOM->Instantiate();
+		// Create a mesh component
+		Component * MeshComponent = new Mesh(MeshType::QUAD);
 		// Add component to component list of object, then add handle to handle list
-		Mesh * MeshComponent = new Mesh(MeshType::QUAD);	// new component to be added
 		obj.AddHandle(GOM->AddComponent(MeshComponent, MeshComponent->GetType(), obj.GetComponentList(), "Mesh", obj.GetHandleID()));
-		
-		// NOTICE: current issue is GameObject::Update() function is not using the new handle system to update the components.
-		PlayerController* ctrl = new PlayerController();
-		obj.AddHandle(GOM->AddComponent(ctrl, "PlayerController", obj));	//alternative
-
- 
-
+		// Retrieve pointer to component like so
+		Mesh * mesh = static_cast<Mesh *>(obj.GetComponent<Mesh>());
 		return true;
 	}
 
@@ -161,7 +156,7 @@ using std::endl;
 			<< "FrameDelta: " << FRC->FrameDelta() * 1000 << "ms | " << FRC->FrameTimeLimit() * 1000 << "ms"
 			<< "  FPS: " << (int)(1.0f / FRC->FrameDelta()) + 1
 			<< "  Frame: #" << FRC->FrameCount()
-			<< "  DebugDraw: " << _debugDraw
+			<< "  DebugDraw: " << _debug
 			<< "  CollisionLog: " << _collisionInfo
 			<< "  GameObjects: " << GOM->GetActiveObjCount() << "/" << GOM->GameObjList().size()
 			<< " \r";

@@ -40,7 +40,7 @@ GameObject::GameObject(GameObjectFactory & mFactory)
 	{
 		name_ = string("GameObject") + std::to_string(id_ - id_offset);
 		tag_ = string("None");
-		//componentList_.resize(Component::ComponentType::COMPONENT_COUNT, NULL);
+		componentList_.resize(Component::ComponentType::COMPONENT_COUNT, NULL);
 
 
 #ifdef DEBUG
@@ -58,7 +58,7 @@ GameObject::GameObject(GameObjectFactory & mFactory, const string& name)
 		mFactoryRef_(mFactory),
 		Entity(EntityType::GameObject)
 	{
-		//componentList_.resize(Component::ComponentType::COMPONENT_COUNT, NULL);
+		componentList_.resize(Component::ComponentType::COMPONENT_COUNT, NULL);
 
 #ifdef DEBUG
 		cout << "gameobj ctor(str): " << id_ << "\t: " << name_ << "(" << tag_ << ")" << endl;
@@ -75,7 +75,7 @@ GameObject::GameObject(GameObjectFactory & mFactory, const string& name, const s
 		mFactoryRef_(mFactory),
 		Entity(EntityType::GameObject)
 	{
-		//componentList_.resize(Component::ComponentType::COMPONENT_COUNT, NULL);
+		componentList_.resize(Component::ComponentType::COMPONENT_COUNT, NULL);
 
 #ifdef DEBUG
 		cout << "gameobj ctor(str, str): " << id_  << "\t: " << name_ << "(" << tag_ << ")" << endl;
@@ -89,6 +89,7 @@ GameObject::GameObject(GameObjectFactory & mFactory, const string& name, const s
 		id_(_last_id++),
 		isActive_(ref.isActive_),
 		isArchetype_(ref.isArchetype_),
+		componentList_(ref.componentList_),
 		mFactoryRef_(ref.mFactoryRef_),
 		Entity(EntityType::GameObject)
 	{
@@ -100,7 +101,20 @@ GameObject::GameObject(GameObjectFactory & mFactory, const string& name, const s
 
 	bool GameObject::operator==(const GameObject& obj)
 	{
-		return id_ == obj.id_;
+
+		//return _id == obj._id;
+
+		// OBSOLETE
+		for (size_t i = 0; i < Component::ComponentType::COMPONENT_COUNT; i++)
+		{
+			if (componentList_[i])
+			{
+				if (componentList_[i] != obj.componentList_[i])
+					return false;
+			}
+		}
+
+		return true;
 	}
 
 	GameObject::~GameObject()
@@ -108,13 +122,12 @@ GameObject::GameObject(GameObjectFactory & mFactory, const string& name, const s
 #ifdef DEBUG
 		cout << "gameobj dtor: " << id_ << "\t: " << name_ << "(" << tag_ << ")" << endl;
 #endif
-		
-		/// DEPRECATED
+
 		// NULL pointers are safe to delete, so no need for null checking
-		//for (Component* component : componentList_)
-		//{
-		//	delete component;
-		//}
+		for (Component* component : componentList_)
+		{
+			delete component;
+		}
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -123,27 +136,24 @@ GameObject::GameObject(GameObjectFactory & mFactory, const string& name, const s
 
 	void GameObject::Update()
 	{
-		// TODO: Use new handle system to use components
-
-		/// DEPRECATED
-		//for (auto& component : componentList_){
-		//	if (component) component->Update();
-		//}
+		for (auto& component : componentList_){
+			if (component) component->Update();
+		}
 	}
 
-	//void GameObject::Relay(Message* m)
-	//{
-	//	for (size_t i = 0; i < Component::ComponentType::COMPONENT_COUNT; i++)
-	//	{
-	//		if (componentList_[i]) componentList_[i]->HandleMessage(m);
-	//	}
-	//}
+	void GameObject::Relay(Message* m)
+	{
+		for (size_t i = 0; i < Component::ComponentType::COMPONENT_COUNT; i++)
+		{
+			if (componentList_[i]) componentList_[i]->HandleMessage(m);
+		}
+	}
 
-	//void GameObject::RemoveComponent(unsigned i)
-	//{
-	//	delete componentList_[i];
-	//	componentList_[i] = NULL;
-	//}
+	void GameObject::RemoveComponent(unsigned i)
+	{
+		delete componentList_[i];
+		componentList_[i] = NULL;
+	}
 
 	//void GameObject::Clone(GameObject& obj) const
 	//{

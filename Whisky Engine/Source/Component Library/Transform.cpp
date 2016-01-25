@@ -11,7 +11,7 @@ Transform::Transform(const glm::vec3 position, const glm::vec3 rotation, const g
 	mPosition_(position), // Used in GameObjectFactory::Instantiate
 	mRotation_(rotation), 
 	mScale_(scale) , 
-	Component(ComponentType::TRANSFORM) 
+	Component(ComponentType::TRANSFORM, "Transform") 
 {}
 
 
@@ -87,64 +87,32 @@ void Transform::Update()
 	// Transform Component does not update itself!
 }
 
-//void Transform::Translate(float X, float Y, float Z)
-//{
-//	mTranslation.m[0][3] += X;
-//	mTranslation.m[1][3] += Y;
-//	mTranslation.m[2][3] += Z;
-//
-//
-//	PhysicsComponent * p = nullptr;
-//	p = static_cast<PhysicsComponent *>(mOwner->GetComponent(Component::PHYSICS));
-//	if (p != nullptr)
-//		Vector3DSet(&p->mPositionCurr, mTranslation.m[0][3], mTranslation.m[1][3], mTranslation.m[2][3], 1);
-//}
-//void Transform::Rotate(float AngleX, float AngleY, float AngleZ)
-//{
-//	if (AngleX != 0)
-//		Matrix3DRotRadX(&mRotation, AngleX);
-//	if (AngleY != 0)
-//		Matrix3DRotRadY(&mRotation, AngleY);
-//	if (AngleZ != 0)
-//		Matrix3DRotRadZ(&mRotation, AngleZ);
-//}
-//void Transform::Scale(float X, float Y, float Z)
-//{
-//	// Saved for use in bounding box construction
-//	mOriginalScale.x = mScale.m[0][0];
-//	mOriginalScale.y = mScale.m[1][1];
-//	mOriginalScale.z = mScale.m[2][2];
-//
-//	mScale.m[0][0] = X;
-//	mScale.m[1][1] = Y;
-//	mScale.m[2][2] = Z;
-//}
 glm::mat4 Transform::ModelTransformationMatrix() const
 {
-	glm::mat4 m = glm::mat4(1);
+	glm::mat4 scale = glm::scale(glm::mat4(1.0f), mScale_);
+	//glm::mat4 rotate = glm::rotate(scale, 0.0f, );	// TODO: FIGURE ROTATIONS OUT
+	glm::mat4 m = glm::translate(scale, mPosition_);
 	return m;
 }
 
-//Transform* Transform::Deserialize(const char* params)
-//{
-//	Transform* t = NULL;
-//	std::vector<std::string> parameters = split(params);
-//	try
-//	{
-//		if (parameters[0].size() == 1 && parameters[0][0] == '-') t = new Transform();
-//		else
-//		{
-//			float x = std::stof(parameters[0]);
-//			float y = std::stof(parameters[1]);
-//			float r = std::stof(parameters[2]);
-//			float s_x = std::stof(parameters[3]);
-//			float s_y = std::stof(parameters[4]);
-//			t = new Transform(x, y, r, s_x, s_y);
-//		}
-//	}
-//	catch (const std::invalid_argument& ia)
-//	{
-//		std::cout << "Invalid argument creating transform: " << ia.what() << endl;
-//	}
-//	return t;
-//}
+Transform* Transform::Deserialize(const char* params)
+{
+	Transform* t = NULL;
+	std::vector<std::string> parameters = split(params);
+	try
+	{	// if the argument is '-' : initialize default Transform
+		if (parameters[0].size() == 1 && parameters[0][0] == '-') t = new Transform();
+		else
+		{
+			glm::vec3 pos(std::stof(parameters[0]), std::stof(parameters[1]), std::stof(parameters[2]));
+			glm::vec3 rot(std::stof(parameters[3]), std::stof(parameters[4]), std::stof(parameters[5]));
+			glm::vec3 scl(std::stof(parameters[6]), std::stof(parameters[7]), std::stof(parameters[8]));
+			t = new Transform(pos, rot, scl);
+		}
+	}
+	catch (const std::invalid_argument& ia)
+	{
+		std::cout << "Invalid argument creating transform: " << ia.what() << std::endl;
+	}
+	return t;
+}

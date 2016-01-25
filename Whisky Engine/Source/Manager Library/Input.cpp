@@ -118,10 +118,10 @@
 
 		if (IsKeyTriggered(sf::Keyboard::Key::Escape))	Engine::Quit();
 		if (IsKeyTriggered(sf::Keyboard::Key::L))		FrameRateController::Inst()->ToggleFPSLock();
-		if (IsKeyTriggered(sf::Keyboard::Key::D))		Engine::ToggleDebugDraw();
+		if (IsKeyTriggered(sf::Keyboard::Key::D))		Engine::ToggleDebug();
 		if (IsKeyTriggered(sf::Keyboard::Key::C))		Engine::ToggleCollisionInfo();
 		if (IsKeyTriggered(sf::Keyboard::Key::I))		Engine::ToggleInfo();
-		//if (IsKeyTriggered(sf::Keyboard::Key::F10))		Engine::TogglePause();
+		if (IsKeyTriggered(sf::Keyboard::Key::F10))		Engine::TogglePause();
 
 
 	}
