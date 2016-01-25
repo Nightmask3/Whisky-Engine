@@ -40,9 +40,24 @@ Mesh* Mesh::Deserialize(const char* params)
 	return comp;
 }
 
+Mesh::Mesh()
+	:
+	Component(ComponentType::MESH)
+{}
+
 Mesh::Mesh(MeshType t) 
 	: 
 	mMeshHandle_(t),
 	bIsActive_(true),
+	mColor_(),
 	Component(ComponentType::MESH)
 {}
+
+Mesh::Mesh(MeshType t, Color c)
+	:
+	mMeshHandle_(t),
+	bIsActive_(true),
+	mColor_(c),
+	Component(ComponentType::MESH)
+{}
+

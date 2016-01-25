@@ -94,7 +94,7 @@ bool Engine::Load()
 	//obj.GetComponent<Transform>()->Scale(0.5f, 0.5f, 0.5f);
 
 	// Add component to component list of object, then add handle to handle list
-	Mesh * mesh = new Mesh(MeshType::QUAD);	// new component to be added
+	Mesh * mesh = new Mesh(MeshType::QUAD, Color::green);	// new component to be added
 	obj.AddHandle(GOM->AddComponent(mesh, "Mesh", obj));
 		
 	// NOTICE: current issue is GameObject::Update() function is not using the new handle system to update the components.

@@ -5,6 +5,6 @@
 class MeshGenerator
 {
 public:
-	//static MeshData makeTriangle();
+	static MeshData MakeTriangle();
 };
 

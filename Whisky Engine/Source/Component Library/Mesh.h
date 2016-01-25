@@ -16,7 +16,7 @@
 #define MESH_H
 
 #include "Component.h"
-
+#include "..\OpenGLRenderer Library\Color.h"
 #include <iostream>
 
 enum MeshType
@@ -30,21 +30,24 @@ enum MeshType
 	MESH_TYPE_COUNT
 };
 
-
 class Mesh : public Component
 {
-	public:
+	public:	// static functions
 		static Mesh* Deserialize(const char*);
-		static const ComponentType _mType = Component::MESH;
-	public:
-		Mesh(MeshType);
 
-		MeshType MeshHandle() const { return mMeshHandle_; }
-		bool IsActive() const		{ return bIsActive_; }
-		void SetActive(bool val)	{ bIsActive_ = val; }
-		// Experimental : Still trying to figure out how it affects the handles being created
-		Mesh() : Component(Component::MESH) { /*std::cout << "Calling default Mesh constructor!\n" << __FUNCTION__ << __LINE__; */ }
-	private:
+	public:	// member functions
+		Mesh(MeshType t);
+		Mesh(MeshType t, Color c);
+		Mesh();
+
+		MeshType MeshHandle()		const { return mMeshHandle_; }
+		bool	 IsActive()			const { return bIsActive_; }
+		void	 SetActive(bool val)	  { bIsActive_ = val; }	
+		Color	 GetColor()			const { return mColor_; }
+		void	 SetColor(const Color& c) { mColor_ = c; }
+
+private:	// data
+		Color mColor_;		// might be stored in Material component/entity?
 		MeshType mMeshHandle_;
 		bool bIsActive_; 
 };

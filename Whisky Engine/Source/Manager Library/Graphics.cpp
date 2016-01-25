@@ -33,12 +33,12 @@ using std::string;
 //const GLuint NUM_VERT_PER_TRI = 3;
 //const GLuint NUM_FLOAT_PER_VERT = 3;
 //const GLuint TRI_SIZE = NUM_VERT_PER_TRI * NUM_FLOAT_PER_VERT * sizeof(float);
-
-struct Vertex
-{
-	glm::vec3 position;
-	glm::vec3 color;
-};
+//
+//struct Vertex
+//{
+//	glm::vec3 position;
+//	glm::vec3 color;
+//};
 
 ////////////////////////////////////////////////////////////////
 //		System Functions
@@ -143,7 +143,7 @@ void Graphics::Render()
 	// Clear the screen to gray
 	glViewport(0, 0, width_, heigth_);
 	glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	// Create View & Projection matrices
 	glm::mat4 vProj = glm::perspective(viewAngle_, (float)width_ / heigth_, near_, far_);
@@ -237,16 +237,22 @@ void Graphics::DrawObject(const GameObject& obj, const glm::mat4 & vView, const 
 	// assert dereference stuff maybe?
 
 	glm::mat4 vModel = obj.GetComponent<Transform>()->ModelTransformationMatrix();
+	glm::vec4 color = obj.GetComponent<Mesh>()->GetColor().Value();
 
 	// send shader parameters
-	GLint uniTrans = glGetUniformLocation(shaderProgram_.program, "model");
-	glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(vModel));
+	GLint loc;	// uniform location
 
-	GLint uniView = glGetUniformLocation(shaderProgram_.program, "view");
-	glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(vView));
+	loc = glGetUniformLocation(shaderProgram_.program, "model");
+	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(vModel));
 
-	GLint uniProj = glGetUniformLocation(shaderProgram_.program, "proj");
-	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(vProj));
+	loc = glGetUniformLocation(shaderProgram_.program, "view");
+	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(vView));
+
+	loc = glGetUniformLocation(shaderProgram_.program, "proj");
+	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(vProj));
+
+	loc = glGetUniformLocation(shaderProgram_.program, "diffuse");
+	glUniform4fv(loc, 1, &color[0]);	// vec4
 
 	// Draw call
 	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
@@ -319,46 +325,38 @@ void Graphics::RenderPauseMenu()
 
 bool Graphics::CreateQuad()
 {
-	// create data
-	Vertex verts[] =
-	{
-		glm::vec3(+0.0f, +1.0f, +0.0f),
-		glm::vec3(+1.0f, +0.0f, +0.0f),
+	MeshData tri = MeshGenerator::MakeTriangle();
 
-		glm::vec3(-1.0f, -1.0f, +0.0f),
-		glm::vec3(+0.0f, +1.0f, +0.0f),
+	GLuint vbo;
+	glGenBuffers(1, &vbo);
+	meshData_[MeshType::QUAD] = vbo;	// register buffer ID for the mesh type
 
-		glm::vec3(+1.0f, -1.0f, +0.0f),
-		glm::vec3(+0.0f, +0.0f, +1.0f),
-	};
+	/////////////////////////////////////////////////////////////////////////
+	/// VERTEX DATA
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, tri.vertexBufferSize(), tri.vertices, GL_STATIC_DRAW);
 
-	GLuint bufferID;
-	glGenBuffers(1, &bufferID);
+	GLsizei stride = sizeof(float) * 6;		// (24B) 6 floats per vertex data (3pos, 3color)
+	const void* offset = (void*)(sizeof(float) * 3);	// (12B) offset position (3 floats)
 
-	meshData_[MeshType::QUAD] = bufferID;
-
-	glBindBuffer(GL_ARRAY_BUFFER, bufferID);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
-
-	GLint index = glGetAttribLocation(shaderProgram_.program, "position");
+	GLint index = glGetAttribLocation(shaderProgram_.program, "vertPosition");
+	glEnableVertexAttribArray(index);	
+	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, stride, 0);		// 3 floats for position
+	//							 ^-----------------------------------------+
+	index = glGetAttribLocation(shaderProgram_.program, "vertColor");
 	glEnableVertexAttribArray(index);
-	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
-	index = glGetAttribLocation(shaderProgram_.program, "color");
-	glEnableVertexAttribArray(index);
-	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (char*)(sizeof(float) * 3));
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, stride, offset); // 3 floats for color
+	//							 ^------------------------------------------+
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	GLuint indices[] = 
-	{
-		0,1,2
-	};
-
-	GLuint indexBufferID;
-	glGenBuffers(1, &indexBufferID);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	/////////////////////////////////////////////////////////////////////////
+	// ELEMENT DATA
+	GLuint ebo;
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, tri.indexBufferSize(), tri.indices, GL_STATIC_DRAW);
 	
-
+	tri.CleanUp();
 	return true;
 }
 
