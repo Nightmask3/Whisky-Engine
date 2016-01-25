@@ -76,8 +76,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\OpenGLRenderer Library\Color.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Source\OpenGLRenderer Library\MeshGenerator.cpp" />
+    <ClCompile Include="Source\OpenGLRenderer Library\MeshData.cpp" />
     <ClCompile Include="Source\Component Library\Component.cpp" />
     <ClCompile Include="Source\Component Library\Mesh.cpp" />
     <ClCompile Include="Source\Component Library\PlayerController.cpp" />
@@ -95,7 +98,10 @@
     <ClCompile Include="Source\OpenGLRenderer Library\ShaderProgram.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\OpenGLRenderer Library\Color.h" />
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="Source\OpenGLRenderer Library\MeshGenerator.h" />
+    <ClInclude Include="Source\OpenGLRenderer Library\MeshData.h" />
     <ClInclude Include="Source\Component Library\Component.h" />
     <ClInclude Include="Source\Component Library\Components.h" />
     <ClInclude Include="Source\Component Library\Mesh.h" />

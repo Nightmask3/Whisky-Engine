@@ -71,7 +71,7 @@ using std::vector;
 
 	bool ResourceManager::Load(const char* lvl_src)
 	{
-		cout << "Resouce Manager loading..." << endl;
+		cout << "Resource Manager loading..." << endl;
 		if (!ReadArchetypes())			return false;
 		if (!ReadLevelData(lvl_src))	return false;
 

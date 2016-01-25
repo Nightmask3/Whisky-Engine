@@ -16,7 +16,7 @@
 #define MESH_H
 
 #include "Component.h"
-
+#include "..\OpenGLRenderer Library\Color.h"
 #include <iostream>
 
 enum MeshType
@@ -30,22 +30,25 @@ enum MeshType
 	MESH_TYPE_COUNT
 };
 
-
 class Mesh : public Component
 {
-	public:
+	public:	// static functions
 		static Mesh* Deserialize(const char*);
-		static const ComponentType _mType = Component::MESH;
-	public:
-		Mesh(MeshType);
+
+	public:	// member functions
+		Mesh(MeshType t);
+		Mesh(MeshType t, Color c);
 		Mesh();
 
-		MeshType MeshHandle() const { return mMeshHandle_; }
-		bool IsActive() const		{ return bIsActive_; }
-		void SetActive(bool val)	{ bIsActive_ = val; }
+		MeshType Type()				const { return mType_; }
+		bool	 IsActive()			const { return bIsActive_; }
+		void	 SetActive(bool val)	  { bIsActive_ = val; }	
+		Color	 GetColor()			const { return mColor_; }
+		void	 SetColor(const Color& c) { mColor_ = c; }
 
-	private:
-		MeshType mMeshHandle_;
+private:	// data
+		Color mColor_;		// might be stored in Material component/entity?
+		MeshType mType_;
 		bool bIsActive_; 
 };
 

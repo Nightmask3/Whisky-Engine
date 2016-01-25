@@ -38,18 +38,26 @@ Mesh* Mesh::Deserialize(const char* params)
 	return comp;
 }
 
-Mesh::Mesh(MeshType t) 
-	: 
-	mMeshHandle_(t),
-	bIsActive_(true),
+// DEFAULT CASE: definition required to instantiate 
+// a default component in GameObject::GetComponent()
+Mesh::Mesh()
+	:
 	Component(ComponentType::MESH, "Mesh")
 {}
 
-// DEFAULT CASE: definition required to instantiate 
-// a default component in GameObject::GetComponent()
-Mesh::Mesh()	
+Mesh::Mesh(MeshType t)
 	:
-	mMeshHandle_(MeshType::MESH_TYPE_COUNT),
+	mType_(t),
 	bIsActive_(true),
+	mColor_(),
 	Component(ComponentType::MESH, "Mesh")
 {}
+
+Mesh::Mesh(MeshType t, Color c)
+	:
+	mType_(t),
+	bIsActive_(true),
+	mColor_(c),
+	Component(ComponentType::MESH, "Mesh")
+{}
+

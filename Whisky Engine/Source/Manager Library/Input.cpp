@@ -49,7 +49,7 @@
 		_deltaPosition = glm::vec2(0.0f, 0.0f);
 
 		// assign window handle
-		_pWindow = Graphics::Inst()->_pWindow;
+		_pWindow = Graphics::Inst()->pWindow_;
 
 		// print system info
 		std::cout << "Input System Initialized.\n";
@@ -57,23 +57,7 @@
 	}
 
 	void Input::Update()
-	{
-		//---------------------------------------------------
-		// MOUSE STATE
-		//---------------------------------------------------
-		// Caputer the mouse position and update the mouse pressed states
-		sf::Window* win = _pWindow;
-		sf::Vector2i temp = sf::Mouse::getPosition(*win);
-		_position.x = temp.x;
-		_position.y = temp.y;
-
-		for (int i = 0; i < sf::Mouse::ButtonCount; i++)
-		{
-			_prevButtonState[static_cast<sf::Mouse::Button>(i)] = _currButtonState[static_cast<sf::Mouse::Button>(i)];
-			_currButtonState[static_cast<sf::Mouse::Button>(i)] = sf::Mouse::isButtonPressed(static_cast<sf::Mouse::Button>(i));
-		}
-		
-		
+	{		
 		//------------------------------------------------
 		// EVENT HANDLING
 		//------------------------------------------------
@@ -96,7 +80,6 @@
 				// Resize Window
 			case sf::Event::Resized:
 				// adjust the viewport when the window is resized
-				glViewport(0, 0, event.size.width, event.size.height);
 				GFX->UpdateWindowSize(event.size.width, event.size.height);
 				break;
 
@@ -119,16 +102,28 @@
 		//------------------------------------------------
 		// KEYBOARD STATE
 		//------------------------------------------------
-		// Update Keyboard state by checking each key individually
-		// since SFML doesn't provide a keyboard state.
 		// WARNING: Keyboard state is updated EVEN if the game has lost focus
-		//			meaning that game will process input when it is alt-tabbed
+		//			meaning that game will process input when it is alt-tabbed !!!!
 		for (int i = 0; i < sf::Keyboard::KeyCount; i++)
 		{
 			_prevState[Key(i)] = _currState[Key(i)];
 			_currState[Key(i)] = sf::Keyboard::isKeyPressed(Key(i));
 		}
 
+		//---------------------------------------------------
+		// MOUSE STATE
+		//---------------------------------------------------
+		// Capture the mouse position and update the mouse pressed states
+		sf::Window* win = _pWindow;
+		sf::Vector2i temp = sf::Mouse::getPosition(*win);
+		_position.x = static_cast<float>(temp.x);
+		_position.y = static_cast<float>(temp.y);
+
+		for (int i = 0; i < sf::Mouse::ButtonCount; i++)
+		{
+			_prevButtonState[static_cast<sf::Mouse::Button>(i)] = _currButtonState[static_cast<sf::Mouse::Button>(i)];
+			_currButtonState[static_cast<sf::Mouse::Button>(i)] = sf::Mouse::isButtonPressed(static_cast<sf::Mouse::Button>(i));
+		}
 
 #ifdef DEBUG
 		//------------------------------------------------
