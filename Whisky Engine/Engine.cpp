@@ -42,7 +42,7 @@ void Engine::ToggleInfo()
 void Engine::TogglePause()
 {
 	_pause = !_pause;
-		
+
 	if (_pause) GFX->RenderPauseMenu();
 	else	   GOM->GetMenu()->GetComponent<Mesh>()->SetActive(false);
 }
@@ -50,7 +50,7 @@ void Engine::TogglePause()
 void print(std::string s)
 {
 	cout << "-----------------------------------------" << endl;
-	cout << "|\t Whisky Engine " << s << "\t|" << endl;
+	cout << "|\t Whisky Engine " << s << " \t|" << endl;
 	cout << "-----------------------------------------" << endl;
 }
 
@@ -76,7 +76,7 @@ bool Engine::Init()
 
 bool Engine::Load()
 {
-	print("Loading...");
+	print("Loading... \t");
 
 
 	if (!RSC->Load("Level.txt") ||
@@ -87,19 +87,18 @@ bool Engine::Load()
 
 	print("Loaded \t");
 
-	/////////////////////////////////////////////////////////////////////////////
-	// Game Object Creation Example
+	///////////////////////////////////////////////////////////////////////////////
+	//// Game Object Creation Example
 
-	GameObject & obj = GOM->Instantiate();				// instantiated with a default transform component
+	//GameObject & obj = GOM->Instantiate();				// instantiated with a default transform component
 	//obj.GetComponent<Transform>()->Scale(0.5f, 0.5f, 0.5f);
 
-	// Add component to component list of object, then add handle to handle list
-	Mesh * mesh = new Mesh(MeshType::QUAD, Color::green);	// new component to be added
-	obj.AddHandle(GOM->AddComponent(mesh, "Mesh", obj));
-		
-	// NOTICE: current issue is GameObject::Update() function is not using the new handle system to update the components.
-	PlayerController* ctrl = new PlayerController();
-	obj.AddHandle(GOM->AddComponent(ctrl, "PlayerController", obj));
+	//// Add component to component list of object, then add handle to handle list
+	//Mesh * mesh = new Mesh(MeshType::QUAD);	// new component to be added
+	//obj.AddComponent(mesh);
+	//
+	//PlayerController* ctrl = new PlayerController();
+	//obj.AddComponent(ctrl);
 
 	return true;
 }

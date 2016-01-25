@@ -27,10 +27,8 @@ Mesh* Mesh::Deserialize(const char* params)
 	string param = params;
 	std::transform(param.begin(), param.end(), param.begin(), ::tolower);
 
-	if (param == "quad")
-		comp = new Mesh(QUAD);
-	//else if (param == "")
-	//	comp = new Mesh(???);
+	if (param == "quad")		comp = new Mesh(QUAD);
+	//else if (param == "")		comp = new Mesh(???);
 
 	else
 	{
@@ -40,17 +38,19 @@ Mesh* Mesh::Deserialize(const char* params)
 	return comp;
 }
 
+// DEFAULT CASE: definition required to instantiate 
+// a default component in GameObject::GetComponent()
 Mesh::Mesh()
 	:
-	Component(ComponentType::MESH)
+	Component(ComponentType::MESH, "Mesh")
 {}
 
-Mesh::Mesh(MeshType t) 
-	: 
+Mesh::Mesh(MeshType t)
+	:
 	mType_(t),
 	bIsActive_(true),
 	mColor_(),
-	Component(ComponentType::MESH)
+	Component(ComponentType::MESH, "Mesh")
 {}
 
 Mesh::Mesh(MeshType t, Color c)
@@ -58,6 +58,6 @@ Mesh::Mesh(MeshType t, Color c)
 	mType_(t),
 	bIsActive_(true),
 	mColor_(c),
-	Component(ComponentType::MESH)
+	Component(ComponentType::MESH, "Mesh")
 {}
 

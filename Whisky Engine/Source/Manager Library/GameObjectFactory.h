@@ -64,7 +64,7 @@ public:
 
 	// Adds a Component to a Game Object component list and returns the handle to it
 	Handle AddComponent(void* p, unsigned int ,std::vector<HandleEntry_> & m_entries, std::string ComponentType, int index) const;
-	Handle AddComponent(void* p, std::string componentType, GameObject& obj) const;
+	Handle AddComponent(void* p, GameObject& obj) const;
 
 	// Updates a Component
 	bool UpdateComponent(Handle handle, void* p, std::vector<HandleEntry_> & m_entries);

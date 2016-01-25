@@ -98,10 +98,6 @@ GameObject::GameObject(GameObjectFactory & mFactory, const string& name, const s
 #endif
 	}
 
-	bool GameObject::operator==(const GameObject& obj)
-	{
-		return id_ == obj.id_;
-	}
 
 	GameObject::~GameObject()
 	{
@@ -117,6 +113,11 @@ GameObject::GameObject(GameObjectFactory & mFactory, const string& name, const s
 		//}
 	}
 
+	bool GameObject::operator==(const GameObject& obj)
+	{
+		return id_ == obj.id_;
+	}
+
 	///////////////////////////////////////////////////////////////////////////////
 	// Member functions
 	///////////////////////////////////////////////////////////////////////////////
@@ -130,6 +131,11 @@ GameObject::GameObject(GameObjectFactory & mFactory, const string& name, const s
 			pComponent->Update();
 		}
 		
+	}
+
+	void GameObject::AddComponent(Component* comp)
+	{
+		AddHandle(GOM->AddComponent(comp, *this));
 	}
 
 	//void GameObject::Relay(Message* m)
