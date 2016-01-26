@@ -94,17 +94,13 @@ bool Engine::Load()
 	obj.GetComponent<Transform>()->Scale(0.1f, 5.0f, 5.0f);
 	obj.GetComponent<Transform>()->Translate(glm::vec3(4.0f, 0.0f, 0.0f));
 
-	Transform * trans1 = obj.GetComponent<Transform>();
-	
-	// Add component to component list of object, then add handle to handle list
-	Mesh * mesh = new Mesh(MeshType::CUBE, Color::blue);	// new component to be added
+	Mesh * mesh = new Mesh(MeshType::CUBE, Color::blue);	
 	obj.AddComponent(mesh);
 
 	PhysicsComponent * phy = new PhysicsComponent();
 	obj.AddComponent(phy);
-	phy->SetCurrentPosition(trans1->GetPosition());
+	phy->SetCurrentPosition(obj.GetComponent<Transform>()->GetPosition());
 	phy->SetBoundingBoxType(Bounding::SPHERE);
-
 	PHY->AddComponentToList(phy);
 
 	Audio* audio = new Audio();
@@ -122,7 +118,8 @@ void Engine::MainLoop()
 	if (_pause)  GFX->RenderPauseMenu();
 	while (!_quit)
 	{
-		FRC->Begin();		// start frame
+		FRC->Update();
+		//FRC->Begin();		// start frame
 
 		// read user inputS
 		INP->Update();		// input manager
@@ -130,7 +127,7 @@ void Engine::MainLoop()
 		if (!_pause)
 		{
 			// update world
-			GOM->Update();		// game object manager
+			GOM->Update();	// game object manager
 			PHY->Update();	// physics
 
 			// render
@@ -138,7 +135,7 @@ void Engine::MainLoop()
 
 		}
 
-		FRC->End();			// end frame
+		//FRC->End();			// end frame
 		if (_info)	Log();
 	}
 }

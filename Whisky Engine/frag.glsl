@@ -19,7 +19,7 @@ void main()
 	vec3 lightPosition = vec3(2, -2, -2);
 	vec3 eye = vec3(0, 0, 10);
 
-	vec3 ambient = vec3(1) * 0.3;
+	vec3 ambient = vec3(1) * 0.25;
 	vec3 lightValue = vec3(1.0f, 1.0f, 1.0f)*0.8;
 	vec3 specular = vec3(1.0f, 1.0f, 1.0f)*0.2;
 	float shininess = 10.0f;
@@ -45,7 +45,7 @@ void main()
 
 	//outColor = vec4(vColor, 1);
 	if(dot(N, L) < 0)
-		outColor = vec4(BRDF, 1.0f);
+		outColor = vec4(BRDF + Ka, 1.0f);
 	else
 		outColor = vec4(BRDF * max(0.0, dot(N, L)) + Ka, 1.0f);
 

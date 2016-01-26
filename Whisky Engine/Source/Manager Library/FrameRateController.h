@@ -25,7 +25,10 @@ public:
 	bool Init(unsigned);
 	void Begin();
 	void End();
+	void Update();
 
+	sf::Time newTime, frameTime, currentTime;
+	double frametime;
 	void ToggleFPSLock();
 
 	inline float FrameDelta() { return frameDelta_; }
@@ -43,11 +46,12 @@ private:
 
 	unsigned fps_;
 	float frameTimeLimit_;	// seconds
-	float frameDelta_;
 	float begin_, end_;
 	double totalTime_;
 	unsigned long frameCount_;
 	sf::Clock time_;
+
+	float frameDelta_;
 
 };
 
