@@ -55,12 +55,14 @@ public:
 	int GetCount(std::vector<HandleEntry_> const & m_entries) const;
 
 	// Creates a list of components for System callers
-	bool InitializeListForSystem(std::vector<HandleEntry_> & m_entries, int);
+	bool InitializeListForSystem(std::vector<HandleEntry_> & m_entries, std::string SystemName);
 	// Creates a list of components for Game object callers
 	bool InitializeListForGameObject(std::vector<HandleEntry_> & m_entries, int);
 
-	// Adds an element to a list
-	Handle Add(void* p, uint32 type, std::vector<HandleEntry_> & m_entries, std::string componentType, int index);
+	// Adds an element to a list of a game object
+	Handle AddForGameObject(void* p, uint32 type, std::vector<HandleEntry_> & m_entries, std::string componentType, int index);
+	// Adds an element to a list of a system
+	Handle AddForSystem(void* p, uint32 type, std::vector<HandleEntry_> & m_entries, unsigned int componentID, std::string name);
 	// Updates a list element
 	void Update(Handle handle, void* p, std::vector<HandleEntry_> & m_entries);
 	// Removes a list element

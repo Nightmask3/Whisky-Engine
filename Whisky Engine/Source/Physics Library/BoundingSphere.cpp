@@ -3,13 +3,13 @@
 #include "..\Entity Library\GameObject.h"
 #include "..\Component Library\PhysicsComponent.h"
 #include "..\Component Library\BehaviorComponent.h"
-
+#include "..\..\Dependencies\glm\glm\glm.hpp"
 
 IntersectData BoundingSphere::IntersectBoundingSphere(const BoundingSphere & other) const
 {
 	float radiusDistance = mRadius + other.GetRadius(); // Distance between two centers for the spheres to be intersecting
-	Vector3D distance;
-	float centerDistance = Vector3DDistance(other.GetCenter(), mCenter);
+	glm::vec3 distance;
+	float centerDistance = glm::distance(other.GetCenter(), mCenter);
 	/*if (centerDistance < radiusDistance) 
 		std::cout << "Intersection!\n";*/
 	// If distance between centers is lesser than radius distance, the spheres are intersecting
@@ -19,8 +19,8 @@ IntersectData BoundingSphere::IntersectBoundingSphere(const BoundingSphere & oth
 IntersectData BoundingSphere::IntersectAABB(const BoundingBox & other) const
 {
 	// Clamp the circle to the closest point on the AABB
-	Vector3D Snap; 
-	Vector3D Difference;
+	glm::vec3 Snap; 
+	glm::vec3 Difference;
 	float distance = 0;
 	
 	float LeftFaceX = other.mCenter.x - other.GetHalfWidth();
@@ -47,8 +47,8 @@ IntersectData BoundingSphere::IntersectAABB(const BoundingBox & other) const
 	else if (mCenter.z < BackFaceZ)
 		Snap.z = BackFaceZ;
 	
-	Vector3DSub(Difference, mCenter, Snap);
-	distance = Vector3DLength(Difference);
+	Difference = mCenter - Snap;
+	distance = Difference.length();
 	IntersectData data(distance <= mRadius, distance, Difference);
 	
 	if (data.GetDoesIntersect())
@@ -60,10 +60,6 @@ IntersectData BoundingSphere::IntersectAABB(const BoundingBox & other) const
 		}
 		else
 		{
-			BehaviorComponent * b = nullptr;
-			b = static_cast<BehaviorComponent *>(mOwner->mOwner->GetComponent(Component::BEHAVIOR));
-			if(b != nullptr)
-				b->mColliding = true;
 		}
 		return data;
 	}

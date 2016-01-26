@@ -24,13 +24,13 @@ HandleManager::HandleManager(GameObjectFactory & factory)
 	_pObjectFactory = &factory;
 }
 GameObjectFactory* HandleManager::_pObjectFactory = NULL;
-bool HandleManager::InitializeListForSystem(std::vector<HandleEntry_> & m_entries, int index)
+bool HandleManager::InitializeListForSystem(std::vector<HandleEntry_> & m_entries, std::string SystemName)
 {
 	ListEntry_ listValue;
 	listValue.m_activeEntryCount = 0;
 	listValue.m_firstFreeEntry = 0;
 	// ID is generated
-	std::string ID = "System" + std::to_string(index);
+	std::string ID = SystemName;
 	// Creates a meta data list entry and inserts with "Caller Type name + GameObject Index" as tag in a map
 	MetaDataList_.insert(std::make_pair(ID, listValue));
 
@@ -61,7 +61,7 @@ bool HandleManager::InitializeListForGameObject(std::vector<HandleEntry_> & m_en
 	for (int i = 0; i < MaxComponents - 1; ++i)
 	{
 		
-		m_entries.push_back(HandleEntry_(i + 1));		// BUG: Vector Subscript out of range
+		m_entries.push_back(HandleEntry_(i + 1));		
 	}
 	// Creates the last element and sets its status to end of List as true
 	m_entries.push_back(HandleEntry_());
@@ -71,7 +71,7 @@ bool HandleManager::InitializeListForGameObject(std::vector<HandleEntry_> & m_en
 }
 
 
-Handle HandleManager::Add(void* p, uint32 type, std::vector<HandleEntry_> & m_entries, std::string componentType, int index)
+Handle HandleManager::AddForGameObject(void* p, uint32 type, std::vector<HandleEntry_> & m_entries, std::string componentType, int index)
 {
 	std::string ID = "GameObject" + std::to_string(index);
 	// Finds first free entry in list
@@ -93,7 +93,27 @@ Handle HandleManager::Add(void* p, uint32 type, std::vector<HandleEntry_> & m_en
 
 	return Handle(newIndex, m_entries[newIndex].m_counter, type);
 }
+Handle HandleManager::AddForSystem(void* p, uint32 type, std::vector<HandleEntry_> & m_entries, unsigned int componentID, std::string name)
+{
+	// Finds first free entry in list
+	const int newIndex = MetaDataList_[name].m_firstFreeEntry;
+	// Shifts the firstFreeEntry to the nextFreeIndex
+	MetaDataList_[name].m_firstFreeEntry = m_entries[newIndex].m_nextFreeIndex;
+	// Sets this entries nextFreeIndex to be 0
+	m_entries[newIndex].m_nextFreeIndex = 0;
+	// Increment the counter of the number of references to this component
+	m_entries[newIndex].m_counter++;
+	// If it was an unused entry, set its count to 1
+	if (m_entries[newIndex].m_counter == 0)
+		m_entries[newIndex].m_counter = 1;
+	m_entries[newIndex].m_active = true;
+	m_entries[newIndex].m_entry = p;
+	// Sets the tag of the index of the component within its manager list
+	m_entries[newIndex].m_ComponentType = std::to_string(componentID);
+	++MetaDataList_[name].m_activeEntryCount;
 
+	return Handle(newIndex, m_entries[newIndex].m_counter, type);
+}
 
 void HandleManager::Update(Handle handle, void* p, std::vector<HandleEntry_> & m_entries)
 {

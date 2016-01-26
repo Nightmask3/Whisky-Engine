@@ -1,15 +1,19 @@
 #include "BoundingBox.h"
-
+#include "..\..\Dependencies\glm\glm\glm.hpp"
 IntersectData BoundingBox::IntersectAABB(const BoundingBox& other) const
 {
-	Vector3D distance1, distance2, distance;
+	glm::vec3 distance1, distance2, distance;
 	// If this AABB is closer to the origin
-	Vector3DSub(distance1, other.GetMinExtends(), maxExtends);
+	distance1 = other.GetMinExtends() - maxExtends;
 	// If the OTHER AABB is closer to the origin
-	Vector3DSub(distance2, minExtends, other.GetMaxExtends());
+	distance2 = minExtends - other.GetMaxExtends();
 	// The actual distance vector is the larger distance between the AABBs
-	distance = Vector3DMaxBetween(distance1, distance2);
-	float maxDistance = Vector3DMax(distance);
+	distance = glm::greaterThan(distance1, distance2);
+	float maxDistance = distance.x;
+	if (distance.y > maxDistance)
+		maxDistance = distance.y;
+	if (distance.z > maxDistance)
+		maxDistance = distance.z;
 	// If there is some amount of space between the two on any axis, returns true, else false (I.E. intersection)
 	if (maxDistance < 0)
 		std::cout << "Intersection!\n";

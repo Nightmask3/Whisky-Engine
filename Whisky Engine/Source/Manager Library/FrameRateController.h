@@ -28,23 +28,26 @@ public:
 
 	void ToggleFPSLock();
 
-	float	 FrameDelta()	const	{ return _frameDelta; }
-	unsigned FPS()			const	{ return _fps; }
-	float	 Time()			const   { return _time.getElapsedTime().asSeconds(); }
-	float FrameTimeLimit() const { return _frameTimeLimit; }
-	unsigned long FrameCount() const { return _frameCount; }
+	inline float FrameDelta() { return frameDelta_; }
+	inline unsigned FPS()			const	{ return fps_; }
+	inline float	 Time()			const   { return time_.getElapsedTime().asSeconds(); }
+	inline float FrameTimeLimit() const { return frameTimeLimit_; }
+	inline double GetTotalTime() { return totalTime_; }
+	inline void AddtoTotalTime(double time) { totalTime_ += time; }
+	inline unsigned long FrameCount() const { return frameCount_; }
 private:
 	FrameRateController(){}
 	~FrameRateController(){}
 
 	static FrameRateController* _pInstance;
 
-	unsigned _fps;
-	float _frameTimeLimit;	// seconds
-	float _frameDelta;
-	float _begin, _end;
-	unsigned long _frameCount;
-	sf::Clock _time;
+	unsigned fps_;
+	float frameTimeLimit_;	// seconds
+	float frameDelta_;
+	float begin_, end_;
+	double totalTime_;
+	unsigned long frameCount_;
+	sf::Clock time_;
 
 };
 

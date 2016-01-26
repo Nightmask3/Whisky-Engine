@@ -21,7 +21,7 @@ public:
 	// Type of rigid body (used in searching later)
 	RigidBodyType mType;
 	// Direction of Intersection Data (used in Behavior Component)
-	Vector3D mCollisionDir;
+	glm::vec3 mCollisionDir;
 	Bounding(RigidBodyType type) : mType(type) {}
 	virtual ~Bounding();
 };

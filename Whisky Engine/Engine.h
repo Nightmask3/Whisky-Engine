@@ -24,7 +24,7 @@
 #include "Source/Manager Library/FrameRateController.h"
 #include "Source/Manager Library/ResourceManager.h"
 #include "Source/Manager Library/AudioManager.h"
-
+#include "Source/Physics Library/PhysicsManager.h"
 
 // handles for Systems/Manager
 #define GFX				Graphics::Inst()
@@ -33,8 +33,8 @@
 #define FRC  FrameRateController::Inst()
 #define RSC		 ResourceManager::Inst()
 #define AM			AudioManager::Inst()
+#define PHY				 PhysicsManager::Inst(*FrameRateController::Inst(), *GameObjectFactory::Inst())
 //#define MSG			   Messaging::Inst()		
-//#define PHY				 Physics::Inst()
 
 class Engine
 {

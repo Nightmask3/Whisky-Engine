@@ -206,9 +206,9 @@ bool GameObjectFactory::InitializeListForGameObject(std::vector<HandleEntry_> & 
 }
 
 // Initializes a list for the system that performed that calling
-bool GameObjectFactory::InitializeListForSystem(std::vector<HandleEntry_> & mEntries, int counter) const
+bool GameObjectFactory::InitializeListForSystem(std::vector<HandleEntry_> & mEntries, std::string name) const
 {
-	if (_pHandleMan->InitializeListForSystem(mEntries, counter))
+	if (_pHandleMan->InitializeListForSystem(mEntries, name))
 		return true;
 	else
 		return false;
@@ -216,7 +216,7 @@ bool GameObjectFactory::InitializeListForSystem(std::vector<HandleEntry_> & mEnt
 
 Handle GameObjectFactory::AddComponent(void* p, unsigned int type, std::vector<HandleEntry_> & m_entries, std::string componentType, int index) const
 {
-	return _pHandleMan->Add(p, type, m_entries, componentType, index);
+	return _pHandleMan->AddForGameObject(p, type, m_entries, componentType, index);
 }
 
 Handle GameObjectFactory::AddComponent(void* p, GameObject& obj) const
@@ -227,9 +227,12 @@ Handle GameObjectFactory::AddComponent(void* p, GameObject& obj) const
 	component->SetOwner(&obj);
 	auto & m_entries = obj.GetComponentList();
 	int index = obj.GetHandleID();
-	return _pHandleMan->Add(p, type, m_entries, name, index);
+	return _pHandleMan->AddForGameObject(p, type, m_entries, name, index);
 }
-
+Handle GameObjectFactory::AddComponentToSystem(void* p, unsigned int type, std::vector<HandleEntry_> & m_entries, unsigned int componentID, std::string name)
+{
+	return _pHandleMan->AddForSystem(p, type, m_entries, componentID, name);
+}
 // Makes a call to handle manager to convert the handle to a pointer
 Component * GameObjectFactory::ConvertHandletoPointer(Handle handle, std::vector<HandleEntry_> mEntries)
 {
@@ -273,7 +276,7 @@ GameObject& GameObjectFactory::Instantiate()
 		{
 			obj.Activate();
 			obj.SetHandleID(_mGameObjectCounter);
-			InitializeListForGameObject(obj.GetComponentList(), _mGameObjectCounter++);	// BUG: ASSERTION FAIL
+			InitializeListForGameObject(obj.GetComponentList(), _mGameObjectCounter++);
 			// Creates a transform component with the default values, registers it on the gameobject component list and returns the handle to it
 			Handle newComponentHandle = AddComponent(new Transform(), Component::ComponentType::TRANSFORM, obj.GetComponentList(), "Transform", obj.GetHandleID());
 			// Handle is added to game object handle list

@@ -22,6 +22,7 @@
 #include "..\Component Library\Transform.h"
 #include "..\Component Library\PlayerController.h"
 #include "..\Manager Library\GameObjectFactory.h"
+#include "..\Manager Library\EventManager.h"
 class Message;
 
 class GameObject : public Entity
@@ -64,7 +65,7 @@ public:	// functions
 	std::vector<HandleEntry_> & GetComponentList() { return HandleEntries_; }
 
 	friend std::ostream& operator<<(std::ostream&, const GameObject&);
-	
+	void HandleEvent(Event *) {}
 private:	// static members
 	static unsigned long _last_id;
 	

@@ -58,7 +58,7 @@ public:
 	bool InitializeListForGameObject(std::vector<HandleEntry_> & mEntries, int) const;
 
 	// Makes a call to handle manager to initialize component list for a system
-	bool InitializeListForSystem(std::vector<HandleEntry_> & mEntries, int) const;
+	bool InitializeListForSystem(std::vector<HandleEntry_> & mEntries, std::string) const;
 
 	// Makes a call to handle manager to convert the handle to a pointer
 	Component * ConvertHandletoPointer(Handle handle, std::vector<HandleEntry_> mEntries);
@@ -67,12 +67,17 @@ public:
 	Handle AddComponent(void* p, unsigned int ,std::vector<HandleEntry_> & m_entries, std::string ComponentType, int index) const;
 	Handle AddComponent(void* p, GameObject& obj) const;
 
+	// For adding a component to a manager list
+	Handle AddComponentToSystem(void* p, unsigned int, std::vector<HandleEntry_> & m_entries, unsigned int, std::string name);
+
 	// Updates a Component
 	bool UpdateComponent(Handle handle, void* p, std::vector<HandleEntry_> & m_entries);
 	
 	// Removes a Component
 	bool Remove(Handle handle, std::vector<HandleEntry_> & m_entries, std::type_info const & CallerType);
 
+	// Gets gameobject list
+	ObjVector & GetObjectList() { return gameObjList_; }
 private:
 	GameObjectFactory();
 	GameObjectFactory(const GameObjectFactory&){}
@@ -80,53 +85,6 @@ private:
 
 	bool InitializeArchetypes();
 	bool InitializeLevel();
-	
-	template <typename T> 
-	bool CreateComponent()	// Member Template function used to create component of any type
-	{
-		Component * mComponent = nullptr;
-		// Create component type as requested
-		if (typeid(T) == typeid(Transform))
-		{
-			return true;
-		}
-		else if (typeid(T) == typeid(Mesh))
-		{
-			return true;
-		}
-		else if (typeid(T) == typeid(PlayerController))
-		{
-			return true;
-		}
-		else if (typeid(T) == typeid(PhysicsComponent))
-		{
-			mComponent = new PhysicsComponent();
-			mComponent->mOwner = &(ObjectLibrary.back());
-			mComponent->mOwner->ComponentListSize++;
-			mComponent->mOwner->ComponentList.push_back(mComponent);
-			// Sets current position to use in physics simulation
-			Transform * t = nullptr;
-			t = static_cast<Transform *>(mComponent->mOwner->GetComponent(Component::TRANSFORM));
-
-			PhysicsComponent * p = nullptr;
-			p = static_cast<PhysicsComponent *>(mComponent->mOwner->GetComponent(Component::PHYSICS));
-
-			Vector3DSet(&(p->mPositionCurr), t->mTranslation.m[0][3], t->mTranslation.m[1][3], t->mTranslation.m[2][3], 1);
-			PhyManager.PhysicsObjectsList.push_back(mComponent);
-			return true;
-		}
-		else if (typeid(T) == typeid(BehaviorComponent))
-		{
-			return true;
-		}
-		/* TODO : Add more component types here */
-		else
-		{
-			std::cout << "Component Type not currently implemented OR Invalid Component Type." << std::endl;
-		}
-		return false;
-	}
-	
 private:
 	static GameObjectFactory* _pInstance;
 	static HandleManager* _pHandleMan;
