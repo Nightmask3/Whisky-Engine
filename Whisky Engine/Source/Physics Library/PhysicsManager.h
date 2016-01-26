@@ -1,18 +1,17 @@
 #pragma once
-#define GRAVITY 10.0f
 #include <vector>
 // Manager Header files
 #include "..\Manager Library\FrameRateController.h"
 #include "..\Manager Library\EventManager.h"
 // Component Header files
 #include "..\Component Library\PhysicsComponent.h"
-#include "..\Component Library\SpriteComponent.h"
 // Bounding box header file for types of bodies
 #include "Bounding.h"
 #include "BoundingSphere.h"
 #include "BoundingBox.h"
 #include "Plane.h"
-
+// How the handle manager refers to the physics system
+#define PHYSICS_SYSTEM_TAG "Physics Manager"
 class CollideEvent : public Event
 {
 	public:
@@ -36,18 +35,31 @@ public:
 class PhysicsManager
 {
 private:
-	FrameRateController & frameManager;
+	FrameRateController & frameManager_;
+	GameObjectFactory & GOManager;
+	static PhysicsManager * _pInstance;
+	static int _mActiveComponentCount;
+	std::vector<HandleEntry_> HandleEntries_;
+	std::vector<Handle> Handles_;
+
+	double accumulator;
 public:
-	bool mGameOver;
-	void SetBoundingBoxType(Bounding::RigidBodyType type);
-	std::vector<Component *> PhysicsObjectsList;
-	PhysicsManager(FrameRateController & frc) : frameManager(frc){ mGameOver = false; }
+	bool bGameOver;
+	//void SetBoundingBoxType(Bounding::RigidBodyType type);
+	PhysicsManager(FrameRateController & frc, GameObjectFactory & gom) : frameManager_(frc), GOManager(gom){ bGameOver = false; }
+	virtual ~PhysicsManager();
+	// Physics management function
 	void Simulation();
 	void DetectCollision();
-	void HandleCollision();
-	void Update();
 	void CheckCollision(Bounding const & shape1, Bounding const & shape2);
 	void Resolution();
-	virtual ~PhysicsManager();
+	void Update();
+	bool Init();
+	// Handle related functions
+	inline void AddHandle(Handle & handle)		 { Handles_.push_back(handle); }
+	inline void AddComponentToList(PhysicsComponent * comp) { AddHandle(GOManager.AddComponentToSystem(comp, Component::ComponentType::PHYSICS, HandleEntries_, _mActiveComponentCount, PHYSICS_SYSTEM_TAG)); _mActiveComponentCount++; }
+	static PhysicsManager* Inst(FrameRateController &, GameObjectFactory &);
+	std::vector<HandleEntry_> & GetComponentList() { return HandleEntries_; }
+
 };
 

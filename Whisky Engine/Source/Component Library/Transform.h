@@ -9,8 +9,8 @@
 #include <cassert>
 #include <sstream>
 // GLM header files
-#include "glm\mat4x4.hpp"
-#include "glm\vec3.hpp"
+#include "..\..\Dependencies\glm\glm\mat4x4.hpp"
+#include "..\..\Dependencies\glm\glm\vec3.hpp"
 
 // Component header files
 #include "Component.h"
@@ -27,10 +27,6 @@ class Transform : public Component
 		{
 			mPosition_ = val; 
 		}
-		glm::vec3 GetPosition()
-		{
-			return mPosition_;
-		}
 		// Adds the vector formed by x, y, z to the position
 		void Position(float x, float y, float z)		
 		{ 
@@ -42,6 +38,7 @@ class Transform : public Component
 			mScale_ = glm::vec3(x, y, z);
 		}
 
+
 		// Translates the position by the provided vector
 		void Translate(glm::vec3 v)
 		{
@@ -51,10 +48,18 @@ class Transform : public Component
 		// Creates a transform component according to a given set of vectors
 		// Initializes rotation and position to (0, 0 ,0) and Scale to (1, 1, 1) as default parameters
 		Transform(const glm::vec3 position = glm::vec3(0), const glm::vec3 rotation = glm::vec3(0), const glm::vec3 scale = glm::vec3(1));
-		 ~Transform();
+		~Transform();
+		// Getters
+		inline glm::vec3 GetPosition() { return mPosition_; }
+		inline glm::vec3 GetRotation() { return mRotation_; }
+		inline glm::vec3 GetScale() { return mScale_; }
+		// Setters
+		inline void SetPosition(glm::vec3 pos) { mPosition_ = pos; }
+		inline void SetRotation(glm::vec3 rot) { mRotation_ = rot; }
+		inline void SetScale(glm::vec3 scale) { mScale_ = scale; }
 		// Returns the Model Transformation Matrix
 		glm::mat4 ModelTransformationMatrix() const;
-		
+
 		void Update();
 		static const ComponentType _mType = Component::TRANSFORM;
 		static Transform * Deserialize(const char*);

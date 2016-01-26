@@ -1,70 +1,83 @@
 #pragma once
+#include "..\Manager Library\EventManager.h"
 #include "..\Entity Library\GameObject.h"
 #include "Transform.h"
-//#include "..\Math Library\Vector3D.h"
+#include "..\..\Dependencies\glm\glm\vec3.hpp"
 #include "..\Physics Library\Bounding.h"
 
-struct VertexCollider
-{
-	GLfloat X, Y, Z;	 // Position
-	GLfloat R, G, B, A;	 // Color
-	GLfloat U = 0, V = 0;// Texture Coordinates
-};
+
 class PhysicsComponent : public Component
 {
-public:
+private:
 	/* -------- VARIABLES ---------- */
 	struct Derivative
 	{
-		Vector3D mDerivedVelocity;
-		Vector3D mDerivedAcceleration;
+		glm::vec3 mDerivedVelocity;
+		glm::vec3 mDerivedAcceleration;
 		Derivative()
 		{
-			Vector3DZero(&mDerivedAcceleration);
-			Vector3DZero(&mDerivedVelocity);
+			mDerivedAcceleration = glm::vec3(0);
+			mDerivedVelocity = glm::vec3(0);
 		}
 	};
-	Vector3D mPositionCurr;
-	Vector3D mPositionPrev;
-	Vector3D mVelocity;
-	Vector3D mForce;
-	Vector3D mMomentum;
-	bool mIsPlayer;
-	float mMass;
-	float mInverseMass;
-	bool mAcceleration;
-	int mLifeCount;
-	Bounding * mpShape; // Pointer to the kind of collision bounding box to be used for this object
-	std::vector<VertexCollider> VertexList;
-	std::vector<GLuint> IndexList;
+
+	glm::vec3 mPositionCurr_;
+	glm::vec3 mPositionPrev_;
+	glm::vec3 mVelocity_;
+	glm::vec3 mForce_;
+	glm::vec3 mMomentum_;
+
+	bool bIsPlayer_;
+	bool bAcceleration_;
+	float mMass_;
+	float mInverseMass_;
+	unsigned int system_handle_id_;
+	unsigned int mLifeCount;
+	
+	Bounding * pShape_; // Pointer to the bounding box to be used for this object
+
+	
+public:
 	/* -------- FUNCTIONS ---------- */
 	// GETTERS
-	inline const Bounding & GetCollider() const { return static_cast<const Bounding &>(*mpShape); }
-	inline const std::vector<VertexCollider> & GetVertexListCollider() { return VertexList; }
-	inline const std::vector<GLuint> & GetIndexListCollider() { return IndexList; }
+	inline const Bounding & GetCollider() const { return static_cast<const Bounding &>(*pShape_); }
+	inline float GetMass() { return mMass_; }
+	inline float GetInversemass() { return mInverseMass_; }
+	inline Bounding * GetBoundingBox() { return pShape_; }
+
+	// Returns a reference to be able to change individual x,y,z values as opposed to setting a new position or translating as a whole
+	inline glm::vec3 & GetCurrentPosition() { return mPositionCurr_; }
+	inline glm::vec3 GetPreviousPosition() { return mPositionPrev_; }
+	inline glm::vec3 & GetVelocity() { return mVelocity_; }
+
 	// SETTERS
-	inline void SetMass(float mass) { mMass = mass; mInverseMass = 1 / mMass; }
-	void Update(){}
+	inline void SetMass(float mass) { mMass_ = mass; mInverseMass_ = 1 / mMass_; }
+	inline void SetCurrentPosition(glm::vec3 pos) { mPositionCurr_ = pos; }
+	inline void TranslatePosition(glm::vec3 pos) { mPositionCurr_ += pos; }
+	inline void SetVelocity(glm::vec3 vel) { mVelocity_ = vel; }
+	inline void ToggleAcceleration(bool value) { bAcceleration_ = value; }
+	void Update() {}
 	void Serialize(std::string & Contents, unsigned int & Count);
 	void UpdateTransform();
 	void Recalculate();
 	void Integrate(double t, double dt);
 	void HandleEvent(Event *);
+	void SetBoundingBoxType(Bounding::RigidBodyType type);
 	Derivative Evaluate(double t, double dt, const Derivative &);
-	Vector3D Acceleration(float t);
-	PhysicsComponent() : Component(Component::PHYSICS)
-	{
-		Vector3DZero(&mVelocity);
-		Vector3DZero(&mPositionCurr);
-		Vector3DZero(&mPositionPrev);
-		Vector3DZero(&mMomentum);
-		Vector3DZero(&mForce);
-		mMass = 0.0f;
-		mInverseMass = 0.0f;
-		mAcceleration = true;
-		mIsPlayer = false;
-		mLifeCount = 3;
+	glm::vec3 Acceleration(float t);
 
+	PhysicsComponent() : Component(Component::PHYSICS, "Physics")
+	{
+		mVelocity_ = glm::vec3(0);
+		mPositionCurr_ = glm::vec3(0);
+		mPositionPrev_ = glm::vec3(0);
+		mMomentum_ = glm::vec3(0);
+		mForce_ = glm::vec3(0);
+		mMass_ = 0.0f;
+		mInverseMass_ = 0.0f;
+		bAcceleration_ = true;
+		bIsPlayer_ = false;
+		mLifeCount = 3;
 	}
 	~PhysicsComponent(){}
 };

@@ -136,7 +136,7 @@ void Graphics::Render()
 {
 	// Clear the screen to gray
 	glViewport(0, 0, width_, heigth_);
-	glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	// Get the View & Projection matrices
@@ -229,6 +229,7 @@ void Graphics::DrawObject(const GameObject& obj, const glm::mat4 & vView, const 
 	glBindVertexArray(meshData_[obj.GetComponent<Mesh>()->Type()]);
 	// assert dereference stuff maybe?
 
+	Transform* tf = obj.GetComponent<Transform>();
 	glm::mat4 vModel = obj.GetComponent<Transform>()->ModelTransformationMatrix();
 	glm::vec4 color = obj.GetComponent<Mesh>()->GetColor().Value();
 
@@ -366,8 +367,9 @@ bool Graphics::CreateCubeMesh()
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, cube.vertexBufferSize(), cube.vertices, GL_STATIC_DRAW);
 
-	GLsizei stride = sizeof(float) * 6;		// (24B) 6 floats per vertex data (3pos, 3color)
-	const void* offset = (void*)(sizeof(float) * 3);	// (12B) offset position (3 floats)
+	GLsizei stride = sizeof(float) * 9;		// (36B) 9 floats per vertex data (3pos, 3color, 3normal)
+	const void* cOffset = (void*)(sizeof(float) * 3);	// (12B) offset to color data  (3 floats from beginning)
+	const void* nOffset = (void*)(sizeof(float) * 6);	// (24B) offset to normal data (6 floats from beginning)
 
 	GLint index = glGetAttribLocation(shaderProgram_.program, "vertPosition");
 	glEnableVertexAttribArray(index);
@@ -375,7 +377,15 @@ bool Graphics::CreateCubeMesh()
 	//							 ^-----------------------------------------+
 	index = glGetAttribLocation(shaderProgram_.program, "vertColor");
 	glEnableVertexAttribArray(index);
-	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, stride, offset); // 3 floats for color
+	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, stride, cOffset); // 3 floats for color
+	//							 ^------------------------------------------+
+	index = glGetAttribLocation(shaderProgram_.program, "vertPosition");
+	glEnableVertexAttribArray(index);
+	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, stride, 0);		// 3 floats for position
+	//							 ^-----------------------------------------+
+	index = glGetAttribLocation(shaderProgram_.program, "vertNormal");
+	glEnableVertexAttribArray(index);
+	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, stride, nOffset); // 3 floats for normal
 	//							 ^------------------------------------------+
 	//glBindBuffer(GL_ARRAY_BUFFER, 0);
 

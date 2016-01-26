@@ -63,11 +63,11 @@ bool Engine::Init()
 
 	// initialize systems
 	if (!FRC->Init(60) ||	// frame rate controller
-		//!PHY->Init() ||	// physics
 		!RSC->Init() ||		// resource manager
 		!GFX->Init() ||		// graphics
 		!INP->Init() ||		// input controller
-		!GOM->Init() //||		// game object manager
+		!GOM->Init() ||		// game object manager
+		!PHY->Init()		// physics
 		//!MSG->Init()		// messaging 
 		)
 		return false;
@@ -113,13 +113,18 @@ bool Engine::Load()
 
 	///CAMERA NOT DELETED SO MEMORY LEAK HERE ALTHOUGH VERY SMALL
 
-
 	GameObject & obj3 = GOM->Instantiate();				// instantiated with a default transform component
 	obj3.GetComponent<Transform>()->Scale(0.1f, 5.0f, 5.0f);
 	obj3.GetComponent<Transform>()->Translate(glm::vec3(4.0f, 0.0f, 0.0f));
-	// Add component to component list of object, then add handle to handle list
-	Mesh * mesh = new Mesh(MeshType::CUBE, Color::black);	// new component to be added
+
+	Mesh * mesh = new Mesh(MeshType::CUBE, Color::blue);	
 	obj3.AddComponent(mesh);
+
+	PhysicsComponent * phy = new PhysicsComponent();
+	obj.AddComponent(phy);
+	phy->SetCurrentPosition(obj.GetComponent<Transform>()->GetPosition());
+	phy->SetBoundingBoxType(Bounding::SPHERE);
+	PHY->AddComponentToList(phy);
 
 	Audio* audio = new Audio();
 	SimpleMusic* music = new SimpleMusic("greatmusic.ogg");
@@ -127,9 +132,7 @@ bool Engine::Load()
 	SimpleSFX* sfx = new SimpleSFX("scream.wav");
 	AM->registerSFX(audio, sfx);
 	obj.AddComponent(audio);
-	//PlayerController* ctrl = new PlayerController();
-	//obj.AddComponent(ctrl);
-
+	
 	return true;
 }
 
@@ -138,7 +141,8 @@ void Engine::MainLoop()
 	if (_pause)  GFX->RenderPauseMenu();
 	while (!_quit)
 	{
-		FRC->Begin();		// start frame
+		FRC->Update();
+		//FRC->Begin();		// start frame
 
 		// read user inputS
 		INP->Update();		// input manager
@@ -146,7 +150,7 @@ void Engine::MainLoop()
 		if (!_pause)
 		{
 			// update world
-			GOM->Update();		// game object manager
+			GOM->Update();	// game object manager
 			//PHY->Update();	// physics
 
 			// render
@@ -154,7 +158,7 @@ void Engine::MainLoop()
 
 		}
 
-		FRC->End();			// end frame
+		//FRC->End();			// end frame
 		if (_info)	Log();
 	}
 }

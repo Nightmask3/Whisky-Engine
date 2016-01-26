@@ -17,7 +17,7 @@
 #include <unordered_map>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
-#include <glm\vec2.hpp>
+#include "..\..\Dependencies\glm\glm\vec2.hpp"
 
 	typedef sf::Keyboard::Key KeyCode;
 
