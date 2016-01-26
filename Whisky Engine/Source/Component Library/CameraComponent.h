@@ -9,8 +9,8 @@
 #include <cassert>
 #include <sstream>
 // GLM header files
-#include "glm\mat4x4.hpp"
-#include "glm\vec3.hpp"
+#include "..\..\Dependencies\glm\glm\mat4x4.hpp"
+#include "..\..\Dependencies\glm\glm\vec3.hpp"
 
 // Component header files
 #include "Component.h"

@@ -116,13 +116,12 @@ bool Engine::Load()
 	GameObject & obj3 = GOM->Instantiate();				// instantiated with a default transform component
 	obj3.GetComponent<Transform>()->Scale(0.1f, 5.0f, 5.0f);
 	obj3.GetComponent<Transform>()->Translate(glm::vec3(4.0f, 0.0f, 0.0f));
-
 	Mesh * mesh = new Mesh(MeshType::CUBE, Color::blue);	
 	obj3.AddComponent(mesh);
 
 	PhysicsComponent * phy = new PhysicsComponent();
-	obj.AddComponent(phy);
-	phy->SetCurrentPosition(obj.GetComponent<Transform>()->GetPosition());
+	obj3.AddComponent(phy);
+	phy->SetCurrentPosition(obj3.GetComponent<Transform>()->GetPosition());
 	phy->SetBoundingBoxType(Bounding::SPHERE);
 	PHY->AddComponentToList(phy);
 
@@ -131,7 +130,7 @@ bool Engine::Load()
 	SimpleAudioSource* audioSource = new SimpleAudioSource("scream.wav");
 	SimpleSFX* sfx = new SimpleSFX("scream.wav");
 	AM->registerSFX(audio, sfx);
-	obj.AddComponent(audio);
+	obj3.AddComponent(audio);
 	
 	return true;
 }
