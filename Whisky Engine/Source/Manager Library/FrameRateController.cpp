@@ -31,35 +31,37 @@ FrameRateController* FrameRateController::Inst()
 
 bool FrameRateController::Init(unsigned fps)
 {
-	_fps = fps;
-	_frameTimeLimit = 1.0f / _fps;
-	_frameCount = 0;
-	_frameDelta = _begin = _end = 0.0f;
-	cout << "FrameRateController Initialized: " << _fps << " FPS | FrameTimeLimit = " << _frameTimeLimit << endl;
+	fps_ = fps;
+	frameTimeLimit_ = 1.0f / fps_;
+	frameCount_ = 0;
+	frameDelta_ = begin_ = end_ = 0.0f;
+	
+	totalTime_ = 0;
+	cout << "FrameRateController Initialized: " << fps_ << " FPS | FrameTimeLimit = " << frameTimeLimit_ << endl;
 	return true;
 }
 
 void FrameRateController::Begin()
 {
-	_begin = Time();
+	begin_ = Time();
 }
 
 void FrameRateController::End()
 {
-	while ((_frameDelta = (Time() - _begin)) < _frameTimeLimit);	// FPS lock
-	++_frameCount;
+	while ((frameDelta_ = (Time() - begin_)) < frameTimeLimit_);	// FPS lock
+	++frameCount_;
 }
 
 void FrameRateController::ToggleFPSLock()
 {
-	if (_fps == 60){
-		_fps = 150;
+	if (fps_ == 60){
+		fps_ = 150;
 	}
 	else
 	{
-		_fps = 60;
+		fps_ = 60;
 	}
 
-	_frameTimeLimit = 1.0f / _fps;
+	frameTimeLimit_ = 1.0f / fps_;
 
 }

@@ -4,19 +4,19 @@
 #include <iostream>
 #include "Bounding.h"
 #include "BoundingSphere.h"
-#include "..\Math Library\Vector3D.h"
+#include "..\..\Dependencies\glm\glm\vec3.hpp"
 
 class Plane : public Bounding
 {
 private:
-	const Vector3D mNormal;
+	const glm::vec3 mNormal;
 	const float mDistance;
 public:
-	Plane(const Vector3D & Normal, float dist) :
+	Plane(const glm::vec3 & Normal, float dist) :
 		mNormal(Normal),
 		mDistance(dist), Bounding(Bounding::PLANE){}
 	IntersectData IntersectSphere(const BoundingSphere & other) const;
-	inline const Vector3D & GetNormal() const { return mNormal; }
+	inline const glm::vec3 & GetNormal() const { return mNormal; }
 	inline const float GetDistance() const { return mDistance; }
 	Plane Normalized() const;
 };

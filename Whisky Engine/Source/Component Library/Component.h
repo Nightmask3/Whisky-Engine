@@ -38,7 +38,7 @@ public:
 		SPRITE,
 		PLAYER_CONTROLLER,
 		AUDIO,
-
+		PHYSICS,
 		COMPONENT_COUNT
 	};
 	

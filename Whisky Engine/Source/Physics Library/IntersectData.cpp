@@ -1,22 +1,22 @@
 #include "IntersectData.h"
-
-IntersectData::Direction IntersectData::SetDirection(Vector3D const & vector) const
+#include "..\..\Dependencies\glm\glm\glm.hpp"
+IntersectData::Direction IntersectData::SetDirection(glm::vec3 const & vector) const
 {
-	Vector3D Compass[] = {
-		Vector3D(0.0f, 1.0f, 0.0f, 1), // UP
-		Vector3D(0.0, -1.0f, 0.0f, 1), // DOWN
-		Vector3D(-1.0f, 0.0f, 0.0f, 1),// LEFT
-		Vector3D(1.0f, 0.0f, 0.0f, 1), // RIGHT
-		Vector3D(0.0f, 0.0f, 1.0f, 1), // FRONT
-		Vector3D(0.0f, 0.0f, -1.0f, 1) // BACK
+	glm::vec3 Compass[] = {
+		glm::vec3(0.0f, 1.0f, 0.0f), // UP
+		glm::vec3(0.0, -1.0f, 0.0f), // DOWN
+		glm::vec3(-1.0f, 0.0f, 0.0f),// LEFT
+		glm::vec3(1.0f, 0.0f, 0.0f), // RIGHT
+		glm::vec3(0.0f, 0.0f, 1.0f), // FRONT
+		glm::vec3(0.0f, 0.0f, -1.0f) // BACK
 	};
-	Vector3D temp;
-	Vector3DNormalize(temp, vector);
+	glm::vec3 temp;
+	temp = glm::normalize(vector);
 	float max = 0.0f;
 	int best_match = -1;
 	for (int i = 0; i < 6; ++i)
 	{
-		float dotProduct = Vector3DDotProduct(temp, Compass[i]);
+		float dotProduct = glm::dot(temp, Compass[i]);
 		if (dotProduct > max)
 		{
 			max = dotProduct;

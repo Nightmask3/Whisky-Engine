@@ -3,35 +3,34 @@
 
 #include <iostream>
 #include "IntersectData.h"
-#include "..\Component Library\TransformComponent.h"
+#include "..\Component Library\Transform.h"
 #include "..\Component Library\PhysicsComponent.h"
 #include "Bounding.h"
-#include "..\Math Library\Vector3D.h"
+#include "..\..\Dependencies\glm\glm\vec3.hpp"
 class BoundingBox : public Bounding
 {
 
 private:
-	const Vector3D minExtends;
-	const Vector3D maxExtends;
+	const glm::vec3 minExtends;
+	const glm::vec3 maxExtends;
 	float halfWidth;
 	float halfHeight;
 	float halfDepth;
 public:
-	Vector3D mCenter;
-	BoundingBox(const Vector3D & min, const Vector3D & max) :
+	glm::vec3 mCenter;
+	BoundingBox(const glm::vec3 & min, const glm::vec3 & max) :
 	minExtends(min), maxExtends(max), halfWidth(0), halfHeight(0), halfDepth(0), Bounding(Bounding::AABB){}
-	void SetCenter(const Vector3D & center) {
-		TransformComponent * t = static_cast<TransformComponent *>(mOwner->mOwner->GetComponent(Component::TRANSFORM));
-		halfWidth = t->mScale.m[0][0] / 2;
-		halfHeight = t->mScale.m[1][1] / 2;
-		halfDepth = t->mScale.m[2][2] / 2;
-		Vector3DSet(&mCenter, center.x, center.y, center.z, 1);
+	void SetCenter(const glm::vec3 & center) {
+		Transform * t = static_cast<Transform *>(mOwner->GetOwner()->GetComponent<Transform>());
+		halfWidth = t->GetScale().x / 2;
+		halfHeight = t->GetScale().y / 2;
+		halfDepth = t->GetScale().z / 2;
+		mCenter = center;
 	}
-	
 	IntersectData IntersectAABB(const BoundingBox& other) const;
-	inline const Vector3D & GetCenter() { return mCenter; }
-	inline const Vector3D & GetMinExtends() const { return minExtends; }
-	inline const Vector3D & GetMaxExtends() const { return maxExtends; }
+	inline const glm::vec3 & GetCenter() { return mCenter; }
+	inline const glm::vec3 & GetMinExtends() const { return minExtends; }
+	inline const glm::vec3 & GetMaxExtends() const { return maxExtends; }
 	inline const float GetHalfWidth() const { return halfWidth; }
 	inline const float GetHalfHeight() const { return halfHeight; }
 	inline const float GetHalfDepth() const { return halfDepth; }

@@ -37,21 +37,21 @@ void Bounding::UpdateCenter()
 	if (mType == SPHERE)
 	{
 		BoundingSphere * sphere = nullptr;
-		TransformComponent * transform = nullptr;
-		transform = static_cast<TransformComponent *>(mOwner->mOwner->GetComponent(Component::TRANSFORM));
+		Transform * transform = nullptr;
+		transform = mOwner->GetOwner()->GetComponent<Transform>();
 		sphere = static_cast<BoundingSphere *>(this);
-		Vector3D center;
-		Vector3DSet(&center, transform->mTranslation.m[0][3], transform->mTranslation.m[1][3], transform->mTranslation.m[2][3], 1);
+		glm::vec3 center;
+		center = transform->GetPosition();
 		sphere->SetCenter(center);
 	}
 	else if (mType == AABB)
 	{
 		BoundingBox * box = nullptr;
-		TransformComponent * transform = nullptr;
-		transform = static_cast<TransformComponent *>(mOwner->mOwner->GetComponent(Component::TRANSFORM));
+		Transform * transform = nullptr;
+		transform = mOwner->GetOwner()->GetComponent<Transform>();
 		box = static_cast<BoundingBox *>(this);
-		Vector3D center;
-		Vector3DSet(&center, transform->mTranslation.m[0][3], transform->mTranslation.m[1][3], transform->mTranslation.m[2][3], 1);
+		glm::vec3 center;
+		center = transform->GetPosition();
 		box->SetCenter(center);
 	}
 }

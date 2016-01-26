@@ -1,7 +1,25 @@
 #include "PhysicsManager.h"
 
+PhysicsManager* PhysicsManager::_pInstance = nullptr;
+int PhysicsManager::_mActiveComponentCount = 0;
 PhysicsManager::~PhysicsManager()
 {
+}
+PhysicsManager* PhysicsManager::Inst(FrameRateController & frc, GameObjectFactory & gom)
+{
+	if (_pInstance == NULL)
+	{
+		_pInstance = new PhysicsManager(frc, gom);
+	}
+	return _pInstance;
+}
+
+bool PhysicsManager::Init()
+{
+	if (GOManager.InitializeListForSystem(HandleEntries_, PHYSICS_SYSTEM_TAG))
+		return true;
+	else
+		return false;
 }
 
 void PhysicsManager::Update()
@@ -17,51 +35,56 @@ void PhysicsManager::Update()
 void PhysicsManager::Simulation()
 {
 	PhysicsComponent * pSimulation = nullptr;
-	while (frameManager.frametime > 0.0)
+	float frameTime = frameManager_.Time();
+	while (frameTime > 0.0)
 	{
-		float deltatime = std::min(frameManager.frametime, frameManager.dt);
-		for (auto iterator = PhysicsObjectsList.begin(); iterator != PhysicsObjectsList.end(); ++iterator)
+		float deltatime = std::min(frameTime, frameManager_.FrameTimeLimit());
+		for(auto iterator = Handles_.begin(); iterator != Handles_.end(); ++iterator)
 		{
 			// Compute the change to the physics components of all objects, except those which are non - moving
-			pSimulation = static_cast<PhysicsComponent *>(*iterator);
-			if (pSimulation->mMass == 0.0f)
-				continue;
-			pSimulation->Integrate(frameManager.t, deltatime);
+			pSimulation = static_cast<PhysicsComponent*>(GOManager.ConvertHandletoPointer(*iterator, HandleEntries_));
+			/*if (pSimulation->GetMass() == 0.0f)
+				continue;*/
+			pSimulation->Integrate(frameTime, frameManager_.FrameTimeLimit());
 		}
-		frameManager.frametime -= deltatime;
-		frameManager.t += deltatime;
+		frameTime -= frameManager_.FrameTimeLimit();
+		frameManager_.AddtoTotalTime(frameManager_.FrameTimeLimit());
 	}
 	
 }
 void PhysicsManager::DetectCollision()
 {
 	PhysicsComponent * pCollisionDet1 = nullptr, *pCollisionDet2 = nullptr;
-	for (auto iterator1 = PhysicsObjectsList.begin(); iterator1 != PhysicsObjectsList.end(); ++iterator1)
+	// If only one object in world don't calculate
+	if (Handles_.size() == 1)
+		return;
+	for (auto iterator1 = Handles_.begin(); iterator1 != Handles_.end(); ++iterator1)
 	{
-		pCollisionDet1 = static_cast<PhysicsComponent *>(*iterator1);
-		for (auto iterator2 = iterator1 + 1; iterator2 != PhysicsObjectsList.end(); ++iterator2)
+		pCollisionDet1 = static_cast<PhysicsComponent*>(GOManager.ConvertHandletoPointer(*iterator1, HandleEntries_));
+
+		for (auto iterator2 = iterator1 + 1; iterator2 != Handles_.end(); ++iterator2)
 		{
-			pCollisionDet2 = static_cast<PhysicsComponent *>(*iterator2);
+			pCollisionDet2 = static_cast<PhysicsComponent*>(GOManager.ConvertHandletoPointer(*iterator2, HandleEntries_));
 			IntersectData data = pCollisionDet1->GetCollider().Intersect(pCollisionDet2->GetCollider());
 			if (data.GetDoesIntersect())
 			{
-				if (pCollisionDet1->mpShape->mType == Bounding::AABB && pCollisionDet2->mpShape->mType == Bounding::SPHERE)
+				if (pCollisionDet1->GetBoundingBox()->mType == Bounding::AABB && pCollisionDet2->GetBoundingBox()->mType == Bounding::SPHERE)
 				{
 					// If Spheres intersect with walls they should return to their last position
 					float Penetration = 0.0f;
-					BoundingSphere * sphere = static_cast<BoundingSphere *>(pCollisionDet2->mpShape);
+					BoundingSphere * sphere = static_cast<BoundingSphere *>(pCollisionDet2->GetBoundingBox());
 					if (data.GetDirection() == IntersectData::LEFT || data.GetDirection() == IntersectData::RIGHT)
 					{
 						Penetration = sphere->GetRadius() - abs(data.GetDifference().x);
 						// If Left collision, trying to move towards negative X direction, hence add
 						if (data.GetDirection() == IntersectData::RIGHT)
 						{
-							pCollisionDet2->mPositionCurr.x += Penetration;
+							pCollisionDet2->GetCurrentPosition().x += Penetration;
 						}
 						// And vice versa
 						else
 						{
-							pCollisionDet2->mPositionCurr.x -= Penetration;
+							pCollisionDet2->GetCurrentPosition().x -= Penetration;
 						}
 					}
 					else if (data.GetDirection() == IntersectData::UP || data.GetDirection() == IntersectData::DOWN)
@@ -70,12 +93,12 @@ void PhysicsManager::DetectCollision()
 						// If Up collision, trying to move towards negative Y direction, hence add
 						if (data.GetDirection() == IntersectData::UP)
 						{
-							pCollisionDet2->mPositionCurr.y += Penetration;
+							pCollisionDet2->GetCurrentPosition().y += Penetration;
 						}
 						// And vice versa
 						else
 						{
-							pCollisionDet2->mPositionCurr.y -= Penetration;
+							pCollisionDet2->GetCurrentPosition().y -= Penetration;
 						}
 					}
 					else if (data.GetDirection() == IntersectData::FRONT || data.GetDirection() == IntersectData::BACK)
@@ -84,69 +107,59 @@ void PhysicsManager::DetectCollision()
 						// If Front collision, trying to move towards negative Z direction, hence add
 						if (data.GetDirection() == IntersectData::FRONT)
 						{
-							pCollisionDet2->mPositionCurr.z += Penetration;
+							pCollisionDet2->GetCurrentPosition().z += Penetration;
 						}
 						// And vice versa
 						else
 						{
-							pCollisionDet2->mPositionCurr.z -= Penetration;
+							pCollisionDet2->GetCurrentPosition().z -= Penetration;
 						}
 					}
 					// Creates collision event
 					CollideEvent collideEvent;
-					collideEvent.mpObject1 = pCollisionDet1->mOwner;
-					collideEvent.mpObject2 = pCollisionDet2->mOwner;
+					collideEvent.mpObject1 = pCollisionDet1->GetOwner();
+					collideEvent.mpObject2 = pCollisionDet2->GetOwner();
 					// Makes the collided bodies handle it
 					collideEvent.mpObject1->HandleEvent(&collideEvent);
 					collideEvent.mpObject2->HandleEvent(&collideEvent);
 				}
-				else if (pCollisionDet1->mpShape->mType == Bounding::SPHERE && pCollisionDet2->mpShape->mType == Bounding::PLANE)
+				else if (pCollisionDet1->GetBoundingBox()->mType == Bounding::SPHERE && pCollisionDet2->GetBoundingBox()->mType == Bounding::PLANE)
 				{
 					// If Spheres intersect with ground plane they should return to their last position, and no more acceleration or velocity along the Y axis
 					//pCollisionDet1->mPositionCurr.y = pCollisionDet1->mPositionPrev.y;
-					pCollisionDet1->mVelocity.y = 0;
-					pCollisionDet1->mAcceleration = false;
+					pCollisionDet1->GetVelocity().y = 0;
+					pCollisionDet1->ToggleAcceleration(false);
 					// Creates collision event
 					CollideEvent collideEvent;
-					collideEvent.mpObject1 = pCollisionDet1->mOwner;
-					collideEvent.mpObject2 = pCollisionDet2->mOwner;
+					collideEvent.mpObject1 = pCollisionDet1->GetOwner();
+					collideEvent.mpObject2 = pCollisionDet2->GetOwner();
 					// Makes the collided bodies handle it
 					collideEvent.mpObject1->HandleEvent(&collideEvent);
 					collideEvent.mpObject2->HandleEvent(&collideEvent);
 				}
-				else if (pCollisionDet1->mpShape->mType == Bounding::SPHERE && pCollisionDet2->mpShape->mType == Bounding::SPHERE && (pCollisionDet1->mIsPlayer == true || pCollisionDet2->mIsPlayer == true))
+				else if (pCollisionDet1->GetBoundingBox()->mType == Bounding::SPHERE && pCollisionDet2->GetBoundingBox()->mType == Bounding::SPHERE)
 				{
-					// If Spheres intersect with another sphere, AND ONE OF THE SPHERES ARE THE PLAYER
-					pCollisionDet1->mPositionCurr.x = 1;
-					pCollisionDet1->mPositionCurr.z = 1;
-					pCollisionDet1->mLifeCount--;
-					pCollisionDet2->mLifeCount--;
-					if (pCollisionDet1->mLifeCount == 0 || pCollisionDet2->mLifeCount == 0)
-						mGameOver = true;
-					//// Creates collision event
-					//CollideEvent collideEvent;
-					//collideEvent.mpObject1 = pCollisionDet1->mOwner;
-					//collideEvent.mpObject2 = pCollisionDet2->mOwner;
-					//// Makes the collided bodies handle it
-					//collideEvent.mpObject1->HandleEvent(&collideEvent);
-					//collideEvent.mpObject2->HandleEvent(&collideEvent);
+					// If Spheres intersect with another sphere
+					// Creates collision event
+					std::cout << "Colliding!";
+					CollideEvent collideEvent;
+					collideEvent.mpObject1 = pCollisionDet1->GetOwner();
+					collideEvent.mpObject2 = pCollisionDet2->GetOwner();
+					// Makes the collided bodies handle it
+					collideEvent.mpObject1->HandleEvent(&collideEvent);
+					collideEvent.mpObject2->HandleEvent(&collideEvent);
 				}
 				
 			}
 			// Set bounding box color back to blue
 			else 
 			{
-				/*for (int i = 0; i < pCollisionDet1->VertexList.size(); i++)
-				{
-					pCollisionDet1->VertexList[i].B = 1;
-					pCollisionDet1->VertexList[i].R = 0;
-				}*/
 				UnCollideEvent DeCollideEvent;
-				DeCollideEvent.mpObject1 = pCollisionDet1->mOwner;
-				DeCollideEvent.mpObject2 = pCollisionDet2->mOwner;
+				DeCollideEvent.mpObject1 = pCollisionDet1->GetOwner();
+				DeCollideEvent.mpObject2 = pCollisionDet2->GetOwner();
 				DeCollideEvent.mpObject1->HandleEvent(&DeCollideEvent);
 				DeCollideEvent.mpObject2->HandleEvent(&DeCollideEvent);
-				pCollisionDet1->mAcceleration = true;
+				pCollisionDet1->ToggleAcceleration(true);
 			}
 		}
 	}
@@ -155,84 +168,10 @@ void PhysicsManager::DetectCollision()
 void PhysicsManager::Resolution()
 {
 	PhysicsComponent * pSimulation = nullptr;
-	for (auto iterator = PhysicsObjectsList.begin(); iterator != PhysicsObjectsList.end(); ++iterator)
+	for (auto iterator = Handles_.begin(); iterator != Handles_.end(); ++iterator)
 	{
-		pSimulation = static_cast<PhysicsComponent *>(*iterator);
+		pSimulation = static_cast<PhysicsComponent*>(GOManager.ConvertHandletoPointer(*iterator, HandleEntries_));
 		pSimulation->UpdateTransform();
 	}
 }
 
-void PhysicsManager::SetBoundingBoxType(Bounding::RigidBodyType type)
-{
-	PhysicsComponent * p = nullptr;
-	TransformComponent * t = nullptr;
-	SpriteComponent * s = nullptr;
-	VertexCollider temp;
-	if (type == Bounding::SPHERE)
-	{
-		p = static_cast<PhysicsComponent *>(PhysicsObjectsList.back());
-		t = static_cast<TransformComponent *>(PhysicsObjectsList.back()->mOwner->GetComponent(Component::TRANSFORM));
-		s = static_cast<SpriteComponent *>(PhysicsObjectsList.back()->mOwner->GetComponent(Component::SPRITE));
-		Vector3D center;
-		Vector3DSet(&center, t->mTranslation.m[0][3] + t->mScale.m[0][0], t->mTranslation.m[1][3] + t->mScale.m[1][1], t->mTranslation.m[2][3] + t->mScale.m[2][2], 1);
-		p->mpShape = new BoundingSphere(center);
-		p->mpShape->mOwner = p;
-		// Sets values of collider bounding box
-		for (int i = 0; i < s->GetVertexList().size(); i++)
-		{
-			temp.X = s->GetVertexList()[i].X;
-			temp.Y = s->GetVertexList()[i].Y;
-			temp.Z = s->GetVertexList()[i].Z;
-			// All debug bounding shapes are green by default (assumes that they are not colliding in first frame)
-			temp.R = 0;
-			temp.G = 0;
-			temp.B = 1;
-			temp.A = 0.5;
-			temp.U = 0;
-			temp.V = 0;
-			p->VertexList.push_back(temp);
-		}
-		for (int i = 0; i < s->GetIndexList().size(); i++)
-		{
-			unsigned int temp = s->GetIndexList()[i];
-			p->IndexList.push_back(temp);
-		}
-	}
-	else if (type == Bounding::AABB)
-	{
-		p = static_cast<PhysicsComponent *>(PhysicsObjectsList.back());
-		t = static_cast<TransformComponent *>(PhysicsObjectsList.back()->mOwner->GetComponent(Component::TRANSFORM));
-		s = static_cast<SpriteComponent *>(PhysicsObjectsList.back()->mOwner->GetComponent(Component::SPRITE));
-		Vector3D min, max;
-		// Begin returns an iterator, Back returns an object 
-		Vector3DSet(&min, s->GetVertexList().begin()->X, s->GetVertexList().begin()->Y, s->GetVertexList().begin()->Z, 1);
-		Vector3DSet(&max, s->GetVertexList().back().X, s->GetVertexList().back().Y, s->GetVertexList().back().Z, 1);
-		Vector3D center;
-		Vector3DSet(&center, t->mTranslation.m[0][3], t->mTranslation.m[1][3], t->mTranslation.m[2][3], 1);
-		p->mpShape = new BoundingBox(min, max);
-		p->mpShape->mOwner = p;
-		BoundingBox * b;
-		b = static_cast<BoundingBox *>(p->mpShape);
-		b->SetCenter(center);
-		// Sets values of collider bounding box
-		for (int i = 0; i < s->GetVertexList().size(); i++)
-		{
-			temp.X = s->GetVertexList()[i].X;
-			temp.Y = s->GetVertexList()[i].Y;
-			temp.Z = s->GetVertexList()[i].Z;
-			// All debug bounding shapes are blue by default (assumes that they are not colliding in first frame)
-			temp.R = 0;
-			temp.G = 0;
-			temp.B = 1;
-			temp.A = 0.5;
-			temp.U = 0;
-			temp.V = 0;
-			p->VertexList.push_back(temp);
-		}
-	}
-	else if (type == Bounding::PLANE)
-	{
-		p = static_cast<PhysicsComponent *>(PhysicsObjectsList.back());
-		p->mpShape = new Plane(Vector3D(0, 1, 0, 0), -0.5); // Sets the origin plane as tile top
-	}
-}

@@ -16,7 +16,7 @@
 #define PLAYERCONTROLLER_H
 
 #include "Component.h"
-#include "glm\vec3.hpp"
+#include "..\..\Dependencies\glm\glm\vec3.hpp"
 
 class PlayerController : public Component
 {
