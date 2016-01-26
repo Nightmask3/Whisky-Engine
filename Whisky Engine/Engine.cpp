@@ -90,13 +90,19 @@ bool Engine::Load()
 	///////////////////////////////////////////////////////////////////////////////
 	//// Game Object Creation Example
 
-	//GameObject & obj = GOM->Instantiate();				// instantiated with a default transform component
-	//obj.GetComponent<Transform>()->Scale(0.5f, 0.5f, 0.5f);
+	GameObject & obj = GOM->Instantiate();				// instantiated with a default transform component
+	obj.GetComponent<Transform>()->Scale(0.1f, 5.0f, 5.0f);
+	obj.GetComponent<Transform>()->Translate(glm::vec3(4.0f, 0.0f, 0.0f));
+	// Add component to component list of object, then add handle to handle list
+	Mesh * mesh = new Mesh(MeshType::CUBE, Color::black);	// new component to be added
+	obj.AddComponent(mesh);
 
-	//// Add component to component list of object, then add handle to handle list
-	//Mesh * mesh = new Mesh(MeshType::QUAD);	// new component to be added
-	//obj.AddComponent(mesh);
-	//
+	Audio* audio = new Audio();
+	SimpleMusic* music = new SimpleMusic("greatmusic.ogg");
+	SimpleAudioSource* audioSource = new SimpleAudioSource("scream.wav");
+	SimpleSFX* sfx = new SimpleSFX("scream.wav");
+	AM->registerSFX(audio, sfx);
+	obj.AddComponent(audio);
 	//PlayerController* ctrl = new PlayerController();
 	//obj.AddComponent(ctrl);
 
