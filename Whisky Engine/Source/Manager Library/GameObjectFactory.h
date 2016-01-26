@@ -52,6 +52,10 @@ public:
 	ObjVector& GameObjList();
 	int GetActiveObjCount() const { return activeObjCount_; }
 	GameObject*   GetMenu()	const { return pauseMenu_; }
+	GameObject* GetPlayer() const { return _player; }
+	void SetPlayer(GameObject* player) { _player = player; }
+	GameObject* GetCamera() const { return _camera; }
+	void SetCamera(GameObject* camera) { _camera = camera; }
 
 	// Makes a call to handle manager to initialize component list for a game object
 	bool InitializeListForGameObject(std::vector<HandleEntry_> & mEntries, int) const;
@@ -73,6 +77,7 @@ public:
 	bool Remove(Handle handle, std::vector<HandleEntry_> & m_entries, std::type_info const & CallerType);
 
 private:
+
 	GameObjectFactory();
 	GameObjectFactory(const GameObjectFactory&){}
 	GameObjectFactory& operator=(const GameObjectFactory&){}
@@ -132,6 +137,9 @@ private:
 	static int  _mGameObjectCounter;
 	ObjVector	gameObjList_;
 	NameObjMap	archetypeList_;
+	
+	GameObject *_player;
+	GameObject *_camera;
 
 	int activeObjCount_;
 	

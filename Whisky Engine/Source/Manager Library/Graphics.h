@@ -78,8 +78,6 @@ private:
 protected:
 	sf::RenderWindow* pWindow_;	// window handle
 	unsigned width_, heigth_;	// window size
-	float near_, far_;
-	float viewAngle_;
 
 private:
 	static Graphics* pInstance_;
@@ -90,7 +88,7 @@ private:
 	TextureMap	textures_;
 	MeshTypeMap meshData_;
 		
-	glm::mat4 _viewMatrix; // to be removed (after camera component)
+	glm::mat4 _viewMatrix; 
 };
 
 #endif

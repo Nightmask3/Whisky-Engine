@@ -20,6 +20,7 @@
 #include "..\..\Engine.h"
 #include "..\..\Dependencies\glm\glm\gtc\matrix_transform.hpp"
 #include "..\..\Dependencies\glm\glm\gtc\type_ptr.hpp"
+#include "..\Component Library\CameraComponent.h"
 
 using std::cout;
 using std::endl;
@@ -77,11 +78,6 @@ bool Graphics::Init()
 		cout << "Error creating window" << endl;
 		return false;
 	}
-
-	// Perspective matrix settings
-	near_ = 0.1f;
-	far_ = 1000.0f;
-	viewAngle_ = 45.0f;
 
 	// Initialize GLEW
 	glewExperimental = GL_TRUE;
@@ -143,18 +139,17 @@ void Graphics::Render()
 	glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	// Create View & Projection matrices
-	glm::mat4 vProj = glm::perspective(viewAngle_, (float)width_ / heigth_, near_, far_);
+	// Get the View & Projection matrices
+	glm::mat4 vProj = GOM->GetCamera()->GetComponent<CameraComponent>()->GetProjectionMatrix();
+	
 	// View matrix settings
-	glm::vec3 eye(0.0f, 0.0f, 10.0f);
-	glm::vec3 target(0.0f, 0.0f, 0.0f);
+	glm::vec3 eye = GOM->GetCamera()->GetComponent<Transform>()->GetPosition();
+	glm::vec3 target = glm::vec3(0.0f, 0.0f, 0.0f);  //glm::vec3 target = GOM->GetPlayer()->GetComponent<Transform>()->GetPosition(); // Switch to this when we have a way of specifying the player properly!!!
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
 
 	// Creation of view matrix (default view, can be overridden)
 	_viewMatrix = glm::lookAt(eye, target, up);
 	//_viewMatrix = glm::mat4(1);
-
-	glm::mat4 vView =  _viewMatrix;
 
 	// draw active objects with active mesh components
 	for (auto& obj : GOM->GameObjList())

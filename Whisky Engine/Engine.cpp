@@ -17,6 +17,8 @@
 #include <iomanip>
 #include <cassert>
 
+#include "Source\Component Library\CameraComponent.h"  //remove when camera init code is moved!!!!!!
+
 using std::cout;
 using std::endl;
 
@@ -87,18 +89,28 @@ bool Engine::Load()
 
 	print("Loaded \t");
 
+
 	///////////////////////////////////////////////////////////////////////////////
 	//// Game Object Creation Example
+	GameObject & obj = GOM->Instantiate();	
+	obj.GetComponent<Transform>()->Scale(0.5f, 0.5f, 0.5f);
+	obj.GetComponent<Transform>()->Translate(glm::vec3(0.0f, 0.0f, 10.0f));
+	CameraComponent* cam = new CameraComponent();
+	obj.AddComponent(cam);
+	PlayerController* ctrl = new PlayerController();	//temporary camera behavior controller until dampening is added
+	obj.AddComponent(ctrl);
+	GOM->SetCamera(&obj);
 
-	//GameObject & obj = GOM->Instantiate();				// instantiated with a default transform component
-	//obj.GetComponent<Transform>()->Scale(0.5f, 0.5f, 0.5f);
+	/*GameObject & obj2 = GOM->Instantiate();
+	obj2.GetComponent<Transform>()->Scale(0.5f, 0.5f, 0.5f);
+	obj2.GetComponent<Transform>()->Translate(glm::vec3(0.0f, 0.0f, 0.0f));
+	//PlayerController* ctrl2 = new PlayerController();
+	//obj2.AddComponent(ctrl2);
+	Mesh* msh = new Mesh(QUAD);
+	obj2.AddComponent(msh);
+	GOM->SetPlayer(&obj2);*/
 
-	//// Add component to component list of object, then add handle to handle list
-	//Mesh * mesh = new Mesh(MeshType::QUAD);	// new component to be added
-	//obj.AddComponent(mesh);
-	//
-	//PlayerController* ctrl = new PlayerController();
-	//obj.AddComponent(ctrl);
+	///CAMERA NOT DELETED SO MEMORY LEAK HERE ALTHOUGH VERY SMALL
 
 	return true;
 }

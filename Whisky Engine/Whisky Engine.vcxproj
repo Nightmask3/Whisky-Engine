@@ -76,6 +76,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Component Library\CameraComponent.cpp" />
     <ClCompile Include="Source\OpenGLRenderer Library\Color.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="main.cpp" />
@@ -98,6 +99,7 @@
     <ClCompile Include="Source\OpenGLRenderer Library\ShaderProgram.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Component Library\CameraComponent.h" />
     <ClInclude Include="Source\OpenGLRenderer Library\Color.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Source\OpenGLRenderer Library\MeshGenerator.h" />

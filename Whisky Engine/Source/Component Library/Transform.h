@@ -27,6 +27,10 @@ class Transform : public Component
 		{
 			mPosition_ = val; 
 		}
+		glm::vec3 GetPosition()
+		{
+			return mPosition_;
+		}
 		// Adds the vector formed by x, y, z to the position
 		void Position(float x, float y, float z)		
 		{ 
