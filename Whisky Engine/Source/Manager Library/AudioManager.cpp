@@ -1,8 +1,5 @@
 #include "AudioManager.h"
 
-#include "../../IMusic.h"
-#include "../../SFX.h"
-#include "../../AudioSource.h"
 
 #include <iostream>
 

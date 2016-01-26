@@ -4,6 +4,13 @@
 #include <map>
 #include <string>
 
+#include "../../IMusic.h"
+#include "../../SFX.h"
+#include "../../AudioSource.h"
+#include "../Component Library/Audio.h"
+#include "../../SimpleMusic.h"
+#include "../../SimpleAudioSource.h"
+#include "../../SimpleSFX.h"
 class IMusic;
 class SFX;
 class GameObject;

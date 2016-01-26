@@ -15,7 +15,6 @@
 // Component header files
 #include "Component.h"
 #include "..\..\Dependencies\GLEW\glew.h"
-
 class Transform : public Component
 {
 	private:
@@ -27,6 +26,10 @@ class Transform : public Component
 		void Position(glm::vec3 val)		
 		{
 			mPosition_ = val; 
+		}
+		glm::vec3 GetPosition()
+		{
+			return mPosition_;
 		}
 		// Adds the vector formed by x, y, z to the position
 		void Position(float x, float y, float z)		

@@ -11,7 +11,7 @@ class GameObject;
 class Audio : public Component
 {
 public:
-	Audio(GameObject* owner);
+	Audio();
 	~Audio();
 
 	virtual void Update() override;
