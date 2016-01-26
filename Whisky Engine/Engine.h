@@ -25,13 +25,14 @@
 #include "Source/Manager Library/ResourceManager.h"
 #include "Source/Manager Library/AudioManager.h"
 
+
 // handles for Systems/Manager
 #define GFX				Graphics::Inst()
 #define INP				   Input::Inst()
 #define GOM	   GameObjectFactory::Inst()
 #define FRC  FrameRateController::Inst()
 #define RSC		 ResourceManager::Inst()
-#define AM		AudioManager::Inst()
+#define AM			AudioManager::Inst()
 //#define MSG			   Messaging::Inst()		
 //#define PHY				 Physics::Inst()
 

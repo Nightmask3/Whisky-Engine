@@ -81,7 +81,7 @@ bool Graphics::Init()
 	// Perspective matrix settings
 	near_ = 0.1f;
 	far_ = 1000.0f;
-	viewAngle_ = 45.0f;
+	viewAngle_ = 60.0f * (3.1415f / 180.0f);
 
 	// Initialize GLEW
 	glewExperimental = GL_TRUE;
