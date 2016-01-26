@@ -55,7 +55,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>"C:\Program Files %28x86%29\Microsoft Visual Studio 12.0\VC\lib";C:\Program Files %28x86%29\Microsoft SDKs\Windows\v7.1A\Lib;$(ProjectDir)\Dependencies\GLEW;$(ProjectDir)\Dependencies\SFML 2.3.2\lib;%(AdditionalDependencies);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;glew32.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;sfml-audio-d.lib;glew32.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -78,10 +78,15 @@
   <ItemGroup>
     <ClCompile Include="Source\Component Library\CameraComponent.cpp" />
     <ClCompile Include="Source\OpenGLRenderer Library\Color.cpp" />
+    <ClCompile Include="AudioSource.cpp" />
+    <ClCompile Include="SimpleAudioSource.cpp" />
+    <ClCompile Include="SimpleMusic.cpp" />
+    <ClCompile Include="SimpleSFX.cpp" />
+    <ClCompile Include="Source\Component Library\Audio.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Source\OpenGLRenderer Library\MeshGenerator.cpp" />
-    <ClCompile Include="Source\OpenGLRenderer Library\MeshData.cpp" />
+    <ClCompile Include="IMusic.cpp" />
+    <ClCompile Include="SFX.cpp" />
     <ClCompile Include="Source\Component Library\Component.cpp" />
     <ClCompile Include="Source\Component Library\Mesh.cpp" />
     <ClCompile Include="Source\Component Library\PlayerController.cpp" />
@@ -89,6 +94,7 @@
     <ClCompile Include="Source\Component Library\Transform.cpp" />
     <ClCompile Include="Source\Entity Library\Camera.cpp" />
     <ClCompile Include="Source\Entity Library\GameObject.cpp" />
+    <ClCompile Include="Source\Manager Library\AudioManager.cpp" />
     <ClCompile Include="Source\Manager Library\FrameRateController.cpp" />
     <ClCompile Include="Source\Manager Library\GameObjectFactory.cpp" />
     <ClCompile Include="Source\Manager Library\Graphics.cpp" />
@@ -96,14 +102,20 @@
     <ClCompile Include="Source\Manager Library\Input.cpp" />
     <ClCompile Include="Source\Manager Library\ResourceManager.cpp" />
     <ClCompile Include="Source\Manager Library\utils.cpp" />
+    <ClCompile Include="Source\OpenGLRenderer Library\MeshGenerator.cpp" />
     <ClCompile Include="Source\OpenGLRenderer Library\ShaderProgram.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Component Library\CameraComponent.h" />
     <ClInclude Include="Source\OpenGLRenderer Library\Color.h" />
+    <ClInclude Include="AudioSource.h" />
+    <ClInclude Include="SimpleAudioSource.h" />
+    <ClInclude Include="SimpleMusic.h" />
+    <ClInclude Include="SimpleSFX.h" />
+    <ClInclude Include="Source\Component Library\Audio.h" />
     <ClInclude Include="Engine.h" />
-    <ClInclude Include="Source\OpenGLRenderer Library\MeshGenerator.h" />
-    <ClInclude Include="Source\OpenGLRenderer Library\MeshData.h" />
+    <ClInclude Include="IMusic.h" />
+    <ClInclude Include="SFX.h" />
     <ClInclude Include="Source\Component Library\Component.h" />
     <ClInclude Include="Source\Component Library\Components.h" />
     <ClInclude Include="Source\Component Library\Mesh.h" />
@@ -113,6 +125,7 @@
     <ClInclude Include="Source\Entity Library\Camera.h" />
     <ClInclude Include="Source\Entity Library\Entity.h" />
     <ClInclude Include="Source\Entity Library\GameObject.h" />
+    <ClInclude Include="Source\Manager Library\AudioManager.h" />
     <ClInclude Include="Source\Manager Library\FrameRateController.h" />
     <ClInclude Include="Source\Manager Library\GameObjectFactory.h" />
     <ClInclude Include="Source\Manager Library\Graphics.h" />
@@ -121,6 +134,7 @@
     <ClInclude Include="Source\Manager Library\Input.h" />
     <ClInclude Include="Source\Manager Library\ResourceManager.h" />
     <ClInclude Include="Source\Manager Library\utils.h" />
+    <ClInclude Include="Source\OpenGLRenderer Library\MeshGenerator.h" />
     <ClInclude Include="Source\OpenGLRenderer Library\ShaderProgram.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
