@@ -38,6 +38,7 @@ public:
 
 	// member functions
 	GameObject& Instantiate();		// Consider removal? Don't want Game Objects that can exist without a transform/root component
+	GameObject& InstantiateEmpty();	// Consider removal? Don't want Game Objects that can exist without a transform/root component
 	GameObject& InstantiateArchetype(const std::string&);
 	GameObject& InstantiateArchetype(const std::string& name, const glm::vec3 & pos);
 	// Initialize the position to (0,0,0), rotation to (0,0,0) and scale to (1,1,)

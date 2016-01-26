@@ -94,7 +94,7 @@ bool Engine::Load()
 	obj.GetComponent<Transform>()->Scale(0.1f, 5.0f, 5.0f);
 	obj.GetComponent<Transform>()->Translate(glm::vec3(4.0f, 0.0f, 0.0f));
 	// Add component to component list of object, then add handle to handle list
-	Mesh * mesh = new Mesh(MeshType::CUBE, Color::black);	// new component to be added
+	Mesh * mesh = new Mesh(MeshType::CUBE, Color::blue);	// new component to be added
 	obj.AddComponent(mesh);
 
 	Audio* audio = new Audio();

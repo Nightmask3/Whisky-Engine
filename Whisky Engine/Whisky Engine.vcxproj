@@ -101,6 +101,7 @@
     <ClCompile Include="Source\Manager Library\ResourceManager.cpp" />
     <ClCompile Include="Source\Manager Library\utils.cpp" />
     <ClCompile Include="Source\OpenGLRenderer Library\Color.cpp" />
+    <ClCompile Include="Source\OpenGLRenderer Library\MeshData.cpp" />
     <ClCompile Include="Source\OpenGLRenderer Library\MeshGenerator.cpp" />
     <ClCompile Include="Source\OpenGLRenderer Library\ShaderProgram.cpp" />
   </ItemGroup>
@@ -132,8 +133,10 @@
     <ClInclude Include="Source\Manager Library\ResourceManager.h" />
     <ClInclude Include="Source\Manager Library\utils.h" />
     <ClInclude Include="Source\OpenGLRenderer Library\Color.h" />
+    <ClInclude Include="Source\OpenGLRenderer Library\MeshData.h" />
     <ClInclude Include="Source\OpenGLRenderer Library\MeshGenerator.h" />
     <ClInclude Include="Source\OpenGLRenderer Library\ShaderProgram.h" />
+    <ClInclude Include="Source\OpenGLRenderer Library\Vertex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

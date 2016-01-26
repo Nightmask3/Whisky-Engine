@@ -162,7 +162,7 @@ bool GameObjectFactory::InitializeLevel()
 	for (auto& obj_s : objList)
 	{
 		// instantiate every object in the scene
-		GameObject& obj = Instantiate();
+		GameObject& obj = InstantiateEmpty();
 		obj.Name(obj_s.name);
 		auto components_s = obj_s.componentList;
 
@@ -279,6 +279,23 @@ GameObject& GameObjectFactory::Instantiate()
 			// Handle is added to game object handle list
 			obj.AddHandle(newComponentHandle);
 			//obj.AddComponent(new Transform());
+			return obj;
+		}
+	}
+
+	cout << "WARNING: MAX GAME OBJECTS REACHED" << endl;
+	return gameObjList_.back();
+}
+
+GameObject& GameObjectFactory::InstantiateEmpty()
+{
+	for (auto& obj : gameObjList_)
+	{
+		if (!obj.IsActive())
+		{
+			obj.Activate();
+			obj.SetHandleID(_mGameObjectCounter);
+			InitializeListForGameObject(obj.GetComponentList(), _mGameObjectCounter++);
 			return obj;
 		}
 	}
