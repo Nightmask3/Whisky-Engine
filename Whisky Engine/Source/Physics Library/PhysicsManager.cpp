@@ -35,22 +35,47 @@ void PhysicsManager::Update()
 void PhysicsManager::Simulation()
 {
 	PhysicsComponent * pSimulation = nullptr;
-	float frameTime = frameManager_.Time();
-	while (frameTime > 0.0)
+	// RK Integration - Using raw component pointer
+	//while (frameManager_.ft_ > 0.0f)
+	//{
+	//	double deltatime = std::min(frameManager_.ft_, frameManager_.FrameTimeLimit());
+	//	for (auto iterator = ComponentList_.begin(); iterator != ComponentList_.end(); ++iterator)
+	//	{
+	//		// Compute the change to the physics components of all objects, except those which are non - moving
+	//		pSimulation = static_cast<PhysicsComponent*>(*iterator);
+	//		/*if (pSimulation->GetMass() == 0.0f)
+	//			continue;*/
+	//		pSimulation->IntegrateRK4(frameManager_.GetTotalTime() , deltatime);
+	//	}
+	//	frameManager_.ft_ -= deltatime;
+	//	frameManager_.AddtoTotalTime(deltatime);
+	//}
+
+	// RK Integration - Using handles
+	//while (frameManager_.ft_ > 0.0f)
+	//{
+	//	double deltatime = std::min(frameManager_.ft_, frameManager_.FrameTimeLimit());
+	//	for(auto iterator = Handles_.begin(); iterator != Handles_.end(); ++iterator)
+	//	{
+	//		// Compute the change to the physics components of all objects, except those which are non - moving
+	//		pSimulation = static_cast<PhysicsComponent*>(GOManager.ConvertHandletoPointer(*iterator, HandleEntries_));
+	//		/*if (pSimulation->GetMass() == 0.0f)
+	//			continue;*/
+	//		pSimulation->IntegrateRK4(frameManager_.GetTotalTime() , frameManager_.FrameTimeLimit());
+	//	}
+	//	frameManager_.ft_ -= deltatime;
+	//	frameManager_.AddtoTotalTime(deltatime);
+	//}
+
+	// EULER Integration = Using raw component pointers
+	for (auto iterator = ComponentList_.begin(); iterator != ComponentList_.end(); ++iterator)
 	{
-		float deltatime = std::min(frameTime, frameManager_.FrameTimeLimit());
-		for(auto iterator = Handles_.begin(); iterator != Handles_.end(); ++iterator)
-		{
-			// Compute the change to the physics components of all objects, except those which are non - moving
-			pSimulation = static_cast<PhysicsComponent*>(GOManager.ConvertHandletoPointer(*iterator, HandleEntries_));
-			/*if (pSimulation->GetMass() == 0.0f)
-				continue;*/
-			pSimulation->Integrate(frameTime, frameManager_.FrameTimeLimit());
-		}
-		frameTime -= frameManager_.FrameTimeLimit();
-		frameManager_.AddtoTotalTime(frameManager_.FrameTimeLimit());
+		// Compute the change to the physics components of all objects, except those which are non - moving
+		pSimulation = static_cast<PhysicsComponent*>(*iterator);
+		if (pSimulation->GetMass() == 0.0f)
+			continue;
+		pSimulation->IntegrateEuler(frameManager_.FrameDelta());
 	}
-	
 }
 void PhysicsManager::DetectCollision()
 {
@@ -58,13 +83,13 @@ void PhysicsManager::DetectCollision()
 	// If only one object in world don't calculate
 	if (Handles_.size() == 1)
 		return;
-	for (auto iterator1 = Handles_.begin(); iterator1 != Handles_.end(); ++iterator1)
+	for (auto iterator1 = ComponentList_.begin(); iterator1 != ComponentList_.end(); ++iterator1)
 	{
-		pCollisionDet1 = static_cast<PhysicsComponent*>(GOManager.ConvertHandletoPointer(*iterator1, HandleEntries_));
+		pCollisionDet1 = static_cast<PhysicsComponent*>(*iterator1);
 
-		for (auto iterator2 = iterator1 + 1; iterator2 != Handles_.end(); ++iterator2)
+		for (auto iterator2 = iterator1 + 1; iterator2 != ComponentList_.end(); ++iterator2)
 		{
-			pCollisionDet2 = static_cast<PhysicsComponent*>(GOManager.ConvertHandletoPointer(*iterator2, HandleEntries_));
+			pCollisionDet2 = static_cast<PhysicsComponent*>(*iterator2);
 			IntersectData data = pCollisionDet1->GetCollider().Intersect(pCollisionDet2->GetCollider());
 			if (data.GetDoesIntersect())
 			{
@@ -149,6 +174,35 @@ void PhysicsManager::DetectCollision()
 					collideEvent.mpObject1->HandleEvent(&collideEvent);
 					collideEvent.mpObject2->HandleEvent(&collideEvent);
 				}
+				else if ((pCollisionDet1->GetBoundingBox()->mType == Bounding::AABB && pCollisionDet2->GetBoundingBox()->mType == Bounding::PLANE) || pCollisionDet1->GetBoundingBox()->mType == Bounding::PLANE && pCollisionDet2->GetBoundingBox()->mType == Bounding::AABB)
+				{
+					// If Boxes intersect with planes
+					if (data.GetDoesIntersect() == true)
+					{
+						if (pCollisionDet1->GetBoundingBox()->mType == Bounding::AABB)
+						{
+							// Hack to stop things from falling for now, should use a boolean/bAcceleration later
+							pCollisionDet1->SetMass(0);
+						}
+						else
+						{
+							pCollisionDet2->SetMass(0);
+						}
+					}
+				}
+				else if ((pCollisionDet1->GetBoundingBox()->mType == Bounding::AABB && pCollisionDet2->GetBoundingBox()->mType == Bounding::AABB) || pCollisionDet1->GetBoundingBox()->mType == Bounding::AABB && pCollisionDet2->GetBoundingBox()->mType == Bounding::AABB)
+				{
+					// If Boxes intersect with Boxes
+					if (data.GetDoesIntersect() == true)
+					{
+						if (pCollisionDet1->GetBoundingBox()->mType == Bounding::AABB)
+						{
+							// Hack to stop things from falling for now, should use a boolean/bAcceleration later
+							pCollisionDet1->SetMass(0);
+							pCollisionDet2->SetMass(0);
+						}
+					}
+				}
 				
 			}
 			// Set bounding box color back to blue
@@ -168,9 +222,13 @@ void PhysicsManager::DetectCollision()
 void PhysicsManager::Resolution()
 {
 	PhysicsComponent * pSimulation = nullptr;
-	for (auto iterator = Handles_.begin(); iterator != Handles_.end(); ++iterator)
+
+	for (auto iterator = ComponentList_.begin(); iterator != ComponentList_.end(); ++iterator)
 	{
-		pSimulation = static_cast<PhysicsComponent*>(GOManager.ConvertHandletoPointer(*iterator, HandleEntries_));
+		// Compute the change to the physics components of all objects, except those which are non - moving
+		pSimulation = static_cast<PhysicsComponent*>(*iterator);
+		if (pSimulation->GetMass() == 0.0f)
+			continue;
 		pSimulation->UpdateTransform();
 	}
 }

@@ -16,6 +16,7 @@ public:
 		mNormal(Normal),
 		mDistance(dist), Bounding(Bounding::PLANE){}
 	IntersectData IntersectSphere(const BoundingSphere & other) const;
+	IntersectData IntersectAABB(const BoundingBox & other) const;
 	inline const glm::vec3 & GetNormal() const { return mNormal; }
 	inline const float GetDistance() const { return mDistance; }
 	Plane Normalized() const;

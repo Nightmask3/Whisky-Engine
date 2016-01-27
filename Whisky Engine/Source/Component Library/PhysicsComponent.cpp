@@ -2,13 +2,18 @@
 #include "..\Physics Library\BoundingSphere.h"
 #include "..\Physics Library\BoundingBox.h"
 #include "..\Physics Library\Plane.h"
+// For collider generation
+#include "..\OpenGLRenderer Library\MeshGenerator.h"
+#include "..\OpenGLRenderer Library\MeshData.h"
 #include "PhysicsComponent.h"
 
+// -10 meters/second^2 
+#define GRAVITY -10.0f
 void PhysicsComponent::Serialize(std::string & Contents, unsigned int & Count)
 {
 
 }
-void PhysicsComponent::Integrate(double t, double dt)
+void PhysicsComponent::IntegrateRK4(double t, double dt)
 {
 	Derivative a, b, c, d;
 	mPositionPrev_ = mPositionCurr_;
@@ -61,6 +66,15 @@ void PhysicsComponent::UpdateTransform()
 	}
 }
 
+void PhysicsComponent::IntegrateEuler(float deltaTime)
+{
+	// Updates position based on velocity
+	mPositionCurr_+= (mVelocity_ * deltaTime);
+	// Updates velocity based on Force/Mass = Acceleration ( F = ma )
+	mVelocity_ += (mForce_ / mMass_) * deltaTime;
+	// Gravity is updated independent of force
+	mVelocity_.y += GRAVITY * deltaTime;
+}
 void PhysicsComponent::Recalculate()
 {
 	mVelocity_.x = mMomentum_.x * mInverseMass_;
@@ -85,18 +99,17 @@ PhysicsComponent::Derivative PhysicsComponent::Evaluate(double t, double dt, con
 	Derivative output;
 	output.mDerivedVelocity = velocityTemp;
 	// If acceleration is turned off, do not calculate anymore
-	if (bAcceleration_ == true)
+	//if (bAcceleration_ == true)
 		output.mDerivedAcceleration = Acceleration(t + dt);
-	else
-		output.mDerivedAcceleration = glm::vec3(0);
+	/*else
+		output.mDerivedAcceleration = glm::vec3(0);*/
 	return output;
 }
 
 glm::vec3 PhysicsComponent::Acceleration(float t)
 {
-	glm::vec3 output;
-	output = glm::vec3(0);
-	const float k = 0.2f;
+	glm::vec3 output = glm::vec3(0);
+	const float k = 1;
 	output.y = -k * t;
 	// Caps the max falling speed
 	if (abs(output.y) > 10)
@@ -114,13 +127,21 @@ void PhysicsComponent::SetBoundingBoxType(Bounding::RigidBodyType type)
 	}
 	else if (type == Bounding::AABB)
 	{
-		glm::vec3 min, max;
-		// Begin returns an iterator, Back returns an object 
-		/*glm::vec3Set(&min, s->GetVertexList().begin()->X, s->GetVertexList().begin()->Y, s->GetVertexList().begin()->Z, 1);
-		glm::vec3Set(&max, s->GetVertexList().back().X, s->GetVertexList().back().Y, s->GetVertexList().back().Z, 1);*/
+		Transform * trans = mOwner_->GetComponent<Transform>();
+		glm::vec4 minC, maxC;
+		// Constructs a unit cube from the Mesh Generator 
+		mColliderMesh_ = MeshGenerator::MakeCube();
+
+		/*for (int i = 0; i < mColliderMesh_.numVertices; ++i)
+		{
+			mColliderMesh_.vertices[i].position *= trans->GetScale();
+		}*/
+		//Index values of vertex array are laid out in the mesh generator as such, need to find a way to make it dynamic
+		maxC = trans->ModelTransformationMatrix() * glm::vec4(mColliderMesh_.vertices[16].position, 1);	// Top left (1, 1, 1)
+		minC = trans->ModelTransformationMatrix() * glm::vec4(mColliderMesh_.vertices[21].position, 1); // Bottom right (-1,-1,-1)
 		glm::vec3 center;
 		center = mPositionCurr_;
-		pShape_ = new BoundingBox(min, max);
+		pShape_ = new BoundingBox(glm::vec3(minC.x, minC.y, minC.z), glm::vec3(maxC.x, maxC.y, maxC.z));
 		pShape_->mOwner = this;
 		BoundingBox * b;
 		b = static_cast<BoundingBox *>(pShape_);
@@ -128,7 +149,7 @@ void PhysicsComponent::SetBoundingBoxType(Bounding::RigidBodyType type)
 	}
 	else if (type == Bounding::PLANE)
 	{
-		pShape_ = new Plane(glm::vec3(0, 1, 0), -0.5); // Sets the origin plane as tile top
+		pShape_ = new Plane(glm::vec3(0, 1, 0), -10.0f); 
 	}
 }
 

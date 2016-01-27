@@ -41,6 +41,7 @@ private:
 	static int _mActiveComponentCount;
 	std::vector<HandleEntry_> HandleEntries_;
 	std::vector<Handle> Handles_;
+	std::vector<Component *> ComponentList_;
 public:
 	bool bGameOver;
 	//void SetBoundingBoxType(Bounding::RigidBodyType type);
@@ -55,7 +56,9 @@ public:
 	bool Init();
 	// Handle related functions
 	inline void AddHandle(Handle & handle)		 { Handles_.push_back(handle); }
-	inline void AddComponentToList(PhysicsComponent * comp) { AddHandle(GOManager.AddComponentToSystem(comp, Component::ComponentType::PHYSICS, HandleEntries_, _mActiveComponentCount, PHYSICS_SYSTEM_TAG)); _mActiveComponentCount++; }
+	inline void AddComponentToList(PhysicsComponent * comp) { 
+		ComponentList_.push_back(comp);
+		AddHandle(GOManager.AddComponentToSystem(comp, Component::ComponentType::PHYSICS, HandleEntries_, _mActiveComponentCount, PHYSICS_SYSTEM_TAG)); _mActiveComponentCount++; }
 	static PhysicsManager* Inst(FrameRateController &, GameObjectFactory &);
 	std::vector<HandleEntry_> & GetComponentList() { return HandleEntries_; }
 

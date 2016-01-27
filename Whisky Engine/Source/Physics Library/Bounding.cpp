@@ -28,6 +28,30 @@ IntersectData Bounding::Intersect(const Bounding & other) const
 		// Checks if AABB and sphere are intersecting
 		return otherSphere.IntersectBoundingSphere(self);
 	}
+	else if (mType == Bounding::AABB && other.mType == Bounding::PLANE)
+	{
+		// Get a read only reference to Sphere and an AABB to use for intersection
+		const BoundingBox box = static_cast<BoundingBox const &>(*this);
+		const Plane plane = static_cast<Plane const &>(other);
+		// Checks if AABB and plane are intersecting
+		return plane.IntersectAABB(box);
+	}
+	else if (mType == Bounding::PLANE && other.mType == Bounding::AABB)
+	{
+		// Get a read only reference to Sphere and an AABB to use for intersection
+		const BoundingBox box = static_cast<BoundingBox const &>(other);
+		const Plane plane = static_cast<Plane const &>(*this);
+		// Checks if AABB and plane are intersecting
+		return plane.IntersectAABB(box);
+	}
+	else if (mType == Bounding::AABB && other.mType == Bounding::AABB)
+	{
+		// Get a read only reference to both AABBs to use for intersection
+		const BoundingBox boxOther = static_cast<BoundingBox const &>(other);
+		const BoundingBox boxSelf = static_cast<BoundingBox const &>(*this);
+		// Checks if AABB and plane are intersecting
+		return boxSelf.IntersectAABB(boxOther);
+	}
 	/*std::cerr << "Error: Collisions not implemented between specified bounding shapes!\n";*/
 
 	return IntersectData(false, 0);

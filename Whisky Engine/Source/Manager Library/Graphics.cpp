@@ -146,7 +146,7 @@ void Graphics::Render()
 	// Create View & Projection matrices
 	glm::mat4 vProj = glm::perspective(viewAngle_, (float)width_ / heigth_, near_, far_);
 	// View matrix settings
-	glm::vec3 eye(0.0f, 0.0f, 10.0f);
+	glm::vec3 eye(0.0f, 0.0f, 20.0f);
 	glm::vec3 target(0.0f, 0.0f, 0.0f);
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
 

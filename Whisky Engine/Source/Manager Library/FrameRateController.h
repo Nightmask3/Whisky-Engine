@@ -20,6 +20,10 @@
 class FrameRateController
 {
 public:
+	// Trying out stuff
+	sf::Time newTime_, currentTime_, frameTime_;
+	double ft_;
+	
 	static FrameRateController* Inst();
 
 	bool Init(unsigned);
@@ -28,10 +32,11 @@ public:
 
 	void ToggleFPSLock();
 
-	inline float FrameDelta() { return frameDelta_; }
+	inline double FrameDelta() { return frameDelta_; }
 	inline unsigned FPS()			const	{ return fps_; }
-	inline float	 Time()			const   { return time_.getElapsedTime().asSeconds(); }
-	inline float FrameTimeLimit() const { return frameTimeLimit_; }
+	void Update();
+	inline double	 Time()			const   { return time_.getElapsedTime().asSeconds(); }
+	inline double FrameTimeLimit() const { return frameTimeLimit_; }
 	inline double GetTotalTime() { return totalTime_; }
 	inline void AddtoTotalTime(double time) { totalTime_ += time; }
 	inline unsigned long FrameCount() const { return frameCount_; }
@@ -42,9 +47,9 @@ private:
 	static FrameRateController* _pInstance;
 
 	unsigned fps_;
-	float frameTimeLimit_;	// seconds
-	float frameDelta_;
-	float begin_, end_;
+	double frameTimeLimit_;	// seconds
+	double frameDelta_;		// seconds
+	double begin_, end_;
 	double totalTime_;
 	unsigned long frameCount_;
 	sf::Clock time_;

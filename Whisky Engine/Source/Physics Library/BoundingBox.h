@@ -28,7 +28,7 @@ public:
 		mCenter = center;
 	}
 	IntersectData IntersectAABB(const BoundingBox& other) const;
-	inline const glm::vec3 & GetCenter() { return mCenter; }
+	inline const glm::vec3 & GetCenter() const { return mCenter; }
 	inline const glm::vec3 & GetMinExtends() const { return minExtends; }
 	inline const glm::vec3 & GetMaxExtends() const { return maxExtends; }
 	inline const float GetHalfWidth() const { return halfWidth; }

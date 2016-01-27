@@ -35,9 +35,12 @@ bool FrameRateController::Init(unsigned fps)
 	frameTimeLimit_ = 1.0f / fps_;
 	frameCount_ = 0;
 	frameDelta_ = begin_ = end_ = 0.0f;
-	
 	totalTime_ = 0;
+	// Starts the clock
+	time_ = sf::Clock();
+	currentTime_ = newTime_ = frameTime_ = sf::Time();
 	cout << "FrameRateController Initialized: " << fps_ << " FPS | FrameTimeLimit = " << frameTimeLimit_ << endl;
+
 	return true;
 }
 
@@ -64,4 +67,14 @@ void FrameRateController::ToggleFPSLock()
 
 	frameTimeLimit_ = 1.0f / fps_;
 
+}
+
+void FrameRateController::Update()
+{
+	newTime_ = time_.getElapsedTime();
+	frameTime_ = newTime_ - currentTime_;
+	ft_ = frameTime_.asSeconds();
+	currentTime_ = newTime_;
+	// For independent timestep
+	//totalTime_ += ft_;
 }

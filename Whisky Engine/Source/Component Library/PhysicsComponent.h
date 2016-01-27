@@ -4,7 +4,7 @@
 #include "Transform.h"
 #include "..\..\Dependencies\glm\glm\vec3.hpp"
 #include "..\Physics Library\Bounding.h"
-
+#include "..\OpenGLRenderer Library\MeshData.h"
 
 class PhysicsComponent : public Component
 {
@@ -33,9 +33,10 @@ private:
 	float mInverseMass_;
 	unsigned int system_handle_id_;
 	unsigned int mLifeCount;
-	
-	Bounding * pShape_; // Pointer to the bounding box to be used for this object
+	MeshData mColliderMesh_;
 
+	Bounding * pShape_; // Pointer to the bounding box to be used for this object
+	
 	
 public:
 	/* -------- FUNCTIONS ---------- */
@@ -60,7 +61,8 @@ public:
 	void Serialize(std::string & Contents, unsigned int & Count);
 	void UpdateTransform();
 	void Recalculate();
-	void Integrate(double t, double dt);
+	void IntegrateRK4(double totalTime, double dt);
+	void IntegrateEuler(float deltaTime);
 	void HandleEvent(Event *);
 	void SetBoundingBoxType(Bounding::RigidBodyType type);
 	Derivative Evaluate(double t, double dt, const Derivative &);
@@ -73,7 +75,7 @@ public:
 		mPositionPrev_ = glm::vec3(0);
 		mMomentum_ = glm::vec3(0);
 		mForce_ = glm::vec3(0);
-		mMass_ = 0.0f;
+		mMass_ = 1.0f;
 		mInverseMass_ = 0.0f;
 		bAcceleration_ = true;
 		bIsPlayer_ = false;
