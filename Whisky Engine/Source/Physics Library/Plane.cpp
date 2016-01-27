@@ -15,8 +15,8 @@ IntersectData Plane::IntersectSphere(const BoundingSphere & other) const
 	float distancefromSphereCenter = fabs(glm::dot(unitNormal, other.GetCenter()) + mDistance);
 	float distancefromSphere = distancefromSphereCenter - other.GetRadius();
 	// If any distance at all between the two, doesn't intersect
-	/*if (distancefromSphere < 0)
-		std::cout << "Intersecting!\n";*/
+	if (distancefromSphere < 0)
+		std::cout << "Intersecting!\n";
 	return IntersectData(distancefromSphere < 0, distancefromSphere);
 }
 
@@ -26,8 +26,11 @@ IntersectData Plane::IntersectAABB(const BoundingBox & other) const
 	glm::vec3 extense, center;
 	center = (other.GetMaxExtends() + other.GetMinExtends())/2.0f;
 	extense = other.GetMaxExtends() - center;
-	float r = glm::dot(mNormal, extense);
+	float r = extense.x * fabs(mNormal.x) + extense.y * fabs(mNormal.y) + extense.z * fabs(mNormal.z);
 	float s = glm::dot(mNormal, center) + mDistance;
+	
+	if ( s <= r )
+		std::cout << "Intersecting!\n";
 
-	return IntersectData(s < r, 0, other.GetCenter() - mNormal);
+	return IntersectData(fabs(s) <= r, 0);
 }
