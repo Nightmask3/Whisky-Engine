@@ -18,13 +18,13 @@ Audio::~Audio()
 
 void Audio::Update()
 {
-	if (INP->IsKeyTriggered(KeyCode::Space))
+	if (INP->IsKeyTriggered(KeyCode::P))
 		(mOwner_->GetComponent<Audio>())->play("greatmusic.ogg");
 	
 	if (INP->IsKeyTriggered(KeyCode::S))
 		(mOwner_->GetComponent<Audio>())->stop("greatmusic.ogg");
 
-	if (INP->IsKeyTriggered(KeyCode::P))
+	if (INP->IsKeyTriggered(KeyCode::Space))
 		(mOwner_->GetComponent<Audio>())->play("scream.wav");
 
 }

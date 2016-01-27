@@ -5,6 +5,7 @@
 #include "Mesh.h"
 #include "Sprite.h"
 #include "PlayerController.h"
+#include "CameraComponent.h"
 #include "Audio.h"
 
 #endif

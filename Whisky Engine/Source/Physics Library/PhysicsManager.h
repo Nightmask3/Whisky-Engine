@@ -42,6 +42,7 @@ private:
 	std::vector<HandleEntry_> HandleEntries_;
 	std::vector<Handle> Handles_;
 	std::vector<Component *> ComponentList_;
+	double accumulator;
 public:
 	bool bGameOver;
 	//void SetBoundingBoxType(Bounding::RigidBodyType type);

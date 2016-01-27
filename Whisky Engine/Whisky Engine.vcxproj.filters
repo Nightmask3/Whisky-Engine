@@ -96,6 +96,7 @@
     <ClCompile Include="Source\OpenGLRenderer Library\Color.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component Library\CameraComponent.cpp">
     <ClCompile Include="Source\Physics Library\Bounding.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -209,6 +210,7 @@
     <ClInclude Include="Source\OpenGLRenderer Library\Color.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Component Library\CameraComponent.h">
     <ClInclude Include="Source\Physics Library\Bounding.h">
       <Filter>Header Files</Filter>
     </ClInclude>

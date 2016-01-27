@@ -77,6 +77,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Component Library\CameraComponent.cpp" />
+    <ClCompile Include="Source\OpenGLRenderer Library\Color.cpp" />
     <ClCompile Include="AudioSource.cpp" />
     <ClCompile Include="SimpleAudioSource.cpp" />
     <ClCompile Include="SimpleMusic.cpp" />
@@ -103,7 +105,6 @@
     <ClCompile Include="Source\Manager Library\Input.cpp" />
     <ClCompile Include="Source\Manager Library\ResourceManager.cpp" />
     <ClCompile Include="Source\Manager Library\utils.cpp" />
-    <ClCompile Include="Source\OpenGLRenderer Library\Color.cpp" />
     <ClCompile Include="Source\OpenGLRenderer Library\MeshGenerator.cpp" />
     <ClCompile Include="Source\OpenGLRenderer Library\ShaderProgram.cpp" />
     <ClCompile Include="Source\Physics Library\Bounding.cpp" />
@@ -114,6 +115,8 @@
     <ClCompile Include="Source\Physics Library\Plane.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Component Library\CameraComponent.h" />
+    <ClInclude Include="Source\OpenGLRenderer Library\Color.h" />
     <ClInclude Include="AudioSource.h" />
     <ClInclude Include="SimpleAudioSource.h" />
     <ClInclude Include="SimpleMusic.h" />
@@ -142,7 +145,6 @@
     <ClInclude Include="Source\Manager Library\Input.h" />
     <ClInclude Include="Source\Manager Library\ResourceManager.h" />
     <ClInclude Include="Source\Manager Library\utils.h" />
-    <ClInclude Include="Source\OpenGLRenderer Library\Color.h" />
     <ClInclude Include="Source\OpenGLRenderer Library\MeshGenerator.h" />
     <ClInclude Include="Source\OpenGLRenderer Library\ShaderProgram.h" />
     <ClInclude Include="Source\Physics Library\Bounding.h" />

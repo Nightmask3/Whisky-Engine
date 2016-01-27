@@ -38,6 +38,7 @@ public:
 
 	// member functions
 	GameObject& Instantiate();		// Consider removal? Don't want Game Objects that can exist without a transform/root component
+	GameObject& InstantiateEmpty();	// Consider removal? Don't want Game Objects that can exist without a transform/root component
 	GameObject& InstantiateArchetype(const std::string&);
 	GameObject& InstantiateArchetype(const std::string& name, const glm::vec3 & pos);
 	// Initialize the position to (0,0,0), rotation to (0,0,0) and scale to (1,1,)
@@ -52,6 +53,10 @@ public:
 	ObjVector& GameObjList();
 	int GetActiveObjCount() const { return activeObjCount_; }
 	GameObject*   GetMenu()	const { return pauseMenu_; }
+	GameObject* GetPlayer() const { return _player; }
+	void SetPlayer(GameObject* player) { _player = player; }
+	GameObject* GetCamera() const { return _camera; }
+	void SetCamera(GameObject* camera) { _camera = camera; }
 
 	// Makes a call to handle manager to initialize component list for a game object
 	bool InitializeListForGameObject(std::vector<HandleEntry_> & mEntries, int) const;
@@ -78,6 +83,7 @@ public:
 	// Gets gameobject list
 	ObjVector & GetObjectList() { return gameObjList_; }
 private:
+
 	GameObjectFactory();
 	GameObjectFactory(const GameObjectFactory&){}
 	GameObjectFactory& operator=(const GameObjectFactory&){}
@@ -90,6 +96,9 @@ private:
 	static int  _mGameObjectCounter;
 	ObjVector	gameObjList_;
 	NameObjMap	archetypeList_;
+	
+	GameObject *_player;
+	GameObject *_camera;
 
 	int activeObjCount_;
 	
